@@ -17,141 +17,32 @@
 
         <!-- link -->
         <a href="/"
-            class="mb-3 font-medium {{ request()->routeIs('dashboard') ? 'text-red-600' : '' }} text-sm hover:text-teal-600  
+            class="mb-3 font-medium text-sm {{ request()->routeIs('dashboard') ? 'text-teal-500' : '' }} hover:text-teal-600  
             ">
             <i class="fad fa-chart-pie text-xs mr-2"></i>
             Dashboard
         </a>
         <!-- end link -->
 
-        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">apps</p>
+        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola keuangan</p>
 
         <!-- link -->
-        <a href="./email.html"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-envelope-open-text text-xs mr-2"></i>
-            email
+        <a href="/about"
+            class="mb-3 font-medium text-sm {{ request()->routeIs('about') ? 'text-teal-500' : '' }} hover:text-teal-600 transition ease-in-out duration-500">
+            <i class="fad fa-money-bill-wave text-xs mr-2"></i>
+            Modal Utama
         </a>
         <!-- end link -->
 
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-comments text-xs mr-2"></i>
-            chat
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-shield-check text-xs mr-2"></i>
-            todo
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-calendar-edit text-xs mr-2"></i>
-            calendar
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-file-invoice-dollar text-xs mr-2"></i>
-            invoice
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-folder-open text-xs mr-2"></i>
-            file manager
-        </a>
-        <!-- end link -->
-
-
-        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">UI Elements</p>
+        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola anggota</p>
 
         <!-- link -->
         <a href="./typography.html"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-text text-xs mr-2"></i>
-            typography
+            class="mb-3 font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
+            <i class="fad fa-users text-xs mr-2"></i>
+            Anggota
         </a>
         <!-- end link -->
-
-        <!-- link -->
-        <a href="./alert.html"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-whistle text-xs mr-2"></i>
-            alerts
-        </a>
-        <!-- end link -->
-
-
-        <!-- link -->
-        <a href="./buttons.html"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-cricket text-xs mr-2"></i>
-            buttons
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-box-open text-xs mr-2"></i>
-            Content
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-swatchbook text-xs mr-2"></i>
-            colors
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-atom-alt text-xs mr-2"></i>
-            icons
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-club text-xs mr-2"></i>
-            card
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-cheese-swiss text-xs mr-2"></i>
-            Widgets
-        </a>
-        <!-- end link -->
-
-        <!-- link -->
-        <a href="#"
-            class="mb-3  font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-computer-classic text-xs mr-2"></i>
-            Components
-        </a>
-        <!-- end link -->
-
-
-
     </div>
     <!-- end sidebar content -->
 
