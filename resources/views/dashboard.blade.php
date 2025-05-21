@@ -141,6 +141,7 @@
                 <!-- info -->
                 <div class="py-2 ml-10">
                     <h1 class="h6">Good Job, Mohamed!</h1>
+                    <a href="auth/regist">regis</a>
                     <p class="text-white text-xs">You've finished all of your tasks for this week.</p>
 
                     <ul class="mt-4">
