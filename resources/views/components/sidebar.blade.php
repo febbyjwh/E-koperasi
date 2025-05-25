@@ -27,8 +27,8 @@
         <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola keuangan</p>
 
         <!-- link -->
-        <a href="/about"
-            class="mb-3 font-medium text-sm {{ request()->routeIs('about') ? 'text-teal-500' : '' }} hover:text-teal-600 transition ease-in-out duration-500">
+        <a href="/admin"
+            class="mb-3 font-medium text-sm {{ request()->routeIs('admin') ? 'text-teal-500' : '' }} hover:text-teal-600 transition ease-in-out duration-500">
             <i class="fad fa-money-bill-wave text-xs mr-2"></i>
             Modal Utama
         </a>
@@ -37,8 +37,8 @@
         <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola anggota</p>
 
         <!-- link -->
-        <a href="./typography.html"
-            class="mb-3 font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
+        <a href="/anggota"
+            class="mb-3 font-medium text-sm {{ request()->routeIs('anggota') ? 'text-teal:500' : ''}} hover:text-teal-600 transition ease-in-out duration-500">
             <i class="fad fa-users text-xs mr-2"></i>
             Anggota
         </a>
