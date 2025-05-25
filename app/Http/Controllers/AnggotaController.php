@@ -8,6 +8,11 @@ class AnggotaController extends Controller
 {
     public function index()
     {
-        return view('anggota.index');
+        return view('admin.kelola_anggota.index');
+    }
+
+    public function create()
+    {
+        return view('admin.kelola_anggota.create');
     }
 }

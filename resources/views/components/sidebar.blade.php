@@ -18,7 +18,7 @@
         <!-- link -->
         <a href="/"
             class="mb-3 font-medium text-sm {{ request()->routeIs('dashboard') ? 'text-teal-500' : '' }} hover:text-teal-600  
-            ">
+             transition ease-in-out duration-500">
             <i class="fad fa-chart-pie text-xs mr-2"></i>
             Dashboard
         </a>
@@ -37,7 +37,7 @@
         <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola anggota</p>
 
         <!-- link -->
-        <a href="/anggota"
+        <a href="{{ route('kelola_anggota.kelola_anggota') }}"
             class="mb-3 font-medium text-sm {{ request()->routeIs('anggota') ? 'text-teal:500' : ''}} hover:text-teal-600 transition ease-in-out duration-500">
             <i class="fad fa-users text-xs mr-2"></i>
             Anggota
