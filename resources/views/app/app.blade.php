@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/assets/fontawesome/all.min.css">
     <title>@yield('title')</title>
-    @vite('resources/css/app.css', 'resources/js/app.js')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-gray-100">
