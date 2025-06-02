@@ -1,6 +1,7 @@
+
 @extends('layout')
 
-@section('title', 'Admin')
+@section('title', 'Modal Utama')
 
 @section('content')
 

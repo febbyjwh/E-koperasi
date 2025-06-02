@@ -1,4 +1,4 @@
-@extends ('app.app')
+@extends ('layout')
 
 @section('title, anggota')
 

@@ -8,7 +8,7 @@ use App\Http\Controllers\AnggotaController;
 
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/admin', [ModalController::class, 'index'])->name('modal');
+Route::get('/modal', [ModalController::class, 'index'])->name('modal');
 
 // Admin (Anggota)
 Route::prefix('kelola_anggota')->name('kelola_anggota.')->group(function () {

@@ -1,49 +1,57 @@
-<div id="sideBar"
-    class="relative flex flex-col flex-wrap bg-white border-r border-gray-300 p-6 flex-none w-64 md:-ml-64 md:fixed md:top-0 md:z-30 md:h-screen md:shadow-xl animated faster">
+<aside id="logo-sidebar"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+    aria-label="Sidebar">
+    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        <ul class="space-y-5 font-medium">
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Homes</p>
+                <a href="{{ route('dashboard') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('dashboard'),
+                ])>
+                    <i @class([
+                        'fas fa-chart-pie mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('dashboard'),
+                    ])></i>
+                    <span class="ml-1">Dashboard</span>
+                </a>
+            </li>
 
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">kelola keuangan</p>
 
-    <!-- sidebar content -->
-    <div class="flex flex-col">
+                <a href="{{ route('modal') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('modal'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('modal'),
+                    ])></i>
+                    <span class="ms-3">Modal Utama</span>
+                </a>
+            </li>
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">kelola Anggota</p>
 
-        <!-- sidebar toggle -->
-        <div class="text-right hidden md:block mb-4">
-            <button id="sideBarHideBtn">
-                <i class="fad fa-times-circle"></i>
-            </button>
-        </div>
-        <!-- end sidebar toggle -->
+                <a href="{{ route('kelola_anggota.kelola_anggota') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('kelola_anggota.kelola_anggota'),
+                ])>
+                    <i @class([
+                        'fad fa-users mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('kelola_anggota.kelola_anggota'),
+                    ])></i>
+                    <span class="ms-3">Anggota</span>
+                </a>
+            </li>
 
-        <p class="uppercase text-xs text-gray-600 mb-4 tracking-wider">homes</p>
-
-        <!-- link -->
-        <a href="/"
-            class="mb-3 font-medium text-sm {{ request()->routeIs('dashboard') ? 'text-teal-500' : '' }} hover:text-teal-600  
-             transition ease-in-out duration-500">
-            <i class="fad fa-chart-pie text-xs mr-2"></i>
-            Dashboard
-        </a>
-        <!-- end link -->
-
-        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola keuangan</p>
-
-        <!-- link -->
-        <a href="/admin"
-            class="mb-3 font-medium text-sm {{ request()->routeIs('admin') ? 'text-teal-500' : '' }} hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-money-bill-wave text-xs mr-2"></i>
-            Modal Utama
-        </a>
-        <!-- end link -->
-
-        <p class="uppercase text-xs text-gray-600 mb-4 mt-4 tracking-wider">kelola anggota</p>
-
-        <!-- link -->
-        <a href="{{ route('kelola_anggota.kelola_anggota') }}"
-            class="mb-3 font-medium text-sm {{ request()->routeIs('anggota') ? 'text-teal:500' : ''}} hover:text-teal-600 transition ease-in-out duration-500">
-            <i class="fad fa-users text-xs mr-2"></i>
-            Anggota
-        </a>
-        <!-- end link -->
+        </ul>
     </div>
-    <!-- end sidebar content -->
-
-</div>
+</aside>
