@@ -4,7 +4,7 @@
 <div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
      <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold text-gray-700">Tambah Anggota</h2>
-        <a href="{{ route('kelola_anggota.create') }}"
+        <a href="{{ route('kelola_anggota.kelola_anggota') }}"
             class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
             Kembali 
         </a>
