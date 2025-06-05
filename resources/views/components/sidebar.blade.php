@@ -15,7 +15,7 @@
                         'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
                         'text-teal-400' => request()->routeIs('dashboard'),
                     ])></i>
-                    <span class="ml-1">Dashboard</span>
+                    <span class="ms-3">Dashboard</span>
                 </a>
             </li>
 

@@ -16,7 +16,12 @@
 
 
     <!-- strat wrapper -->
-    @yield('content')
+    <div class="flex flex-col min-h-screen">
+        <div class="flex-1 flex items-center justify-center flex-col">
+            <img src="{{ asset('assets/img/logo-new.png') }}" class="h-24" alt="Logo" />
+            @yield('content')
+        </div>
+    </div>
     <!-- end wrapper -->
 
     <!-- script -->
