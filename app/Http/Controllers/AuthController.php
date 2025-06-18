@@ -40,13 +40,13 @@ class AuthController extends Controller
             if ($authenticatedUser->role === 'admin') {
                 return redirect()->route('dashboard');
             } elseif ($authenticatedUser->role === 'anggota') {
-                return redirect()->route('anggota.home');
+                return redirect()->route('anggota.anggota');
             }
 
             Auth::logout();
             return redirect()->back()->with(['pesan' => 'Role tidak dikenali.']);
         }
-
+        
         return redirect()->back()->with(['pesan' => 'Akun tidak terdaftar!']);
     }
 
@@ -59,5 +59,29 @@ class AuthController extends Controller
     public function register()
     {
         return view('auth.register');
+    }
+
+    public function store(Request $request)
+    {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'username' => 'required|string|max:50|unique:users,username',
+        'email' => 'required|email|unique:users,email',
+        'no_hp' => 'nullable|string|max:20',
+        'alamat' => 'nullable|string|max:255',
+        'password' => 'required|string|confirmed|min:6',
+    ]);
+
+    User::create([
+        'name' => $request->name,
+        'username' => $request->username,
+        'email' => $request->email,
+        'no_hp' => $request->no_hp,
+        'alamat' => $request->alamat,
+        'password' => Hash::make($request->password),
+        'role' => 'anggota', // default role
+    ]);
+
+    return redirect()->route('auth.login')->with('success', 'Registrasi berhasil. Silakan login.');
     }
 }

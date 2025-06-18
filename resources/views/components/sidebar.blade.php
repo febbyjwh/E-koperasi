@@ -22,17 +22,46 @@
             <li>
                 <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">kelola keuangan</p>
 
-                <a href="{{ route('modal') }}" @class([
+                <a href="{{ route('modal.index') }}" @class([
                     'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
                     'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
-                    'text-teal-400 bg-gray-100' => request()->routeIs('modal'),
+                    'text-teal-400 bg-gray-100' => request()->routeIs('modal.index'),
                 ])>
                     <i @class([
                         'fad fa-money-bill-wave mr-3 transition duration-500',
                         'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
-                        'text-teal-400' => request()->routeIs('modal'),
+                        'text-teal-400' => request()->routeIs('modal.index'),
                     ])></i>
-                    <span class="ms-3">Modal Utama</span>
+                    <span class="ms-3">Management Modal</span>
+                </a>
+
+                @if(auth()->user()->role == 'admin')
+
+                <a href="{{ route('pengajuan_pinjaman.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('pengajuan_pinjaman.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('pengajuan_pinjaman.index'),
+                    ])></i>
+                    <span class="ms-3">Pengajuan Pinjaman</span>
+                </a>
+                @endif
+
+                <a href="{{ route('pelunasan_anggota.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('pelunasan_anggota.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('pelunasan_anggota.index'),
+                    ])></i>
+                    <span class="ms-3">Pelunasan Anggota</span>
                 </a>
             </li>
             <li>
@@ -51,6 +80,7 @@
                     <span class="ms-3">Anggota</span>
                 </a>
             </li>
+
 
         </ul>
     </div>

@@ -2,17 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
     public function index()
     {
-        return view('admin.kelola_anggota.index');
+        $anggota = User::where('role', 'anggota')->latest()->get();
+        return view('admin.kelola_anggota.index', compact('anggota'));
     }
 
     public function create()
     {
         return view('admin.kelola_anggota.create');
+    }
+
+    // Simpan data anggota baru
+    public function store(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'nama' => 'required|string|max:255',
+            'username' => 'required|string|max:50|unique:users,username',
+            'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'tanggal_lahir' => 'nullable|date',
+        ]);
+
+        User::create([
+            'name' => $request->nama,
+            'username' => $request->username,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'password' => Hash::make('password123'), // Default password
+            'role' => 'anggota',
+        ]);
+
+        return redirect()->route('kelola_anggota.kelola_anggota')
+                         ->with('success', 'Anggota berhasil ditambahkan.');
+    }
+
+    public function edit($id)
+    {
+        $anggota = User::findOrFail($id);
+        return view('admin.kelola_anggota.edit', compact('anggota'));
+    }
+
+    // ✅ Proses update data anggota
+    public function update(Request $request, $id)
+    {
+        $anggota = User::findOrFail($id);
+
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $anggota->id,
+            'nama' => 'required|string|max:255',
+            'username' => 'required|string|max:50|unique:users,username,' . $anggota->id,
+            'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'tanggal_lahir' => 'nullable|date',
+        ]);
+
+        $anggota->update([
+            'name' => $request->nama,
+            'username' => $request->username,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+        ]);
+
+        return redirect()->route('kelola_anggota.kelola_anggota')
+                         ->with('success', 'Data anggota berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $anggota = User::findOrFail($id);
+        $anggota->delete();
+
+        return redirect()->route('kelola_anggota.kelola_anggota')
+                         ->with('success', 'Data anggota berhasil dihapus.');
+    }
+
+    public function index_anggota(){
+        return view('anggota.index');
     }
 }
