@@ -36,7 +36,7 @@
 
             <p class="mt-6 text-center text-sm text-gray-600">
                 Belum punya akun?
-                <a href="{{ route('auth.register') }}" class="text-teal-600 hover:underline">Daftar di sini</a>
+                <a href="{{ route('register') }}" class="text-teal-600 hover:underline">Daftar di sini</a>
             </p>
         </div>
     </div>

@@ -20,6 +20,6 @@ class isAdmin
             return $next($request);
         }
 
-        return redirect()->route('auth.formlogin')->with('pesan', 'Anda harus login sebagai admin!');
+        return redirect()->back()->with('pesan', 'Anda harus login sebagai admin!');
     }
 }

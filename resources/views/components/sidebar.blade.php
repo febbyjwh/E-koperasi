@@ -19,7 +19,7 @@
                 </a>
             </li>
 
-            <li>
+            <li class=" space-y-4">
                 <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">kelola keuangan</p>
 
                 <a href="{{ route('modal.index') }}" @class([
@@ -35,12 +35,11 @@
                     <span class="ms-3">Management Modal</span>
                 </a>
 
-                @if(auth()->user()->role == 'admin')
-
                 <a href="{{ route('pengajuan_pinjaman.index') }}" @class([
                     'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
                     'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
-                    'text-teal-400 bg-gray-100' => request()->routeIs('pengajuan_pinjaman.index'),
+                    'text-teal-400 bg-gray-100' => request()->routeIs(
+                        'pengajuan_pinjaman.index'),
                 ])>
                     <i @class([
                         'fad fa-money-bill-wave mr-3 transition duration-500',
@@ -49,12 +48,12 @@
                     ])></i>
                     <span class="ms-3">Pengajuan Pinjaman</span>
                 </a>
-                @endif
 
                 <a href="{{ route('pelunasan_anggota.index') }}" @class([
                     'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
                     'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
-                    'text-teal-400 bg-gray-100' => request()->routeIs('pelunasan_anggota.index'),
+                    'text-teal-400 bg-gray-100' => request()->routeIs(
+                        'pelunasan_anggota.index'),
                 ])>
                     <i @class([
                         'fad fa-money-bill-wave mr-3 transition duration-500',
@@ -70,7 +69,8 @@
                 <a href="{{ route('kelola_anggota.kelola_anggota') }}" @class([
                     'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
                     'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
-                    'text-teal-400 bg-gray-100' => request()->routeIs('kelola_anggota.kelola_anggota'),
+                    'text-teal-400 bg-gray-100' => request()->routeIs(
+                        'kelola_anggota.kelola_anggota'),
                 ])>
                     <i @class([
                         'fad fa-users mr-3 transition duration-500',

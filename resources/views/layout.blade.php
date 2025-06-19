@@ -14,17 +14,38 @@
 
 <body class="bg-gray-100">
 
+    @php
+        $anggota = auth()->user()->role == 'anggota';
+        $admin = auth()->user()->role == 'admin';
+    @endphp
 
     <!-- start navbar -->
-    @include('components.navbar')
+    <div @class(['hidden', 'md:block', 'sm:block'])>
+        @include('components.navbar')
+    </div>
     <!-- end navbar -->
 
-    @include('components.sidebar')
+    @if ($admin)
+        @include('components.sidebar')
+    @endif
 
     <!-- strat wrapper -->
-    <div class="p-4 sm:ml-64">
-        <div class="p-4 dark:border-gray-700 mt-14">
+    <div @class([
+        'p-4' => $admin,
+        'sm:ml-64' => $admin,
+    ])>
+        <div @class([
+            'p-4' => $admin,
+            'mt-14' => $admin,
+            'sm:mt-16' => $anggota,
+        ])">
             @yield('content')
+
+            @if ($anggota)
+            <div @class(['block', 'md:hidden', 'sm:hidden'])>
+                @include('components.bottombar')
+            </div>
+            @endif
         </div>
     </div>
     <!-- end wrapper -->

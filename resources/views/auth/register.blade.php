@@ -75,7 +75,7 @@
 
         <p class="mt-6 text-center text-sm text-gray-600">
             Sudah punya akun?
-            <a href="{{ route('auth.login') }}" class="text-blue-600 hover:underline">Masuk di sini</a>
+            <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Masuk di sini</a>
         </p>
     </div>
 </div>
