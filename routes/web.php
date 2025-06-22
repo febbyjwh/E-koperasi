@@ -5,9 +5,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\TabunganWajibController;
+use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
-
 
 Route::get('/', [AuthController::class, 'formlogin'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -39,6 +40,26 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/{id}/edit', [AnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [AnggotaController::class, 'update'])->name('update');
         Route::delete('/{id}', [AnggotaController::class, 'destroy'])->name('destroy');
+    });
+
+    // Tabungan Wajib
+    Route::prefix('tabungan_wajib')->name('tabungan_wajib.')->group(function () {
+        Route::get('/', [TabunganWajibController::class, 'index'])->name('tabungan_wajib');
+        Route::get('/create', [TabunganWajibController::class, 'create'])->name('create');
+        Route::post('/', [TabunganWajibController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [TabunganWajibController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TabunganWajibController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TabunganWajibController::class, 'destroy'])->name('destroy');
+    });
+
+    // Tabungan Manasuka
+    Route::prefix('tabungan_manasuka')->name('tabungan_manasuka.')->group(function () {
+        Route::get('/', [TabunganManasukaController::class, 'index'])->name('tabungan_manasuka');
+        Route::get('/create', [TabunganManasukaController::class, 'create'])->name('create');
+        Route::post('/', [TabunganManasukaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [TabunganManasukaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TabunganManasukaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TabunganManasukaController::class, 'destroy'])->name('destroy');
     });
 
     // Pelunasan anggota

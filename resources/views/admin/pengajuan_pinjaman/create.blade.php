@@ -3,7 +3,7 @@
 @section('title', 'Ajukan Pinjaman')
 
 @section('content')
-<div class="p-6 bg-white rounded-2xl shadow-lg max-w-2xl mx-auto">
+<div class="p-6 bg-white rounded-2xl shadow-lg w-full">
     <h2 class="text-2xl font-semibold mb-6 text-gray-700">Form Pengajuan Pinjaman</h2>
 
     <form action="{{ route('pengajuan_pinjaman.store') }}" method="POST" class="space-y-4">
@@ -23,6 +23,21 @@
                 @endforeach
             </select>
             @error('user_id')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Jenis Pinjaman --}}
+        <div>
+            <label for="jenis_pinjaman" class="block text-sm font-medium text-gray-700">Jenis Pinjaman</label>
+            <select name="jenis_pinjaman" id="jenis_pinjaman"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
+                    required>
+                <option value="">-- Pilih Jenis --</option>
+                <option value="kms" {{ old('jenis_pinjaman') == 'kms' ? 'selected' : '' }}>Kredit Manasuka (KMS)</option>
+                <option value="barang" {{ old('jenis_pinjaman') == 'barang' ? 'selected' : '' }}>Kredit Barang</option>
+            </select>
+            @error('jenis_pinjaman')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>

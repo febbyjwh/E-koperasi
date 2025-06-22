@@ -59,7 +59,6 @@
                                     role="menuitem">Earnings</a>
                             </li>
                             <li>
-
                                 <form action="{{ route('auth.logout') }}" method="post">
                                     @csrf
                                     <button type="submit"

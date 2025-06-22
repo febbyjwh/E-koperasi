@@ -3,7 +3,7 @@
 @section('title','Tambah Modal Utama')
 
 @section('content')
-<div class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+<div class="p-6 bg-white rounded-2xl shadow-lg w-full">
     <h2 class="text-xl font-semibold text-gray-700 mb-4">Tambah Sumber Modal</h2>
 
     <form action="{{ route('modal.store')}}" method="POST" class="space-y-4">
@@ -49,6 +49,7 @@
                 <option value="masuk">Masuk</option>
                 <option value="pending">Pending</option>
                 <option value="ditolak">Ditolak</option>
+                <option value="keluar">Keluar</option>
             </select>
         </div>
 

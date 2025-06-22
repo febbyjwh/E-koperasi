@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="./img/fav.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/assets/fontawesome/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"> --}}
     <title>@yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])

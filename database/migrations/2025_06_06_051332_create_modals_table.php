@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('jumlah', 15, 2);
             $table->text('keterangan')->nullable();
             $table->string('sumber');
-            $table->enum('status', ['masuk', 'pending', 'ditolak'])->default('pending');
+            $table->enum('status', ['masuk', 'pending', 'ditolak', 'keluar'])->default('pending');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             });

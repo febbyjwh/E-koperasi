@@ -1,91 +1,114 @@
 @extends('layout')
 
-@section('title', 'Pelunasan Pinjaman Anggota')
+@section('title', 'Daftar Pelunasan Pinjaman Anggota')
 
 @section('content')
-<div class="p-6 bg-white rounded-xl shadow-lg">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm md:text-xl font-semibold text-gray-700">
-            Daftar Pelunasan Peminjaman Anggota
-        </h2>
+<div class="p-4 bg-white rounded-2xl shadow-lg">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h2 class="text-lg md:text-xl font-semibold text-gray-700">Daftar Pelunasan Pinjaman Anggota</h2>
 
-        {{-- ✅ Tombol Tambah Pelunasan --}}
+        <form action="{{ route('pelunasan_anggota.index') }}" method="GET" class="w-full md:max-w-md">
+            <div class="relative">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Cari nama anggota...">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                <button type="submit"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white font-medium rounded-lg text-sm px-4 py-2 h-10">
+                    Cari
+                </button>
+            </div>
+        </form>
+
         <a href="{{ route('pelunasan_anggota.create') }}"
-           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
             Tambah Pelunasan
         </a>
     </div>
 
-    <table class="min-w-full table-auto border">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-2 border">No</th>
-                <th class="px-4 py-2 border">Nama Anggota</th>
-                <th class="px-4 py-2 border">ID Pinjaman</th>
-                <th class="px-4 py-2 border">Jumlah Dibayar</th>
-                <th class="px-4 py-2 border">Tanggal Bayar</th>
-                <th class="px-4 py-2 border">Status</th>
-                <th class="px-4 py-2 border">Keterangan</th>
-                <th class="px-4 py-2 border">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($pelunasans as $item)
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
-                    <td class="px-4 py-2 border">{{ $item->user->name ?? '-' }}</td>
-                    <td class="px-4 py-2 border">#{{ $item->pinjaman_id }}</td>
-                    <td class="px-4 py-2 border">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
-                    <td class="px-4 py-2 border">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
-                    
-                    {{-- Status --}}
-                    <td class="px-4 py-2 border capitalize">
-                        @if($item->status === 'pending')
-                            <form action="{{ route('pelunasan_anggota.konfirmasi', $item->id) }}" method="POST" class="flex gap-1">
-                                @csrf
-                                <button type="submit" name="status" value="terverifikasi"
-                                    class="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs">
-                                    Verifikasi
-                                </button>
-                                <button type="submit" name="status" value="ditolak"
-                                    class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs">
-                                    Tolak
-                                </button>
-                            </form>
-                        @elseif($item->status === 'terverifikasi')
-                            <span class="text-green-600 font-semibold">Terverifikasi</span>
-                        @elseif($item->status === 'ditolak')
-                            <span class="text-red-600 font-semibold">Ditolak</span>
-                        @endif
-                    </td>
-
-                    {{-- Keterangan --}}
-                    <td class="px-4 py-2 border">{{ $item->keterangan ?? '-' }}</td>
-
-                    {{-- ✅ Aksi Edit & Delete --}}
-                    <td class="px-4 py-2 border whitespace-nowrap">
-                        <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
-                           class="text-blue-600 hover:underline text-sm">Edit</a>
-
-                        <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST"
-                              class="inline-block ml-2"
-                              onsubmit="return confirm('Yakin ingin menghapus data pelunasan ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline text-sm">
-                                Hapus
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
+    <div class="overflow-x-auto w-full">
+        <table class="min-w-full text-sm text-left text-gray-500 border rounded-lg">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
-                    <td colspan="8" class="text-center py-4 text-gray-500">
-                        Belum ada data pelunasan pinjaman.
-                    </td>
+                    <th class="px-6 py-3">No</th>
+                    <th class="px-6 py-3">Nama Anggota</th>
+                    <th class="px-6 py-3">Jumlah Pinjaman</th>
+                    {{-- <th class="px-6 py-3">Jumlah Harus Bayar</th> --}}
+                    <th class="px-6 py-3">Jumlah Bayar</th>
+                    <th class="px-6 py-3">Sisa Cicilan</th>
+                    <th class="px-6 py-3">Metode Pembayaran</th>
+                    <th class="px-6 py-3">Tanggal Bayar</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Konfirmasi</th>
+                    <th class="px-6 py-3">Keterangan</th>
+                    <th class="px-6 py-3 text-right">Aksi</th>
                 </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse($pelunasans as $i => $item)
+                    @php
+                        $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
+                        $statusColor = match($item->status) {
+                            'pending' => 'bg-yellow-100 text-yellow-800',
+                            'terverifikasi' => 'bg-green-100 text-green-800',
+                            'ditolak' => 'bg-red-100 text-red-800',
+                            default => 'bg-gray-100 text-gray-800',
+                        };
+                    @endphp
+                    <tr class="bg-white hover:bg-gray-50 border-b">
+                        <td class="px-6 py-4">{{ $pelunasans->firstItem() + $i }}</td>
+                        <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
+                        <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
+                        {{-- <td class="px-6 py-4">Rp {{ number_format($item->total_harus_bayar, 0, ',', '.') }}</td> --}}
+                        <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4">Rp {{ number_format($item->sisa_cicilan, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4">{{ ucfirst($item->metode_pembayaran ?? 'Tunai') }}</td>
+                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 text-xs rounded-full font-medium {{ $statusColor }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if($item->status === 'pending')
+                                <form action="{{ route('pelunasan_anggota.konfirmasi', $item->id) }}" method="POST" class="flex gap-1">
+                                    @csrf
+                                    <button name="status" value="terverifikasi" title="Verifikasi">
+                                        <i class="bx bx-check-circle text-green-500 text-xl"></i>
+                                    </button>
+                                    <button name="status" value="ditolak" title="Tolak">
+                                        <i class="bx bx-x-circle text-red-500 text-xl"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <span class="text-gray-400 text-xs">Sudah dikonfirmasi</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
+                            <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="12" class="px-6 py-4 text-center text-gray-500">Tidak ada data pelunasan.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div class="mt-4">
+            {{ $pelunasans->withQueryString()->links() }}
+        </div>
+    </div>
 </div>
 @endsection

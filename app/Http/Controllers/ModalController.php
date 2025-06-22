@@ -7,15 +7,24 @@ use App\Models\Modal;
 
 class ModalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $modals = Modal::with('user')->orderBy('tanggal', 'desc')->get();
+        $search = $request->input('search');
+
+        $modals = Modal::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where('keterangan', 'like', "%{$search}%")
+                    ->orWhere('sumber', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            })
+            ->orderBy('tanggal', 'desc')
+            ->get();
         
         $totalMasuk = Modal::where('status', 'masuk')->sum('jumlah');
         $totalKeluar = Modal::where('status', 'keluar')->sum('jumlah');
         $saldo = $totalMasuk - $totalKeluar;
 
-        return view('admin.modal.index', compact('modals', 'totalMasuk', 'totalKeluar', 'saldo'));
+        return view('admin.modal.index', compact('modals', 'totalMasuk', 'totalKeluar', 'saldo', 'search'));
     }
 
     public function create()

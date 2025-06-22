@@ -11,12 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
 {
-    // Tampilkan daftar pengajuan (admin)
-    public function index()
+    public function index(Request $request)
     {
-        $pengajuan = PengajuanPinjaman::with('user')->latest()->get();
-        return view('admin.pengajuan_pinjaman.index', compact('pengajuan'));
+        $search = $request->input('search');
+
+        $pengajuan = PengajuanPinjaman::with('user')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.pengajuan_pinjaman.index', compact('pengajuan', 'search'));
     }
+
 
     // Form pengajuan pinjaman (anggota/user)
     public function create()
@@ -28,27 +38,21 @@ class PengajuanController extends Controller
     // Simpan pengajuan pinjaman baru
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'jumlah' => 'required|numeric|min:100000',
+            'jenis_pinjaman' => 'required|in:barang,kms',
+            'jumlah' => 'required|numeric|min:1',
             'lama_angsuran' => 'required|integer|min:1',
-            'tujuan' => 'required|string|max:255',
+            'tujuan' => 'required|string',
         ]);
 
-        PengajuanPinjaman::create([
-            'user_id' => $request->user_id,
-            'jumlah' => $request->jumlah,
-            'lama_angsuran' => $request->lama_angsuran,
-            'tujuan' => $request->tujuan,
-            'tanggal_pengajuan' => now(),
-            'status' => 'pending',
-        ]);
+        $validated['tanggal_pengajuan'] = now();
+        PengajuanPinjaman::create($validated);
 
-        return redirect()->route('pengajuan_pinjaman.index')
-                        ->with('success', 'Pengajuan berhasil disimpan.');
-        }
+        return redirect()->route('pengajuan_pinjaman.index')->with('success', 'Pengajuan berhasil disimpan.');
+    }
 
-        // Tampilkan form edit
+    // Tampilkan form edit
     public function edit($id)
     {
         $pengajuan = PengajuanPinjaman::findOrFail($id);
@@ -60,25 +64,54 @@ class PengajuanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id', // ← tambahkan ini!
+            'user_id' => 'required|exists:users,id',
             'jumlah' => 'required|numeric|min:100000',
-            'lama_angsuran' => 'required|integer|min:1',
+            'lama_angsuran' => 'required|integer|min:1|max:20',
             'tujuan' => 'required|string|max:255',
             'tanggal_pengajuan' => 'required|date',
+            'jenis_pinjaman' => 'required|in:kms,barang',
         ]);
 
-        $pengajuan = PengajuanPinjaman::findOrFail($id);
+        $jumlah = $request->jumlah;
+        $tenor = $request->lama_angsuran;
+        $jenis = $request->jenis_pinjaman;
 
+        $propisi = $jumlah * 0.02;
+        $totalJasa = 0;
+        $cicilanPertama = 0;
+
+        if ($jenis === 'kms') {
+            $pokokBulanan = $jumlah / $tenor;
+            $sisaPokok = $jumlah;
+            for ($i = 1; $i <= $tenor; $i++) {
+                $jasaBulan = $sisaPokok * 0.025;
+                $totalJasa += $jasaBulan;
+                if ($i === 1) {
+                    $cicilanPertama = $pokokBulanan + $jasaBulan;
+                }
+                $sisaPokok -= $pokokBulanan;
+            }
+        } else {
+            $jasaFlat = $jumlah * 0.02;
+            $totalJasa = $jasaFlat * $tenor;
+            $cicilanPertama = ($jumlah / $tenor) + $jasaFlat;
+        }
+
+        $pengajuan = PengajuanPinjaman::findOrFail($id);
         $pengajuan->update([
             'user_id' => $request->user_id,
-            'jumlah' => $request->jumlah,
-            'lama_angsuran' => $request->lama_angsuran,
+            'jumlah' => $jumlah,
+            'lama_angsuran' => $tenor,
             'tujuan' => $request->tujuan,
             'tanggal_pengajuan' => $request->tanggal_pengajuan,
+            'jenis_pinjaman' => $jenis,
+            'potongan_propisi' => $propisi,
+            'total_jasa' => $totalJasa,
+            'cicilan_per_bulan' => $cicilanPertama,
         ]);
 
         return redirect()->route('pengajuan_pinjaman.index')
-                        ->with('success', 'Pengajuan berhasil diperbarui.');
+            ->with('success', 'Pengajuan berhasil diperbarui.');
     }
 
     // Hapus pengajuan

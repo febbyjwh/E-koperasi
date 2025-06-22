@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('modal_logs', function (Blueprint $table) {
         $table->id();
-        $table->enum('tipe', ['masuk', 'keluar']);
+        $table->enum('tipe', ['pending','disetujui', 'ditolak', 'keluar']);
         $table->decimal('jumlah', 15, 2);
         $table->string('sumber');
         $table->timestamps();

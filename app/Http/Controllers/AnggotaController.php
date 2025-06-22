@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class AnggotaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $anggota = User::where('role', 'anggota')->latest()->get();
+        $query = User::where('role', 'anggota');
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('username', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $anggota = $query->latest()->get();
+
         return view('admin.kelola_anggota.index', compact('anggota'));
     }
 

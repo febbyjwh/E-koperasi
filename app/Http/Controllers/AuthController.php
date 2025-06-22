@@ -53,7 +53,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('auth.formlogin')->with('pesan', 'Anda telah berhasil logout.');
+        return redirect()->route('login')->with('pesan', 'Anda telah berhasil logout.');
     }
 
     public function register()
@@ -82,6 +82,6 @@ class AuthController extends Controller
         'role' => 'anggota', // default role
     ]);
 
-    return redirect()->route('auth.login')->with('success', 'Registrasi berhasil. Silakan login.');
+    return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
     }
 }
