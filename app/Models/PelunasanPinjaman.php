@@ -51,6 +51,12 @@ class PelunasanPinjaman extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
+    public function angsuran()
+    {
+        return $this->belongsTo(Angsuran::class);
+    }
+
+
     /**
      * Scope pelunasan yang telah diverifikasi
      */

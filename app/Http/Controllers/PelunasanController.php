@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Angsuran;
 use App\Models\PelunasanPinjaman;
 use App\Models\PengajuanPinjaman;
 use Illuminate\Http\Request;
@@ -45,6 +46,16 @@ class PelunasanController extends Controller
 
         return view('admin.pelunasan_anggota.index', compact('pelunasans'));
     }
+
+    public function show($id)
+    {
+        $pelunasans = Angsuran::where('pinjaman_id', $id)->get();
+
+            // dd($pelunasans);
+
+        return view('admin.pelunasan_anggota.show', compact('pelunasans'));
+    }
+
 
     private function hitungCicilanBulanan($pinjaman)
     {

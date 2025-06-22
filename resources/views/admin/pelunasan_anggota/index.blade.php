@@ -91,11 +91,18 @@
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
-                            <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
-                            </form>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
+
+                                {{-- Tombol Lihat Angsuran --}}
+                                <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
+
+                                <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
+                                </form>
+                            </td>
+
                         </td>
                     </tr>
                 @empty

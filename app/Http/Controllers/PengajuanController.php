@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\ModalLog;
 use App\Models\Modal;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Angsuran;
+use App\Models\PelunasanPinjaman;
 
 class PengajuanController extends Controller
 {
@@ -47,10 +49,46 @@ class PengajuanController extends Controller
         ]);
 
         $validated['tanggal_pengajuan'] = now();
-        PengajuanPinjaman::create($validated);
+        $peminjaman = PengajuanPinjaman::create($validated);
+
+        $this->generateAngsuran($peminjaman, $validated['user_id'], $validated['jumlah'], $validated['lama_angsuran']);
 
         return redirect()->route('pengajuan_pinjaman.index')->with('success', 'Pengajuan berhasil disimpan.');
     }
+    
+    public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)
+    {
+        $jumlah = $peminjaman->jumlah;
+        $lama = $peminjaman->lama_angsuran;
+        $bunga = 2.5;
+        $pokok_per_bulan = $jumlah / $lama;
+
+        for ($bulan = 1; $bulan <= $lama; $bulan++) {
+            $sisa_pinjaman = $jumlah - $pokok_per_bulan * ($bulan - 1);
+            $bunga_bulan_ini = $sisa_pinjaman * ($bunga / 100);
+            $total = $pokok_per_bulan + $bunga_bulan_ini;
+
+            $angsuran = Angsuran::create([
+                'pinjaman_id' => $peminjaman->id,
+                'bulan_ke' => $bulan,
+                'pokok' => $pokok_per_bulan,
+                'bunga' => $bunga_bulan_ini,
+                'total_angsuran' => $total,
+                'tanggal_jatuh_tempo' => now()->addMonths($bulan),
+            ]);
+        }
+
+        PelunasanPinjaman::create([
+            'user_id' => $userId,
+            'pinjaman_id' => $peminjaman->id,
+            'angsuran_id' => $angsuran->id,
+            'jumlah_dibayar' => 0,
+            'tanggal_bayar' => now(),
+            'metode_pembayaran' => 'tunai',
+            'status' => 'pending',
+        ]);
+    }
+
 
     // Tampilkan form edit
     public function edit($id)
