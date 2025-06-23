@@ -16,10 +16,12 @@ class Angsuran extends Model
         'bunga',
         'total_angsuran',
         'tanggal_jatuh_tempo',
+        'tanggal_bayar',
+        'status',
     ];
 
     public function peminjaman()
     {
-        return $this->belongsTo(PengajuanPeminjaman::class, 'pinjaman_id');
+        return $this->belongsTo(PengajuanPinjaman::class, 'pinjaman_id');
     }
 }

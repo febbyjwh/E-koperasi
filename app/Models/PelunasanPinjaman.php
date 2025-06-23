@@ -20,6 +20,7 @@ class PelunasanPinjaman extends Model
         'keterangan',
         'status',
         'admin_id',
+        'sisa_pinjaman',
     ];
 
     protected $casts = [

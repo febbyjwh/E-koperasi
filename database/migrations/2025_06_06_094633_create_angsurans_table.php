@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('bunga', 15, 2);
             $table->decimal('total_angsuran', 15, 2);
             $table->date('tanggal_jatuh_tempo')->nullable();
+            $table->date('tanggal_bayar')->nullable();
             $table->enum('status', ['belum_bayar', 'sudah_bayar', 'terlambat'])->default('belum_bayar');
             $table->timestamps();
         });

@@ -38,13 +38,11 @@
                     <th class="px-6 py-3">No</th>
                     <th class="px-6 py-3">Nama Anggota</th>
                     <th class="px-6 py-3">Jumlah Pinjaman</th>
-                    {{-- <th class="px-6 py-3">Jumlah Harus Bayar</th> --}}
-                    <th class="px-6 py-3">Jumlah Bayar</th>
+                    <th class="px-6 py-3">Jumlah dibayar</th>
                     <th class="px-6 py-3">Sisa Cicilan</th>
                     <th class="px-6 py-3">Metode Pembayaran</th>
                     <th class="px-6 py-3">Tanggal Bayar</th>
                     <th class="px-6 py-3">Status</th>
-                    <th class="px-6 py-3">Konfirmasi</th>
                     <th class="px-6 py-3">Keterangan</th>
                     <th class="px-6 py-3 text-right">Aksi</th>
                 </tr>
@@ -64,9 +62,8 @@
                         <td class="px-6 py-4">{{ $pelunasans->firstItem() + $i }}</td>
                         <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
-                        {{-- <td class="px-6 py-4">Rp {{ number_format($item->total_harus_bayar, 0, ',', '.') }}</td> --}}
                         <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($item->sisa_cicilan, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4">Rp {{ number_format($item->sisa_pinjaman, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">{{ ucfirst($item->metode_pembayaran ?? 'Tunai') }}</td>
                         <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
                         <td class="px-6 py-4">
@@ -74,29 +71,11 @@
                                 {{ ucfirst($item->status) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
-                            @if($item->status === 'pending')
-                                <form action="{{ route('pelunasan_anggota.konfirmasi', $item->id) }}" method="POST" class="flex gap-1">
-                                    @csrf
-                                    <button name="status" value="terverifikasi" title="Verifikasi">
-                                        <i class="bx bx-check-circle text-green-500 text-xl"></i>
-                                    </button>
-                                    <button name="status" value="ditolak" title="Tolak">
-                                        <i class="bx bx-x-circle text-red-500 text-xl"></i>
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-gray-400 text-xs">Sudah dikonfirmasi</span>
-                            @endif
-                        </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             <td class="px-6 py-4 text-right space-x-2">
                                 <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
-
-                                {{-- Tombol Lihat Angsuran --}}
                                 <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
-
                                 <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>

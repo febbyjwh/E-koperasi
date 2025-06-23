@@ -51,44 +51,8 @@ class PengajuanController extends Controller
         $validated['tanggal_pengajuan'] = now();
         $peminjaman = PengajuanPinjaman::create($validated);
 
-        $this->generateAngsuran($peminjaman, $validated['user_id'], $validated['jumlah'], $validated['lama_angsuran']);
-
         return redirect()->route('pengajuan_pinjaman.index')->with('success', 'Pengajuan berhasil disimpan.');
     }
-    
-    public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)
-    {
-        $jumlah = $peminjaman->jumlah;
-        $lama = $peminjaman->lama_angsuran;
-        $bunga = 2.5;
-        $pokok_per_bulan = $jumlah / $lama;
-
-        for ($bulan = 1; $bulan <= $lama; $bulan++) {
-            $sisa_pinjaman = $jumlah - $pokok_per_bulan * ($bulan - 1);
-            $bunga_bulan_ini = $sisa_pinjaman * ($bunga / 100);
-            $total = $pokok_per_bulan + $bunga_bulan_ini;
-
-            $angsuran = Angsuran::create([
-                'pinjaman_id' => $peminjaman->id,
-                'bulan_ke' => $bulan,
-                'pokok' => $pokok_per_bulan,
-                'bunga' => $bunga_bulan_ini,
-                'total_angsuran' => $total,
-                'tanggal_jatuh_tempo' => now()->addMonths($bulan),
-            ]);
-        }
-
-        PelunasanPinjaman::create([
-            'user_id' => $userId,
-            'pinjaman_id' => $peminjaman->id,
-            'angsuran_id' => $angsuran->id,
-            'jumlah_dibayar' => 0,
-            'tanggal_bayar' => now(),
-            'metode_pembayaran' => 'tunai',
-            'status' => 'pending',
-        ]);
-    }
-
 
     // Tampilkan form edit
     public function edit($id)
@@ -159,7 +123,7 @@ class PengajuanController extends Controller
         $pengajuan->delete();
 
         return redirect()->route('pengajuan_pinjaman.index')
-                         ->with('success', 'Pengajuan berhasil dihapus.');
+            ->with('success', 'Pengajuan berhasil dihapus.');
     }
 
     // Konfirmasi pengajuan (admin)
@@ -173,27 +137,66 @@ class PengajuanController extends Controller
         $pengajuan->status = $request->status;
         $pengajuan->save();
 
+        $this->generateAngsuran($pengajuan, $pengajuan->user_id, $pengajuan->jumlah, $pengajuan->lama_angsuran);
+
         // Jika pengajuan disetujui, kurangi modal dan log
         if ($request->status === 'disetujui') {
-    // Catat ke modal_logs
-    ModalLog::create([
-        'tipe' => 'keluar',
-        'jumlah' => $pengajuan->jumlah,
-        'sumber' => 'Pinjaman untuk ' . $pengajuan->user->name,
-    ]);
+            // Catat ke modal_logs
+            ModalLog::create([
+                'tipe' => 'keluar',
+                'jumlah' => $pengajuan->jumlah,
+                'sumber' => 'Pinjaman untuk ' . $pengajuan->user->name,
+            ]);
 
-    // Catat ke modals (supaya tampil di modal utama)
-    Modal::create([
-        'tanggal' => now(),
-        'jumlah' => $pengajuan->jumlah,
-        'keterangan' => 'Pengeluaran untuk pinjaman ' . $pengajuan->user->name,
-        'sumber' => 'pinjaman',
-        'status' => 'keluar', // pastikan validasi `status` menerima 'keluar'
-        'user_id' => auth()->id(),
-    ]);
-}
+            // Catat ke modals (supaya tampil di modal utama)
+            Modal::create([
+                'tanggal' => now(),
+                'jumlah' => $pengajuan->jumlah,
+                'keterangan' => 'Pengeluaran untuk pinjaman ' . $pengajuan->user->name,
+                'sumber' => 'pinjaman',
+                'status' => 'keluar', // pastikan validasi `status` menerima 'keluar'
+                'user_id' => auth()->id(),
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Pengajuan berhasil dikonfirmasi.');
     }
 
+    public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)
+    {
+        $jumlah = $peminjaman->jumlah;
+        $lama = $peminjaman->lama_angsuran;
+        $bunga = 2.5;
+        $pokok_per_bulan = $jumlah / $lama;
+        $total_bunga = 0;
+
+        for ($bulan = 1; $bulan <= $lama; $bulan++) {
+            $sisa_pinjaman = $jumlah - $pokok_per_bulan * ($bulan - 1);
+            $bunga_bulan_ini = $sisa_pinjaman * ($bunga / 100);
+            $total = $pokok_per_bulan + $bunga_bulan_ini;
+
+            $total_bunga += $bunga_bulan_ini;
+            $jumlah_dan_total_bunga = $jumlah + $total_bunga;
+
+            $angsuran = Angsuran::create([
+                'pinjaman_id' => $peminjaman->id,
+                'bulan_ke' => $bulan,
+                'pokok' => $pokok_per_bulan,
+                'bunga' => $bunga_bulan_ini,
+                'total_angsuran' => $total,
+                'tanggal_jatuh_tempo' => now()->addMonths($bulan),
+            ]);
+        }
+
+        PelunasanPinjaman::create([
+            'user_id' => $userId,
+            'pinjaman_id' => $peminjaman->id,
+            'angsuran_id' => $angsuran->id,
+            'jumlah_dibayar' => 0,
+            'sisa_pinjaman' => $jumlah_dan_total_bunga,
+            'tanggal_bayar' => now(),
+            'metode_pembayaran' => 'tunai',
+            'status' => 'belum_lunas',
+        ]);
+    }
 }

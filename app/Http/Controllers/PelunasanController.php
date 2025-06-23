@@ -11,7 +11,10 @@ class PelunasanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PelunasanPinjaman::with(['user', 'pinjaman']);
+        $query = PelunasanPinjaman::with(['user', 'pinjaman'])
+            ->whereHas('pinjaman', function ($q) {
+                $q->where('status', 'disetujui');
+            });
 
         if ($search = $request->search) {
             $query->whereHas('user', function ($q) use ($search) {
@@ -21,7 +24,6 @@ class PelunasanController extends Controller
 
         $pelunasans = $query->latest()->paginate(10);
 
-        // ====== Tambahkan perhitungan ini ======
         foreach ($pelunasans as $item) {
             $pinjaman = $item->pinjaman;
 
@@ -47,15 +49,33 @@ class PelunasanController extends Controller
         return view('admin.pelunasan_anggota.index', compact('pelunasans'));
     }
 
+
     public function show($id)
     {
         $pelunasans = Angsuran::where('pinjaman_id', $id)->get();
-
-            // dd($pelunasans);
-
         return view('admin.pelunasan_anggota.show', compact('pelunasans'));
     }
 
+    public function bayar(Request $request, $id)
+    {
+        // dd($request->all());
+        $pinjaman = Angsuran::findOrFail($id);
+        $pinjaman->update([
+            'status' => 'sudah_bayar',
+            'tanggal_bayar' => now(),
+        ]);
+
+        $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pinjaman->pinjaman_id)->firstOrFail();
+        $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
+        $pelunasan->decrement('sisa_pinjaman', $request->jumlah_bayar);
+
+        if ($pelunasan->sisa_pinjaman <= 0) {
+            $pelunasan->update(['status' => 'lunas']);
+        }
+
+        return redirect()->route('pelunasan_anggota.index')
+            ->with('success', 'Pembayaran cicilan berhasil dilakukan.');
+    }
 
     private function hitungCicilanBulanan($pinjaman)
     {
@@ -221,7 +241,7 @@ class PelunasanController extends Controller
         ]);
 
         return redirect()->route('pelunasan_anggota.index')
-                         ->with('success', 'Data pelunasan berhasil diperbarui.');
+            ->with('success', 'Data pelunasan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -230,6 +250,6 @@ class PelunasanController extends Controller
         $pelunasan->delete();
 
         return redirect()->route('pelunasan_anggota.index')
-                         ->with('success', 'Data pelunasan berhasil dihapus.');
+            ->with('success', 'Data pelunasan berhasil dihapus.');
     }
 }
