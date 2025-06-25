@@ -67,6 +67,8 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/', [PelunasanController::class, 'index'])->name('index');
         Route::get('/create', [PelunasanController::class, 'create'])->name('create');
         Route::post('/', [PelunasanController::class, 'store'])->name('store');
+        Route::get('/{id}', [PelunasanController::class, 'show'])->name('show');
+        Route::post('/{id}/bayar', [PelunasanController::class, 'bayar'])->name('bayar');
         Route::get('/{id}/edit', [PelunasanController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PelunasanController::class, 'update'])->name('update');
         Route::delete('/{id}', [PelunasanController::class, 'destroy'])->name('destroy');
