@@ -3,6 +3,8 @@
     aria-label="Sidebar">
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
         <ul class="space-y-5 font-medium">
+
+            @if (auth()->check() && auth()->user()->role === 'admin')            
             <li>
                 <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Homes</p>
                 <a href="{{ route('dashboard') }}" @class([
@@ -104,6 +106,85 @@
                     <span class="ms-3">Tabungan Manasuka</span>
                 </a>
             </li>
+
+            @elseif (auth()->check() && auth()->user()->role === 'anggota')
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Homes</p>
+                <a href="{{ route('anggota.anggota') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('anggota.anggota'),
+                ])>
+                    <i @class([
+                        'fas fa-chart-pie mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('anggota.anggota'),
+                    ])></i>
+                    <span class="ms-3">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Pinjaman</p>
+
+                <a href="{{ route('pinjaman_anggota.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('pinjaman_anggota.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('pinjaman_anggota.index'),
+                    ])></i>
+                    <span class="ms-3">Ajukan Pinjaman</span>
+                </a>
+
+                <a href="{{ route('cicilan_anggota.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('cicilan_anggota.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('cicilan_anggota.index'),
+                    ])></i>
+                    <span class="ms-3">Cicilan Pinjaman</span>
+                </a>
+            </li>
+
+            <li>
+                <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Tabungan Saya</p>
+
+                <a href="{{ route('tab_wajib_anggota.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('tab_wajib_anggota.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('tab_wajib_anggota.index'),
+                    ])></i>
+                    <span class="ms-3">Tabungan Wajib</span>
+                </a>
+
+                <a href="{{ route('tab_manasuka_anggota.index') }}" @class([
+                    'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
+                    'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
+                    'text-teal-400 bg-gray-100' => request()->routeIs('tab_manasuka_anggota.index'),
+                ])>
+                    <i @class([
+                        'fad fa-money-bill-wave mr-3 transition duration-500',
+                        'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
+                        'text-teal-400' => request()->routeIs('tab_manasuka_anggota.index'),
+                    ])></i>
+                    <span class="ms-3">Tabungan Manasuka</span>
+                </a>
+            </li>
+            @endif
+
         </ul>
     </div>
 </aside>

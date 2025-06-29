@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModalController;
 use App\Http\Controllers\AuthController;
@@ -9,6 +10,12 @@ use App\Http\Controllers\TabunganWajibController;
 use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
+
+use App\Http\Controllers\PinjamanAnggotaController;
+use App\Http\Controllers\CicilanAnggotaController;
+use App\Http\Controllers\TabWajibAnggotaController;
+use App\Http\Controllers\TabManasukaAnggotaController;
+
 
 Route::get('/', [AuthController::class, 'formlogin'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -92,5 +99,41 @@ Route::prefix('pengajuan_pinjaman')->name('pengajuan_pinjaman.')->group(function
 Route::middleware(['isAnggota'])->group(function () {
     Route::prefix('anggota')->name('anggota.')->group(function () {
         Route::get('/home', [AnggotaController::class, 'index_anggota'])->name('anggota');
+    });
+
+    Route::prefix('pinjaman_anggota')->name('pinjaman_anggota.')->group(function () {
+        Route::get('/', [PinjamanAnggotaController::class, 'index'])->name('index');
+        Route::get('/create', [PinjamanAnggotaController::class, 'create'])->name('create');
+        Route::post('/', [PinjamanAnggotaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [PinjamanAnggotaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PinjamanAnggotaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PinjamanAnggotaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('cicilan_anggota')->name('cicilan_anggota.')->group(function () {
+        Route::get('/', [CicilanAnggotaController::class, 'index'])->name('index');
+        Route::get('/create', [CicilanAnggotaController::class, 'create'])->name('create');
+        Route::post('/', [CicilanAnggotaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [CicilanAnggotaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CicilanAnggotaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CicilanAnggotaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('tab_wajib_anggota')->name('tab_wajib_anggota.')->group(function () {
+        Route::get('/', [TabWajibAnggotaController::class, 'index'])->name('index');
+        Route::get('/create', [TabWajibAnggotaController::class, 'create'])->name('create');
+        Route::post('/', [TabWajibAnggotaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [TabWajibAnggotaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TabWajibAnggotaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TabWajibAnggotaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('tab_manasuka_anggota')->name('tab_manasuka_anggota.')->group(function () {
+        Route::get('/', [TabManasukaAnggotaController::class, 'index'])->name('index');
+        Route::get('/create', [TabManasukaAnggotaController::class, 'create'])->name('create');
+        Route::post('/', [TabManasukaAnggotaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [TabManasukaAnggotaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TabManasukaAnggotaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TabManasukaAnggotaController::class, 'destroy'])->name('destroy');
     });
 });

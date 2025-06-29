@@ -26,14 +26,14 @@
     </div>
     <!-- end navbar -->
 
-    @if ($admin)
-        @include('components.sidebar')
+    @if (in_array(auth()->user()->role, ['admin', 'anggota']))
+    @include('components.sidebar')
     @endif
 
     <!-- strat wrapper -->
     <div @class([
-        'p-4' => $admin,
-        'sm:ml-64' => $admin,
+        'p-4' => $admin || $anggota,
+        'sm:ml-64' => $admin || $anggota,
     ])>
         <div @class([
             'p-4' => $admin,

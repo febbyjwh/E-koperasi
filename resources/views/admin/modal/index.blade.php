@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title','Modal Masuk Manual')
+@section('title','Modal Masuk')
 
 @section('content')
 <div class="p-4 bg-white rounded-2xl shadow-lg">

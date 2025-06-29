@@ -18,6 +18,8 @@ class PengajuanPinjaman extends Model
     'tujuan',
     'jenis_pinjaman',
     'potongan_propisi',
+    'jumlah_diterima', 
+    'jumlah_harus_dibayar',
     'total_jasa',
     'cicilan_per_bulan',
     'tanggal_pengajuan',

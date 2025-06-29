@@ -1,13 +1,13 @@
 @extends('layout')
 
-@section('title', 'Daftar Pelunasan Pinjaman Anggota')
+@section('title', 'Cicilan Saya')
 
 @section('content')
 <div class="p-4 bg-white rounded-2xl shadow-lg">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 class="text-lg md:text-xl font-semibold text-gray-700">Daftar Pelunasan Pinjaman Anggota</h2>
+        <h2 class="text-lg md:text-xl font-semibold text-gray-700">Cicilan Saya</h2>
 
-        <form action="{{ route('pelunasan_anggota.index') }}" method="GET" class="max-w-md w-full mr-4">
+        <form action="{{ route('cicilan_anggota.index') }}" method="GET" class="max-w-md w-full mr-4">
             <div class="relative">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -26,10 +26,10 @@
             </div>
         </form>
 
-        <a href="{{ route('pelunasan_anggota.create') }}"
+        {{-- <a href="{{ route('pelunasan_anggota.create') }}"
             class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
             Tambah Pelunasan
-        </a>
+        </a> --}}
     </div>
 
     <div class="overflow-x-auto w-full">
@@ -45,7 +45,7 @@
                     <th class="px-6 py-3">Tanggal Bayar</th>
                     <th class="px-6 py-3">Status</th>
                     <th class="px-6 py-3">Keterangan</th>
-                    <th class="px-6 py-3 text-right">Aksi</th>
+                    {{-- <th class="px-6 py-3 text-right">Aksi</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -73,14 +73,14 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
+                        {{-- <td class="px-6 py-4 text-right space-x-2">
                             <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
                             <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
                             <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
                             </form>
-                        </td>
+                        </td> --}}
                     </tr>
                 @empty
                     <tr>

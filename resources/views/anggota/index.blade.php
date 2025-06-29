@@ -3,6 +3,7 @@
 @section('title', 'anggota')
 
 @section('content')
+
     <div class="relative bg-teal-500 p-5 pb-20 rounded-b-3xl">
         <div class="grid grid-cols-2 lg:grid-cols-2 grid-rows-2 gap-2">
             <div class=" p-3 sm:p-7 col-span-1 row-span-2 bg-white h-42 sm:h-58 rounded-lg">
@@ -36,7 +37,7 @@
         <div class="absolute inset-x-0 bottom-0 flex justify-center translate-y-1/2">
             <div
                 class="bg-white h-20 w-96 sm:w-full sm:max-w-2xl rounded-xl shadow-sm z-10 flex items-center justify-between p-10">
-                <a href="">
+                <a href="{{ route('pinjaman_anggota.index') }}">
                     <i class="fas fa-wallet text-3xl text-teal-500"></i>
                 </a>
                 <a href="">
@@ -116,7 +117,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
 @endsection

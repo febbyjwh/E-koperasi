@@ -15,7 +15,7 @@
                         </svg>
                     </button>
                 @endif
-                <a href="https://flowbite.com" class="flex ms-2 md:me-24">
+                <a href="" class="flex ms-2 md:me-24">
                     <img src="{{ asset('assets/img/logo-new.png') }}" class="h-10 me-3" alt="FlowBite Logo" />
                     <span
                         class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">E-Koperasi</span>
@@ -44,19 +44,14 @@
                         </div>
                         <ul class="py-1" role="none">
                             <li>
-                                <a href="#"
+                                <a href="{{ route('dashboard') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                     role="menuitem">Dashboard</a>
                             </li>
                             <li>
-                                <a href="#"
+                                <a href="{{ route('auth.logout') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                     role="menuitem">Settings</a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    role="menuitem">Earnings</a>
                             </li>
                             <li>
                                 <form action="{{ route('auth.logout') }}" method="post">
