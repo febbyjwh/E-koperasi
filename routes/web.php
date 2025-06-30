@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\DataAnggotaUpdate;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
@@ -10,12 +11,13 @@ use App\Http\Controllers\TabunganWajibController;
 use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
+use App\Http\Controllers\LaporanController;
 
 use App\Http\Controllers\PinjamanAnggotaController;
 use App\Http\Controllers\CicilanAnggotaController;
 use App\Http\Controllers\TabWajibAnggotaController;
 use App\Http\Controllers\TabManasukaAnggotaController;
-
+use Pusher\Pusher;
 
 Route::get('/', [AuthController::class, 'formlogin'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -28,6 +30,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::middleware(['isAdmin'])->group(function () {
+    // DataAnggotaUpdate::dispatch('lorem ipsum dolor sit amet');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Modal Utama
     Route::prefix('modal')->name('modal.')->group(function () {
@@ -80,19 +83,32 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::put('/{id}', [PelunasanController::class, 'update'])->name('update');
         Route::delete('/{id}', [PelunasanController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/konfirmasi', [PelunasanController::class, 'konfirmasi'])->name('konfirmasi');
+        
+    });
+
+    // Pengajuan pinjaman
+    Route::prefix('pengajuan_pinjaman')->name('pengajuan_pinjaman.')->group(function () {
+        Route::get('/', [PengajuanController::class, 'index'])->name('index');
+        Route::get('/create', [PengajuanController::class, 'create'])->name('create');
+        Route::post('/', [PengajuanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [PengajuanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PengajuanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PengajuanController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/invoice', [PengajuanController::class, 'invoice'])->name('invoice');
+        Route::patch('/{id}/konfirmasi', [PengajuanController::class, 'konfirmasi'])->name('konfirmasi');
+    });
+
+    // Laporan
+    Route::prefix('laporan')->name('laporan.')->group(function () {
+        Route::get('/', [LaporanController::class, 'index'])->name('index');
+        Route::get('/create', [LaporanController::class, 'create'])->name('create');
+        Route::post('/', [LaporanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [LaporanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('destroy');
     });
 });
 
-// Pengajuan pinjaman
-Route::prefix('pengajuan_pinjaman')->name('pengajuan_pinjaman.')->group(function () {
-    Route::get('/', [PengajuanController::class, 'index'])->name('index');
-    Route::get('/create', [PengajuanController::class, 'create'])->name('create');
-    Route::post('/', [PengajuanController::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [PengajuanController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [PengajuanController::class, 'update'])->name('update');
-    Route::delete('/{id}', [PengajuanController::class, 'destroy'])->name('destroy');
-    Route::patch('/{id}/konfirmasi', [PengajuanController::class, 'konfirmasi'])->name('konfirmasi');
-});
 
 // Role Anggota
 // Anggota

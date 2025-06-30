@@ -55,6 +55,7 @@
     <script src="/assets/fontawesome/pro.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
     <script src="/assets/fontawesome/pro.min.js"></script>
+    <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
     <!-- end script -->
 </body>
 

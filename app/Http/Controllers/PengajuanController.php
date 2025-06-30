@@ -213,6 +213,17 @@ class PengajuanController extends Controller
         return redirect()->back()->with('success', 'Pengajuan berhasil dikonfirmasi.');
     }
 
+    public function invoice($id)
+    {
+        $pinjaman = PengajuanPinjaman::with('user')->findOrFail($id);
+
+        if (request()->ajax()) {
+            return view('admin.pengajuan_pinjaman.partials.invoice', compact('pinjaman'));
+        }
+
+        return view('admin.pengajuan_pinjaman.invoice_full', compact('pinjaman')); // untuk full page fallback (opsional)
+    }
+
     public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)
     {
         $jumlah = $peminjaman->jumlah;
