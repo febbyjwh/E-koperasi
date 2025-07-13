@@ -30,6 +30,23 @@
     @include('components.sidebar')
     @endif
 
+    <style>
+    @media print {
+        body * {
+        visibility: hidden;
+        }
+        #laporan-neraca, #laporan-neraca * {
+        visibility: visible;
+        }
+        #laporan-neraca {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;    
+        }
+    }
+    </style>
+
     <!-- strat wrapper -->
     <div @class([
         'p-4' => $admin || $anggota,
@@ -56,6 +73,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
     <script src="/assets/fontawesome/pro.min.js"></script>
     <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
     <!-- end script -->
 </body>
 

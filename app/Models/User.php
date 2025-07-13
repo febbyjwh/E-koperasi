@@ -48,4 +48,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function tabunganWajib()
+    {
+        return $this->hasMany(TabWajib::class, 'user_id');
+    }
+
+    public function tabunganManasuka()
+    {
+        return $this->hasMany(TabManasuka::class, 'user_id');
+    }
+
 }

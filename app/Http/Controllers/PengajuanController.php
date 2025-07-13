@@ -218,10 +218,10 @@ class PengajuanController extends Controller
         $pinjaman = PengajuanPinjaman::with('user')->findOrFail($id);
 
         if (request()->ajax()) {
-            return view('admin.pengajuan_pinjaman.partials.invoice', compact('pinjaman'));
+            return view('admin.pengajuan_pinjaman.invoice', compact('pinjaman'));
         }
 
-        return view('admin.pengajuan_pinjaman.invoice_full', compact('pinjaman')); // untuk full page fallback (opsional)
+        return view('admin.pengajuan_pinjaman.invoice', compact('pinjaman')); // untuk full page fallback (opsional)
     }
 
     public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)

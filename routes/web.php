@@ -12,6 +12,7 @@ use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
 use App\Http\Controllers\LaporanController;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Http\Controllers\PinjamanAnggotaController;
 use App\Http\Controllers\CicilanAnggotaController;
@@ -101,11 +102,19 @@ Route::middleware(['isAdmin'])->group(function () {
     // Laporan
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('index');
-        Route::get('/create', [LaporanController::class, 'create'])->name('create');
-        Route::post('/', [LaporanController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [LaporanController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [LaporanController::class, 'update'])->name('update');
-        Route::delete('/{id}', [LaporanController::class, 'destroy'])->name('destroy');
+        Route::get('/neraca', [LaporanController::class, 'neraca'])->name('neraca');
+        Route::get('/arus_kas', [LaporanController::class, 'arusKas'])->name('arus_kas');
+        Route::get('/shu', [LaporanController::class, 'laporanSHU'])->name('shu');
+        Route::get('/anggota', [LaporanController::class, 'anggota']);
+        
+        // Export
+        Route::get('/neraca/export-pdf', [LaporanController::class, 'exportNeracaPdf'])->name('exportpdf');
+        Route::get('/export/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('exportexcel');
+        Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcelArusKas'])->name('exportexcelaruskas');
+        Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdfArusKas'])->name('exportpdfaruskas');
+        Route::get('/laporan/shu-pdf', [LaporanController::class, 'exportPdfShu'])->name('laporan.exportpdfshu');
+        Route::get('/laporan/shu-excel', [LaporanController::class, 'exportPdfShu'])->name('laporan.exportshu');
+
     });
 });
 

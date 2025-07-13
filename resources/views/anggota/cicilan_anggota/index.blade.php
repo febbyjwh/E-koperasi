@@ -45,6 +45,7 @@
                     <th class="px-6 py-3">Tanggal Bayar</th>
                     <th class="px-6 py-3">Status</th>
                     <th class="px-6 py-3">Keterangan</th>
+                    <th class="px-6 py-3">Aksi</th>
                     {{-- <th class="px-6 py-3 text-right">Aksi</th> --}}
                 </tr>
             </thead>
@@ -73,14 +74,9 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                        {{-- <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
-                            <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
-                            </form>
-                        </td> --}}
+                        <td class="px-6 py-4 text-right space-x-2">
+                           {{-- <a href="{{ route('cicilan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Cicilan</a> --}}
+                        </td>
                     </tr>
                 @empty
                     <tr>
