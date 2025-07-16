@@ -17,41 +17,41 @@ class PengajuanController extends Controller
     {
         $search = $request->input('search');
 
-    // Data pengajuan dipisah berdasarkan status
-    $pengajuanPending = PengajuanPinjaman::with('user')
-        ->where('status', 'pending')
-        ->when($search, function ($query, $search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        })
-        ->latest()->get();
+        // Data pengajuan dipisah berdasarkan status
+        $pengajuanPending = PengajuanPinjaman::with('user')
+            ->where('status', 'pending')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->latest()->get();
 
-    $pengajuanDisetujui = PengajuanPinjaman::with('user')
-        ->where('status', 'disetujui')
-        ->when($search, function ($query, $search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        })
-        ->latest()->get();
+        $pengajuanDisetujui = PengajuanPinjaman::with('user')
+            ->where('status', 'disetujui')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->latest()->get();
 
-    $pengajuanDitolak = PengajuanPinjaman::with('user')
-        ->where('status', 'ditolak')
-        ->when($search, function ($query, $search) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
-        })
-        ->latest()->get();
+        $pengajuanDitolak = PengajuanPinjaman::with('user')
+            ->where('status', 'ditolak')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            })
+            ->latest()->get();
 
-    return view('admin.pengajuan_pinjaman.index', compact(
-        'pengajuanPending',
-        'pengajuanDisetujui',
-        'pengajuanDitolak',
-        'search'
-    ));
-}
+        return view('admin.pengajuan_pinjaman.index', compact(
+            'pengajuanPending',
+            'pengajuanDisetujui',
+            'pengajuanDitolak',
+            'search'
+        ));
+    }
 
     // Form pengajuan pinjaman (anggota/user)
     public function create()
@@ -217,11 +217,27 @@ class PengajuanController extends Controller
     {
         $pinjaman = PengajuanPinjaman::with('user')->findOrFail($id);
 
-        if (request()->ajax()) {
-            return view('admin.pengajuan_pinjaman.invoice', compact('pinjaman'));
-        }
+        // Pastikan nilai-nilai ini diambil dari field yang benar
+        $nama = $pinjaman->user->name;
+        $tanggal = $pinjaman->created_at;
+        $jumlah_pinjaman = $pinjaman->jumlah; // asal field ini 'jumlah'
+        $propisi = $pinjaman->potongan_propisi; // asal disimpan saat create
+        $jenis_pinjaman = $pinjaman->jenis_pinjaman;
+        $lama_angsuran = $pinjaman->lama_angsuran;
+        $jumlah_diterima = $pinjaman->jumlah_diterima;
+        $status_konfirmasi = $pinjaman->status;
 
-        return view('admin.pengajuan_pinjaman.invoice', compact('pinjaman')); // untuk full page fallback (opsional)
+        return view('admin.pengajuan_pinjaman.invoice', compact(
+            'pinjaman',
+            'nama',
+            'tanggal',
+            'jumlah_pinjaman',
+            'propisi',
+            'jenis_pinjaman',
+            'lama_angsuran',
+            'jumlah_diterima',
+            'status_konfirmasi'
+        ));
     }
 
     public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)

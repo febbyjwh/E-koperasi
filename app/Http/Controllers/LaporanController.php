@@ -129,17 +129,41 @@ class LaporanController extends Controller
 
     public function laporanSHU(Request $request)
     {
-        // Contoh data dummy, Anda bisa ambil dari DB
-        $penjualan_barang = 10000000;
-        $jasa_simpan_pinjam = 3000000;
-        $pendapatan_lain = 1000000;
+        $periode = $request->input('periode', now()->format('Y-m')); // contoh filter bulan
+        $start = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        // Pendapatan
+        $jasa_simpan_pinjam = Angsuran::whereBetween('tanggal_bayar', [$start, $end])->sum('bunga');
+
+        $pendapatan_lain = Modal::where('status', 'masuk')
+            ->where('sumber', 'pendapatan_lain')
+            ->whereBetween('created_at', [$start, $end])
+            ->sum('jumlah');
+
+        $penjualan_barang = 0; // default nol, atau ambil dari tabel penjualan jika ada
+
         $total_pendapatan = $penjualan_barang + $jasa_simpan_pinjam + $pendapatan_lain;
 
-        $biaya_operasional = 4000000;
-        $biaya_gaji = 2000000;
-        $biaya_lain = 1000000;
+        // Biaya
+        $biaya_operasional = Modal::where('status', 'keluar')
+            ->where('sumber', 'biaya_operasional')
+            ->whereBetween('created_at', [$start, $end])
+            ->sum('jumlah');
+
+        $biaya_gaji = Modal::where('status', 'keluar')
+            ->where('sumber', 'gaji')
+            ->whereBetween('created_at', [$start, $end])
+            ->sum('jumlah');
+
+        $biaya_lain = Modal::where('status', 'keluar')
+            ->where('sumber', 'biaya_lain')
+            ->whereBetween('created_at', [$start, $end])
+            ->sum('jumlah');
+
         $total_biaya = $biaya_operasional + $biaya_gaji + $biaya_lain;
 
+        // SHU
         $shu_sebelum_pajak = $total_pendapatan - $total_biaya;
         $pajak = $shu_sebelum_pajak * 0.10;
         $shu_bersih = $shu_sebelum_pajak - $pajak;
