@@ -52,6 +52,16 @@ class PelunasanController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        // Cek jika anggota hanya bisa lihat miliknya
+        if ($user->role === 'anggota') {
+            $pinjamanUser = PelunasanPinjaman::where('id', $id)->where('user_id', $user->id)->first();
+            if (!$pinjamanUser) {
+                abort(403, 'Akses ditolak.');
+            }
+        }
+
         $pelunasans = Angsuran::where('pinjaman_id', $id)->get();
         return view('admin.pelunasan_anggota.show', compact('pelunasans'));
     }
@@ -192,7 +202,7 @@ class PelunasanController extends Controller
         $pelunasan->metode_pembayaran = $request->metode_pembayaran ?? 'Tunai';
         $pelunasan->save();
 
-        return redirect()->route('pelunasan_anggota.index')->with('success', 'Pelunasan berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Pembayaran berhasil');
     }
 
     public function konfirmasi(Request $request, $id)
@@ -223,7 +233,7 @@ class PelunasanController extends Controller
             'jumlah_dibayar' => 'required|numeric|min:0',
             'tanggal_bayar' => 'required|date',
             'metode_pembayaran' => 'required|string|max:50',
-            'status' => 'required|in:pending,terverifikasi,ditolak',
+            // 'status' => 'required|in:pending,terverifikasi,ditolak',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -236,12 +246,50 @@ class PelunasanController extends Controller
             'jumlah_dibayar' => $request->jumlah_dibayar,
             'tanggal_bayar' => $request->tanggal_bayar,
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status' => $request->status,
+            // 'status' => $request->status,
             'keterangan' => $request->keterangan,
         ]);
 
         return redirect()->route('pelunasan_anggota.index')
             ->with('success', 'Data pelunasan berhasil diperbarui.');
+    }
+
+    public function invoice($id)
+    {
+        $pelunasan = PelunasanPinjaman::with(['pinjaman.user'])->findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->id() !== optional($pelunasan->pinjaman->user)->id) {
+                abort(403, 'Unauthorized'); 
+        }
+
+        $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
+        $tanggal = $pelunasan->tanggal_bayar;
+        $nama = $pelunasan->pinjaman->user->name;
+        $jumlah_dibayar = $pelunasan->jumlah_dibayar;
+        $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
+        $keterangan = $pelunasan->keterangan ?? '-';
+
+        return view('admin.pelunasan_anggota.invoice', compact(
+            'pelunasan', 'invoiceId', 'tanggal', 'nama', 'jumlah_dibayar', 'metode', 'keterangan'
+        ));
+    }
+
+    public function exportPdfInvoice($id)
+    {
+        $pelunasan = PelunasanPinjaman::with(['pinjaman.user'])->findOrFail($id);
+
+        $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
+        $tanggal = $pelunasan->tanggal_bayar;
+        $nama = $pelunasan->pinjaman->user->name;
+        $jumlah_dibayar = $pelunasan->jumlah_dibayar;
+        $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
+        $keterangan = $pelunasan->keterangan ?? '-';
+
+        $pdf = Pdf::loadView('admin.pelunasan_anggota.invoicepdf', compact(
+            'pelunasan', 'invoiceId', 'tanggal', 'nama', 'jumlah_dibayar', 'metode', 'keterangan'
+        ));
+
+        return $pdf->download($invoiceId . '.pdf');
     }
 
     public function destroy($id)

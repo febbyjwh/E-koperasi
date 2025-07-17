@@ -75,7 +75,9 @@
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
-                           {{-- <a href="{{ route('cicilan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Cicilan</a> --}}
+                            @if (auth()->id() === $item->user_id)
+                                <a href="{{ route('cicilan_anggota.pelunasan_anggota.show', $item->pinjaman_id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
+                            @endif
                         </td>
                     </tr>
                 @empty

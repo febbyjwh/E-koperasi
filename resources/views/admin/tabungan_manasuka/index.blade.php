@@ -46,25 +46,58 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($tabunganManasuka as $tabungan)
-                    <tr class="bg-white hover:bg-gray-50">
-                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4">{{ $tabungan->anggota->name ?? '-' }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($tabungan->nominal_masuk, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($tabungan->nominal_keluar, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4 font-semibold">Rp {{ number_format($tabungan->total, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d M Y') }}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('tabungan_manasuka.edit', $tabungan->id) }}"
-                               class="font-medium text-blue-600 hover:underline">Edit</a>
-                            <form action="{{ route('tabungan_manasuka.destroy', $tabungan->id) }}" method="POST"
-                                  class="inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
-                            </form>
+                @php
+                    $grouped = $tabunganManasuka->groupBy('user_id');
+                    $groupIndex = 1;
+                @endphp
+
+                @forelse ($grouped as $userId => $items)
+                    {{-- Baris khusus nama anggota --}}
+                    <tr class="bg-blue-100">
+                        <td class="px-6 py-2"></td>
+                        <td class="px-6 py-2 font-bold text-gray-800">{{ $items->first()->anggota->name ?? '-' }}</td>
+                        <td colspan="5"></td>
+                    </tr>
+
+                    @foreach ($items as $i => $tabungan)
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ $groupIndex }}.{{ $loop->iteration }}</td>
+                            <td class="px-6 py-4"></td>
+                            <td class="px-6 py-4 {{ $tabungan->nominal_masuk > 0 ? 'text-green-600 font-medium' : '' }}">
+                                Rp {{ number_format($tabungan->nominal_masuk, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 {{ $tabungan->nominal_keluar > 0 ? 'text-red-600 font-medium' : '' }}">
+                                Rp {{ number_format($tabungan->nominal_keluar, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 font-semibold">
+                                Rp {{ number_format($tabungan->total, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ \Carbon\Carbon::parse($tabungan->tanggal)->format('d M Y') }}
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <a href="{{ route('tabungan_manasuka.edit', $tabungan->id) }}"
+                                class="font-medium text-blue-600 hover:underline">Edit</a>
+                                <form action="{{ route('tabungan_manasuka.destroy', $tabungan->id) }}" method="POST"
+                                    class="inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @php
+                        $totalSaldo = $items->sum('nominal_masuk') - $items->sum('nominal_keluar');
+                    @endphp
+                    <tr class="bg-gray-100">
+                        <td colspan="7" class="px-6 py-2 font-semibold text-right text-gray-700">
+                            Total Saldo {{ $items->first()->anggota->name ?? 'Anggota' }}:
+                            <span class="text-blue-700">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</span>
                         </td>
                     </tr>
+
+                    @php $groupIndex++; @endphp
                 @empty
                     <tr>
                         <td colspan="7" class="text-center text-gray-500 py-4">Belum ada data tabungan manasuka.</td>

@@ -46,6 +46,7 @@
                     <th class="px-6 py-3">Tujuan</th>
                     <th class="px-6 py-3">Tanggal</th>
                     <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Bukti</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,6 +70,16 @@
                                 @endif">
                                 {{ ucfirst($item->status) }}
                             </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if ($item->status === 'disetujui')
+                                <a href="{{ route('pinjaman_anggota.bukti', $item->id) }}"
+                                class="text-blue-600 hover:underline text-xs">
+                                    Lihat Bukti
+                                </a>
+                            @else
+                                <span class="text-gray-400 text-xs italic">-</span>
+                            @endif
                         </td>
                     </tr>
                 @empty

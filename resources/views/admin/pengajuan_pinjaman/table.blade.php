@@ -64,12 +64,12 @@
                             </td>
                         @endif
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pengajuan_pinjaman.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{{ route('pengajuan_pinjaman.invoice', $item->id) }}" class="text-blue-600 hover:underline text-xs">Bukti</a>
+                            <a href="{{ route('pengajuan_pinjaman.edit', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Edit</a>
+                            <a href="{{ route('pengajuan_pinjaman.invoice', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Bukti</a>
                             <form action="{{ route('pengajuan_pinjaman.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
+                                <button type="submit" class="font-medium text-red-600 hover:underline text-xs ml-2">Hapus</button>
                             </form>
                         </td>
                     </tr>

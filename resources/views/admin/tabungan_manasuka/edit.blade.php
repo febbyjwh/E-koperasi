@@ -3,8 +3,14 @@
 @section('title', 'Edit Tabungan Manasuka')
 
 @section('content')
-<div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md">
-    <h2 class="text-xl font-semibold mb-4 text-gray-700">Edit Tabungan Manasuka</h2>
+<div class="bg-white p-6 rounded-xl shadow-md overflow-x-auto">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-700">Edit Anggota</h2>
+        <a href="{{ route('tabungan_manasuka.tabungan_manasuka') }}"
+            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
+            Kembali
+        </a>
+    </div>
 
     <form action="{{ route('tabungan_manasuka.update', $tabungan->id) }}" method="POST">
         @csrf
@@ -28,7 +34,7 @@
         <div class="mb-4">
             <label for="nominal_masuk" class="block text-gray-600 mb-1">Nominal Masuk</label>
             <input type="number" name="nominal_masuk" id="nominal_masuk" value="{{ old('nominal_masuk', $tabungan->nominal_masuk) }}"
-                   class="w-full border rounded-lg px-3 py-2" min="10000" required>
+                   class="w-full border rounded-lg px-3 py-2" min="0">
             <p id="nominalWarning" class="text-red-500 text-sm mt-1 hidden">Nominal masuk minimal Rp10.000</p>
             @error('nominal_masuk')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -55,8 +61,8 @@
 
         <div class="flex justify-end">
             <button type="submit"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
-                Update
+                class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                Perbaharui
             </button>
         </div>
     </form>
@@ -67,11 +73,12 @@
     const warning = document.getElementById('nominalWarning');
 
     nominalMasuk.addEventListener('input', function () {
-        if (this.value < 10000) {
+        if (this.value && parseInt(this.value) < 10000) {
             warning.classList.remove('hidden');
         } else {
             warning.classList.add('hidden');
         }
+
     });
 </script>
 @endsection

@@ -4,12 +4,13 @@
 
 @section('content')
 <div class="p-6 bg-white rounded-2xl shadow-lg w-full">
-    <h2 class="text-xl font-semibold text-gray-700 mb-4">Edit Setoran Tabungan Wajib</h2>
-
-    <a href="{{ route('tabungan_wajib.tabungan_wajib') }}"
-        class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
-        Kembali
-    </a>
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-700">Edit Tabungan Wajib</h2>
+        <a href="{{ route('tabungan_wajib.tabungan_wajib') }}"
+            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
+            Kembali
+        </a>
+    </div>
 
     <form action="{{ route('tabungan_wajib.update', $setoran->id) }}" method="POST" class="space-y-4">
         @csrf
@@ -53,9 +54,8 @@
                 value="{{ $setoran->tanggal }}">
         </div>
 
-        <div class="text-right">
-            <a href="{{ route('tabungan_wajib.tabungan_wajib') }}" class="text-sm text-gray-600 hover:underline mr-4">Batal</a>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Perbarui</button>
+        <div class="flex justify-end">
+            <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-blue-700">Perbarui</button>
         </div>
     </form>
 </div>

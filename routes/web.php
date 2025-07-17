@@ -82,9 +82,10 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::post('/{id}/bayar', [PelunasanController::class, 'bayar'])->name('bayar');
         Route::get('/{id}/edit', [PelunasanController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PelunasanController::class, 'update'])->name('update');
+        Route::get('/{id}/invoice', [PelunasanController::class, 'invoice'])->name('invoice');
+        Route::get('/{id}/invoicepdf', [PelunasanController::class, 'exportPdfInvoice'])->name('invoicepdf');
         Route::delete('/{id}', [PelunasanController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/konfirmasi', [PelunasanController::class, 'konfirmasi'])->name('konfirmasi');
-        
     });
 
     // Pengajuan pinjaman
@@ -96,6 +97,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::put('/{id}', [PengajuanController::class, 'update'])->name('update');
         Route::delete('/{id}', [PengajuanController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/invoice', [PengajuanController::class, 'invoice'])->name('invoice');
+        Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdf');
         Route::patch('/{id}/konfirmasi', [PengajuanController::class, 'konfirmasi'])->name('konfirmasi');
     });
 
@@ -132,6 +134,8 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::post('/', [PinjamanAnggotaController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [PinjamanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PinjamanAnggotaController::class, 'update'])->name('update');
+        Route::get('/{id}/bukti', [PengajuanController::class, 'invoice'])->name('bukti');
+        Route::get('/{id}/bukti-pdf', [PengajuanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
         Route::delete('/{id}', [PinjamanAnggotaController::class, 'destroy'])->name('destroy');
     });
 
@@ -141,6 +145,9 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::post('/', [CicilanAnggotaController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [CicilanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [CicilanAnggotaController::class, 'update'])->name('update');
+        Route::get('/cicilan_anggota/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');    
+        Route::get('/pelunasan/{id}/bukti', [PelunasanController::class, 'invoice'])->name('bukti');
+        Route::get('/pelunasan/{id}/bukti-pdf', [PelunasanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
         Route::delete('/{id}', [CicilanAnggotaController::class, 'destroy'])->name('destroy');
     });
 

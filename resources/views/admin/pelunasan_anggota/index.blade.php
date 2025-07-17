@@ -74,11 +74,11 @@
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
+                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Edit</a>
+                            <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="font-medium text-green-600 hover:underline text-xs">Pelunasan</a>
                             <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline text-xs ml-2">Hapus</button>
+                                <button type="submit" class="font-medium text-red-600 hover:underline text-xs ml-2">Hapus</button>
                             </form>
                         </td>
                     </tr>

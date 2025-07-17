@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Konfirmasi Pengajuan Pinjaman')
+@section('title', 'Invoice Pengajuan Pinjaman')
 
 @section('content')
 <!-- Invoice Page -->
@@ -111,14 +111,23 @@
 
       <!-- Buttons -->
       <div class="mt-5 flex justify-end gap-x-2">
-        <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800" href="#">
+        @php
+            $isAdmin = Auth::user()->role === 'admin'; // Ganti sesuai field & nilai role kamu
+        @endphp
+
+        <a href="{{ $isAdmin ? route('pengajuan_pinjaman.index') : route('pinjaman_anggota.index') }}"
+          class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
+          Kembali
+        </a>
+
+        <a href="{{ route('pengajuan_pinjaman.invoicepdf', $pinjaman->id) }}" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-blue-700 text-white shadow-2xs hover:bg-blue-500 dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
           <!-- Download Icon -->
           Bukti PDF
         </a>
-        <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600" href="#">
+        {{-- <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600" href="#">
           <!-- Print Icon -->
           Print
-        </a>
+        </a> --}}
       </div>
 
       <div class="mt-5 sm:mt-10">

@@ -3,8 +3,14 @@
 @section('title', 'Edit Pengajuan Pinjaman')
 
 @section('content')
-<div class="p-6 bg-white rounded-2xl shadow-lg max-w-2xl mx-auto">
-    <h2 class="text-2xl font-semibold mb-6 text-gray-700">Edit Pengajuan Pinjaman</h2>
+<div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-700">Edit Pengajuan Pinjaman Anggota</h2>
+        <a href="{{ route('pengajuan_pinjaman.index') }}"
+            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
+            Kembali
+        </a>
+    </div>
 
     <form action="{{ route('pengajuan_pinjaman.update', $pengajuan->id) }}" method="POST" class="space-y-4">
         @csrf
@@ -24,6 +30,20 @@
                 @endforeach
             </select>
             @error('user_id')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label for="jenis_pinjaman" class="block text-sm font-medium text-gray-700">Jenis Pinjaman</label>
+            <select name="jenis_pinjaman" id="jenis_pinjaman"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
+                    required>
+                <option value="">-- Pilih Jenis --</option>
+                <option value="kms" {{ old('jenis_pinjaman', $pengajuan->jenis_pinjaman) == 'kms' ? 'selected' : '' }}>KMS</option>
+                <option value="barang" {{ old('jenis_pinjaman', $pengajuan->jenis_pinjaman) == 'barang' ? 'selected' : '' }}>Barang</option>
+            </select>
+            @error('jenis_pinjaman')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -77,12 +97,7 @@
 
         {{-- Tombol --}}
         <div class="flex justify-end">
-            <a href="{{ route('pengajuan_pinjaman.index') }}" 
-               class="px-4 py-2 text-gray-600 hover:underline mr-2">Batal</a>
-            <button type="submit"
-                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-                Simpan
-            </button>
+            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">Perbaharui</button>
         </div>
     </form>
 </div>

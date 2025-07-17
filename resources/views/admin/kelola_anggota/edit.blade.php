@@ -64,7 +64,7 @@
         </div>
 
         <div class="flex justify-end">
-            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">Update</button>
+            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">Perbaharui</button>
         </div>
     </form>
 </div>

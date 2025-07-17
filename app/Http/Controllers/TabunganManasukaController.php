@@ -71,14 +71,14 @@ class TabunganManasukaController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'nominal_masuk' => 'nullable|integer|min:10000',
+            'nominal_masuk' => 'nullable|integer|min:0',
             'nominal_keluar' => 'nullable|integer|min:0',
             'tanggal' => 'required|date',
         ]);
 
         $tabungan = TabManasuka::findOrFail($id);
 
-        $nominalMasuk = $request->nominal_masuk;
+        $nominalMasuk = $request->filled('nominal_masuk') ? (int)$request->nominal_masuk : 0;
         $nominalKeluar = $request->nominal_keluar ?? 0;
 
         // Hitung total sebelumnya (tidak termasuk data yang sedang diedit)

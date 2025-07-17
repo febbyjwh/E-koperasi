@@ -10,6 +10,8 @@ use App\Models\ModalLog;
 use App\Models\Modal;
 use App\Models\Angsuran;
 use App\Models\PelunasanPinjaman;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class PengajuanController extends Controller
 {
@@ -217,11 +219,14 @@ class PengajuanController extends Controller
     {
         $pinjaman = PengajuanPinjaman::with('user')->findOrFail($id);
 
-        // Pastikan nilai-nilai ini diambil dari field yang benar
+        if (Auth::user()->role !== 'admin' && Auth::id() !== $pinjaman->user_id) {
+        abort(403, 'Unauthorized');
+        }
+        
         $nama = $pinjaman->user->name;
         $tanggal = $pinjaman->created_at;
-        $jumlah_pinjaman = $pinjaman->jumlah; // asal field ini 'jumlah'
-        $propisi = $pinjaman->potongan_propisi; // asal disimpan saat create
+        $jumlah_pinjaman = $pinjaman->jumlah; 
+        $propisi = $pinjaman->potongan_propisi;
         $jenis_pinjaman = $pinjaman->jenis_pinjaman;
         $lama_angsuran = $pinjaman->lama_angsuran;
         $jumlah_diterima = $pinjaman->jumlah_diterima;
@@ -238,6 +243,28 @@ class PengajuanController extends Controller
             'jumlah_diterima',
             'status_konfirmasi'
         ));
+    }
+
+    public function exportPdfInvoice($id)
+    {
+        $pinjaman = PengajuanPinjaman::findOrFail($id);
+
+        $tanggal = now();
+        $nama = $pinjaman->user->name;
+        $tanggal = $pinjaman->created_at;
+        $jumlah_pinjaman = $pinjaman->jumlah; 
+        $propisi = $pinjaman->potongan_propisi;
+        $jenis_pinjaman = $pinjaman->jenis_pinjaman;
+        $lama_angsuran = $pinjaman->lama_angsuran;
+        $jumlah_diterima = $pinjaman->jumlah_diterima;
+        $status_konfirmasi = $pinjaman->status;
+
+        $pdf = Pdf::loadView('admin.pengajuan_pinjaman.invoicepdf', compact(
+            'pinjaman', 'tanggal', 'jumlah_diterima', 'jumlah_pinjaman',
+            'propisi', 'nama', 'jenis_pinjaman', 'lama_angsuran', 'status_konfirmasi'
+        ))->setPaper('a5', 'portrait');
+
+        return $pdf->download('bukti-pencairan-' . $pinjaman->id . '.pdf');
     }
 
     public function generateAngsuran($peminjaman, $userId, $jumlah, $lama_angsuran)

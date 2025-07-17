@@ -91,12 +91,12 @@
                             @endswitch
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('modal.edit', $modal->id) }}" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="{{ route('modal.edit', $modal->id) }}" class="font-medium text-blue-600 hover:underline">Edit</a>
                             <form action="{{ route('modal.destroy', $modal->id) }}" method="POST" class="inline-block"
                                   onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:underline">Hapus</button>
+                                <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
                             </form>
                         </td>
                     </tr>

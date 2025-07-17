@@ -3,8 +3,14 @@
 @section('title', 'Edit Pelunasan')
 
 @section('content')
-<div class="max-w-xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-    <h2 class="text-lg font-semibold mb-4 text-gray-700">Edit Data Pelunasan</h2>
+<div class="p-6 bg-white rounded-xl shadow-lg overflow-x-auto">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-700">Edit Pelunasan Pinjaman Anggota</h2>
+        <a href="{{ route('pelunasan_anggota.index') }}"
+            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
+            Kembali
+        </a>
+    </div>
 
     <form action="{{ route('pelunasan_anggota.update', $pelunasan->id) }}" method="POST">
         @csrf
@@ -37,6 +43,17 @@
             @enderror
         </div>
 
+        {{-- Metode Pembayaran --}}
+        <div class="mb-4">
+            <label class="block text-sm text-gray-600 mb-1">Metode Pembayaran</label>
+            <input type="text" name="metode_pembayaran"
+                value="{{ old('metode_pembayaran', $pelunasan->metode_pembayaran) }}"
+                class="w-full px-3 py-2 border rounded @error('metode_pembayaran') border-red-500 @enderror">
+            @error('metode_pembayaran')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
         {{-- Tanggal Bayar --}}
         <div class="mb-4">
             <label class="block text-sm text-gray-600 mb-1">Tanggal Bayar</label>
@@ -48,7 +65,7 @@
         </div>
 
         {{-- Status --}}
-        <div class="mb-4">
+        {{-- <div class="mb-4">
             <label class="block text-sm text-gray-600 mb-1">Status</label>
             <select name="status"
                     class="w-full px-3 py-2 border rounded @error('status') border-red-500 @enderror">
@@ -59,7 +76,7 @@
             @error('status')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
-        </div>
+        </div> --}}
 
         {{-- Keterangan --}}
         <div class="mb-4">
@@ -72,13 +89,8 @@
         </div>
 
         {{-- Tombol Submit --}}
-        <div class="mt-6">
-            <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                Simpan Perubahan
-            </button>
-            <a href="{{ route('pelunasan_anggota.index') }}"
-               class="ml-3 text-sm text-gray-600 hover:underline">Batal</a>
+        <div class="flex justify-end">
+            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">Perbaharui</button>
         </div>
     </form>
 </div>
