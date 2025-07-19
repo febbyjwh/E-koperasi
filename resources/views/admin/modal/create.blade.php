@@ -53,11 +53,13 @@
             </select>
         </div>
 
-        <div class="flex justify-end space-x-2">
-            <a href="{{ route('modal.index') }}" 
-               class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Batal</a>
+        <div class="flex justify-end gap-2">
             <button type="submit" 
-                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">Simpan
+            </button>
+            <a href="{{ route('modal.index') }}" 
+               class="px-4 py-2 text-gray-600 hover:underline">Batal
+            </a>
         </div>
     </form>
 </div>

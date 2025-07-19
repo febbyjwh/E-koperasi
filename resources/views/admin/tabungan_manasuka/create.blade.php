@@ -60,13 +60,13 @@
                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring focus:ring-blue-200">
         </div>
 
-        <div class="pt-4">
+        <div class="flex justify-end gap-2">
             <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">
+                    class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
                 Simpan
             </button>
             <a href="{{ route('tabungan_manasuka.tabungan_manasuka') }}"
-               class="ml-2 inline-block text-gray-600 hover:text-gray-900">Batal</a>
+               class="px-4 py-2 text-gray-600 hover:underline">Batal</a>
         </div>
     </form>
 

@@ -27,7 +27,7 @@
         </form>
 
         <a href="{{ route('pelunasan_anggota.create') }}"
-            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Pelunasan
         </a>
     </div>
@@ -54,9 +54,10 @@
                         $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
                         $statusColor = match($item->status) {
                             'pending' => 'bg-yellow-100 text-yellow-800',
-                            'terverifikasi' => 'bg-green-100 text-green-800',
+                            'terverifikasi' => 'bg-blue-100 text-blue-800',
+                            'lunas' => 'bg-green-100 text-green-800',
                             'ditolak' => 'bg-red-100 text-red-800',
-                            default => 'bg-gray-100 text-gray-800',
+                            default => 'bg-yellow-100 text-yellow-800',
                         };
                     @endphp
                     <tr class="bg-white hover:bg-gray-50 border-b">
@@ -73,13 +74,28 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{{ route('pelunasan_anggota.show', $item->id) }}" class="font-medium text-green-600 hover:underline text-xs">Pelunasan</a>
-                            <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="font-medium text-red-600 hover:underline text-xs ml-2">Hapus</button>
-                            </form>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex flex-row justify-end space-x-2">
+                                <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
+                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
+                                Edit
+                                </a>
+
+                                <a href="{{ route('pelunasan_anggota.show', $item->id) }}"
+                                class="text-white bg-yellow-700 hover:bg-yellow-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700">
+                                Pelunasan
+                                </a>
+
+                                <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block"
+                                    onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

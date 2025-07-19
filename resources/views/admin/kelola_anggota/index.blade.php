@@ -27,7 +27,7 @@
         </form>
 
         <a href="{{ route('kelola_anggota.create') }}"
-           class="inline-block px-2 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+           class="inline-block px-2 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Anggota
     </a>
     </div>
@@ -46,7 +46,7 @@
                     <th class="px-6 py-3">Alamat</th>
                     <th class="px-6 py-3">Tanggal Lahir</th>
                     <th class="px-6 py-3">Tanggal Registrasi</th>
-                    <th class="px-6 py-3 text-right">Aksi</th>
+                    <th class="px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,16 +66,23 @@
                         <td class="px-6 py-4">
                             {{ optional($user->created_at)->format('d M Y') ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('kelola_anggota.edit', $user->id) }}"
-                               class="font-medium text-blue-600 hover:underline">Edit</a>
-                            <form action="{{ route('kelola_anggota.destroy', $user->id) }}" method="POST" class="inline"
-                                  onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="font-medium text-red-600 hover:underline">Delete</button>
-                            </form>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex flex-row justify-end space-x-2">
+                                <a href="{{ route('kelola_anggota.edit', $user->id) }}"
+                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
+                                Edit
+                                </a>
+
+                                <form action="{{ route('kelola_anggota.destroy', $user->id) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

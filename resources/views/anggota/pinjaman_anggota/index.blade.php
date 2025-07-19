@@ -27,7 +27,7 @@
         </form>
 
         <a href="{{ route('pinjaman_anggota.create') }}"
-           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Ajukan Pinjaman
         </a>
     </div>
@@ -74,8 +74,8 @@
                         <td class="px-6 py-4">
                             @if ($item->status === 'disetujui')
                                 <a href="{{ route('pinjaman_anggota.bukti', $item->id) }}"
-                                class="text-blue-600 hover:underline text-xs">
-                                    Lihat Bukti
+                                class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                                    Bukti
                                 </a>
                             @else
                                 <span class="text-gray-400 text-xs italic">-</span>

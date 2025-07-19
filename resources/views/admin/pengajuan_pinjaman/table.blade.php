@@ -18,7 +18,7 @@
                     <th class="px-6 py-3">Tanggal</th>
                     <th class="px-6 py-3">Status</th>
                     @if (!empty($showKonfirmasi)) <th class="px-6 py-3">Konfirmasi</th> @endif
-                    <th class="px-6 py-3 text-right">Aksi</th>
+                    <th class="px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,15 +63,30 @@
                                 </form>
                             </td>
                         @endif
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('pengajuan_pinjaman.edit', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{{ route('pengajuan_pinjaman.invoice', $item->id) }}" class="font-medium text-blue-600 hover:underline text-xs">Bukti</a>
-                            <form action="{{ route('pengajuan_pinjaman.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="font-medium text-red-600 hover:underline text-xs ml-2">Hapus</button>
-                            </form>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex flex-row justify-end space-x-2">
+                                <a href="{{ route('pengajuan_pinjaman.edit', $item->id) }}"
+                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
+                                Edit
+                                </a>
+
+                                <a href="{{ route('pengajuan_pinjaman.invoice', $item->id) }}"
+                                class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-gray-600 dark:hover:bg-gray-700">
+                                Bukti
+                                </a>
+
+                                <form action="{{ route('pengajuan_pinjaman.destroy', $item->id) }}" method="POST" class="inline-block"
+                                    onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </td>
+
                     </tr>
                 @empty
                     <tr><td colspan="13" class="px-6 py-4 text-center text-gray-500">Tidak ada data.</td></tr>

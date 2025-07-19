@@ -27,7 +27,7 @@
         </form>
 
         <a href="{{ route('tabungan_wajib.create') }}"
-           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Setoran
         </a>
     </div>
@@ -42,7 +42,7 @@
                     <th class="px-6 py-3">Nominal</th>
                     <th class="px-6 py-3">Total</th>
                     <th class="px-6 py-3">Tanggal</th>
-                    <th class="px-6 py-3 text-right">Aksi</th>
+                    <th class="px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,14 +54,14 @@
                         <td class="px-6 py-4">Rp {{ number_format($setoran->nominal, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($setoran->total, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">{{ \Carbon\Carbon::parse($setoran->tanggal)->format('d M Y') }}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
+                        <td class="px-0 py-4 space-x-2">
                             <a href="{{ route('tabungan_wajib.edit', $setoran->id) }}"
-                               class="font-medium text-blue-600 hover:underline">Edit</a>
+                               class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Edit</a>
                             <form action="{{ route('tabungan_wajib.destroy', $setoran->id) }}" method="POST" class="inline"
                                   onsubmit="return confirm('Yakin ingin menghapus setoran ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
+                                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Hapus</button>
                             </form>
                         </td>
                     </tr>

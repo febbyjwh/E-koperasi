@@ -6,10 +6,6 @@
     <div class="p-6 bg-white rounded-2xl shadow-lg w-full">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold text-gray-700">Tambah Setoran Tabungan Wajib</h2>
-            <a href="{{ route('tabungan_wajib.tabungan_wajib') }}"
-                class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
-                Kembali
-            </a>
         </div>
 
         <form action="{{ route('tabungan_wajib.store') }}" method="POST" class="space-y-4">
@@ -53,10 +49,14 @@
                     required>
             </div>
 
-            <div class="flex justify-end">
-                <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">
+            <div class="flex justify-end gap-2">
+                <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
                     Simpan
                 </button>
+                 <a href="{{ route('tabungan_wajib.tabungan_wajib') }}"
+                    class="px-4 py-2 text-gray-600 hover:underline">
+                    Kembali
+                </a>
             </div>
         </form>
 

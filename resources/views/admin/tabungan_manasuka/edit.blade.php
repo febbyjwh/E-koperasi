@@ -6,10 +6,6 @@
 <div class="bg-white p-6 rounded-xl shadow-md overflow-x-auto">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold text-gray-700">Edit Anggota</h2>
-        <a href="{{ route('tabungan_manasuka.tabungan_manasuka') }}"
-            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
-            Kembali
-        </a>
     </div>
 
     <form action="{{ route('tabungan_manasuka.update', $tabungan->id) }}" method="POST">
@@ -59,11 +55,15 @@
             @enderror
         </div>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-2">
             <button type="submit"
-                class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
                 Perbaharui
             </button>
+            <a href="{{ route('tabungan_manasuka.tabungan_manasuka') }}"
+                class="px-4 py-2 text-gray-600 hover:underline">
+                Kembali
+            </a>
         </div>
     </form>
 </div>

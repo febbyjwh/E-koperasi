@@ -26,7 +26,7 @@
         </form>
 
         <a href="{{ route('pengajuan_pinjaman.create') }}"
-            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Pengajuan
         </a>
     </div>

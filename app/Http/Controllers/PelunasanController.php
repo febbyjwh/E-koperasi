@@ -49,7 +49,6 @@ class PelunasanController extends Controller
         return view('admin.pelunasan_anggota.index', compact('pelunasans'));
     }
 
-
     public function show($id)
     {
         $user = auth()->user();
@@ -62,7 +61,7 @@ class PelunasanController extends Controller
             }
         }
 
-        $pelunasans = Angsuran::where('pinjaman_id', $id)->get();
+        $pelunasans = Angsuran::with('peminjaman')->where('pinjaman_id', $id)->get();
         return view('admin.pelunasan_anggota.show', compact('pelunasans'));
     }
 
@@ -258,8 +257,11 @@ class PelunasanController extends Controller
     {
         $pelunasan = PelunasanPinjaman::with(['pinjaman.user'])->findOrFail($id);
 
-        if (auth()->user()->role !== 'admin' && auth()->id() !== optional($pelunasan->pinjaman->user)->id) {
-                abort(403, 'Unauthorized'); 
+        // Cek apakah user boleh lihat
+        if (auth()->user()->role !== 'admin') {
+            if (!$pelunasan->pinjaman || auth()->id() !== $pelunasan->pinjaman->user_id) {
+                abort(403, 'Unauthorized');
+            }
         }
 
         $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
@@ -268,6 +270,8 @@ class PelunasanController extends Controller
         $jumlah_dibayar = $pelunasan->jumlah_dibayar;
         $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
         $keterangan = $pelunasan->keterangan ?? '-';
+
+        \Log::info('Pelunasan Invoice:', $pelunasan->toArray());
 
         return view('admin.pelunasan_anggota.invoice', compact(
             'pelunasan', 'invoiceId', 'tanggal', 'nama', 'jumlah_dibayar', 'metode', 'keterangan'

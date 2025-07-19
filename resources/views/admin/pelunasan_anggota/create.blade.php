@@ -3,7 +3,7 @@
 @section('title', 'Tambah Pelunasan Pinjaman')
 
 @section('content')
-<div class="p-6 bg-white rounded-2xl shadow-lg w-full max-w-3xl mx-auto">
+<div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
     <h2 class="text-xl font-semibold mb-6 text-gray-700">Form Tambah Pelunasan Pinjaman</h2>
 
     <form action="{{ route('pelunasan_anggota.store') }}" method="POST" class="space-y-5">
@@ -51,7 +51,7 @@
             <a href="{{ route('pelunasan_anggota.index') }}"
                class="px-4 py-2 text-gray-600 hover:underline">Batal</a>
             <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition">
                 Simpan
             </button>
         </div>

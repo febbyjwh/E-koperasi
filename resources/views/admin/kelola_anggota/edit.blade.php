@@ -6,10 +6,6 @@
 <div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold text-gray-700">Edit Anggota</h2>
-        <a href="{{ route('kelola_anggota.kelola_anggota') }}"
-            class="inline-block px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">
-            Kembali
-        </a>
     </div>
 
     <form action="{{ route('kelola_anggota.update', $anggota->id) }}" method="POST" class="space-y-4">
@@ -63,8 +59,12 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5" required>
         </div>
 
-        <div class="flex justify-end">
-            <button type="submit" class="bg-teal-600 text-white px-6 py-2 rounded hover:bg-teal-700">Perbaharui</button>
+        <div class="flex justify-end gap-2">
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">Perbaharui</button>
+            <a href="{{ route('kelola_anggota.kelola_anggota') }}"
+                class="px-4 py-2 text-gray-600 hover:underline">
+                Kembali
+            </a>
         </div>
     </form>
 </div>

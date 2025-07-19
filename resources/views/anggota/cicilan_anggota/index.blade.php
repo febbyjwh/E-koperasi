@@ -55,7 +55,9 @@
                         $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
                         $statusColor = match($item->status) {
                             'pending' => 'bg-yellow-100 text-yellow-800',
+                            'belum_lunas' => 'bg-yellow-100 text-yellow-800',
                             'terverifikasi' => 'bg-green-100 text-green-800',
+                            'lunas' => 'bg-green-100 text-green-800',
                             'ditolak' => 'bg-red-100 text-red-800',
                             default => 'bg-gray-100 text-gray-800',
                         };
@@ -76,7 +78,7 @@
                         <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             @if (auth()->id() === $item->user_id)
-                                <a href="{{ route('cicilan_anggota.pelunasan_anggota.show', $item->pinjaman_id) }}" class="text-green-600 hover:underline text-xs">Pelunasan</a>
+                                <a href="{{ route('cicilan_anggota.pelunasan_anggota.show', $item->pinjaman_id) }}" class="text-white bg-yellow-700 hover:bg-yellow-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700">Pelunasan</a>
                             @endif
                         </td>
                     </tr>

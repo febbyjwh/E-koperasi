@@ -44,7 +44,7 @@
         </form>
 
         <a href="{{ route('modal.create') }}"
-           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+           class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Modal
         </a>
     </div>
@@ -60,7 +60,7 @@
                     <th class="px-6 py-3">Sumber</th>
                     <th class="px-6 py-3">Petugas</th>
                     <th class="px-6 py-3">Status</th>
-                    <th class="px-6 py-3 text-right">Aksi</th>
+                    <th class="px-6 py-3">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,13 +90,16 @@
                                     <span class="text-gray-500 text-sm">-</span>
                             @endswitch
                         </td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('modal.edit', $modal->id) }}" class="font-medium text-blue-600 hover:underline">Edit</a>
+                        <td class="px-6 py-4 space-x-2">
+                            <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                <a href="{{ route('modal.edit', $modal->id) }}"> Edit
+                            </button>
+
                             <form action="{{ route('modal.destroy', $modal->id) }}" method="POST" class="inline-block"
                                   onsubmit="return confirm('Yakin ingin menghapus?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="font-medium text-red-600 hover:underline">Hapus</button>
+                                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Hapus</button>
                             </form>
                         </td>
                     </tr>

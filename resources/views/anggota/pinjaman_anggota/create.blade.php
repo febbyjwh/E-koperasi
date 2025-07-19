@@ -62,9 +62,9 @@
         {{-- Tombol --}}
         <div class="flex justify-end">
             <a href="{{ route('pinjaman_anggota.index') }}" 
-               class="px-4 py-2 text-gray-600 hover:underline mr-2">Batal</a>
+               class="px-4 py-2 text-gray-600 hover:underline">Batal</a>
             <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                    class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
                 Ajukan
             </button>
         </div>
