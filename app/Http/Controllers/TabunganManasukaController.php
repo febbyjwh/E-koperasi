@@ -42,9 +42,15 @@ class TabunganManasukaController extends Controller
         $nominalMasuk = $request->nominal_masuk ?? 0;
         $nominalKeluar = $request->nominal_keluar ?? 0;
 
-        // Hitung total sebelumnya
-        $totalSebelumnya = TabManasuka::where('user_id', $request->user_id)->sum('nominal_masuk') 
-                        - TabManasuka::where('user_id', $request->user_id)->sum('nominal_keluar');
+        // Hitung total saldo sebelumnya
+        $totalSebelumnya = TabManasuka::where('user_id', $request->user_id)
+            ->sum('nominal_masuk') - TabManasuka::where('user_id', $request->user_id)
+            ->sum('nominal_keluar');
+
+        // Validasi saldo mencukupi
+        if ($nominalKeluar > $totalSebelumnya) {
+            return back()->withErrors(['nominal_keluar' => 'Saldo tidak mencukupi untuk penarikan ini.'])->withInput();
+        }
 
         $total = $totalSebelumnya + $nominalMasuk - $nominalKeluar;
 
@@ -56,7 +62,8 @@ class TabunganManasukaController extends Controller
             'tanggal' => $request->tanggal,
         ]);
 
-        return redirect()->route('tabungan_manasuka.tabungan_manasuka')->with('success', 'Tabungan berhasil ditambahkan.');
+        return redirect()->route('tabungan_manasuka.tabungan_manasuka')
+            ->with('success', 'Tabungan berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -81,13 +88,17 @@ class TabunganManasukaController extends Controller
         $nominalMasuk = $request->filled('nominal_masuk') ? (int)$request->nominal_masuk : 0;
         $nominalKeluar = $request->nominal_keluar ?? 0;
 
-        // Hitung total sebelumnya (tidak termasuk data yang sedang diedit)
         $totalSebelumnya = TabManasuka::where('user_id', $request->user_id)
             ->where('id', '!=', $id)
-            ->sum('nominal_masuk') 
-            - TabManasuka::where('user_id', $request->user_id)
+            ->sum('nominal_masuk') - TabManasuka::where('user_id', $request->user_id)
             ->where('id', '!=', $id)
             ->sum('nominal_keluar');
+
+        // Validasi saldo mencukupi
+        if ($nominalKeluar > $totalSebelumnya) {
+            return back()->withErrors(['nominal_keluar' => 'Saldo tidak mencukupi untuk penarikan.'])
+                         ->withInput();
+        }
 
         $total = $totalSebelumnya + $nominalMasuk - $nominalKeluar;
 
@@ -99,7 +110,8 @@ class TabunganManasukaController extends Controller
             'tanggal' => $request->tanggal,
         ]);
 
-        return redirect()->route('tabungan_manasuka.tabungan_manasuka')->with('success', 'Tabungan berhasil diperbarui.');
+        return redirect()->route('tabungan_manasuka.tabungan_manasuka')
+            ->with('success', 'Tabungan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -107,6 +119,7 @@ class TabunganManasukaController extends Controller
         $tabungan = TabManasuka::findOrFail($id);
         $tabungan->delete();
 
-        return redirect()->route('tabungan_manasuka.tabungan_manasuka')->with('success', 'tabungan berhasil dihapus.');
+        return redirect()->route('tabungan_manasuka.tabungan_manasuka')
+            ->with('success', 'Tabungan berhasil dihapus.');
     }
 }

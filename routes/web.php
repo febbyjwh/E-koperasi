@@ -33,6 +33,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware(['isAdmin'])->group(function () {
     // DataAnggotaUpdate::dispatch('lorem ipsum dolor sit amet');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/simulasi', [SimulasiController::class, 'calculate'])->name('simulasi.calculate');
     // Modal Utama
     Route::prefix('modal')->name('modal.')->group(function () {
         Route::get('/', [ModalController::class, 'index'])->name('index');

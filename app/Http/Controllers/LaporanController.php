@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Exports\NeracaExport;
 use App\Models\PelunasanPinjaman;
 use App\Models\TabWajib;
@@ -77,8 +78,10 @@ class LaporanController extends Controller
                 'jumlah' => TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])->sum('nominal')
             ],
             [
-                'keterangan' => 'Setoran Simpanan Sukarela',
-                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])->sum('nominal_masuk')
+                'keterangan' => 'Setoran Simpanan Sukarela (net)',
+                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])
+                    ->select(DB::raw('SUM(CAST(nominal_masuk AS SIGNED) - CAST(nominal_keluar AS SIGNED)) as total'))
+                    ->value('total')
             ],
             [
                 'keterangan' => 'Pelunasan Pinjaman',
@@ -129,57 +132,31 @@ class LaporanController extends Controller
 
     public function laporanSHU(Request $request)
     {
-        $periode = $request->input('periode', now()->format('Y-m')); // contoh filter bulan
-        $start = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
-        $end = $start->copy()->endOfMonth();
+        $periode = $request->input('periode', now()->format('Y-m'));
+        $periodeStart = \Carbon\Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+        $periodeEnd = $periodeStart->copy()->endOfMonth();
 
-        // Pendapatan
-        $jasa_simpan_pinjam = Angsuran::whereBetween('tanggal_bayar', [$start, $end])->sum('bunga');
+        // 1. Hitung pendapatan (bunga pinjaman)
+        $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$periodeStart, $periodeEnd])
+            ->sum('bunga');
 
-        $pendapatan_lain = Modal::where('status', 'masuk')
-            ->where('sumber', 'pendapatan_lain')
-            ->whereBetween('created_at', [$start, $end])
-            ->sum('jumlah');
+        // 2. Hitung biaya operasional (10% dari pendapatan)
+        $biaya_operasional = $pendapatan * 0.10;
 
-        $penjualan_barang = 0; // default nol, atau ambil dari tabel penjualan jika ada
+        // 3. Hitung SHU bersih
+        $shu_bersih = $pendapatan - $biaya_operasional;
 
-        $total_pendapatan = $penjualan_barang + $jasa_simpan_pinjam + $pendapatan_lain;
-
-        // Biaya
-        $biaya_operasional = Modal::where('status', 'keluar')
-            ->where('sumber', 'biaya_operasional')
-            ->whereBetween('created_at', [$start, $end])
-            ->sum('jumlah');
-
-        $biaya_gaji = Modal::where('status', 'keluar')
-            ->where('sumber', 'gaji')
-            ->whereBetween('created_at', [$start, $end])
-            ->sum('jumlah');
-
-        $biaya_lain = Modal::where('status', 'keluar')
-            ->where('sumber', 'biaya_lain')
-            ->whereBetween('created_at', [$start, $end])
-            ->sum('jumlah');
-
-        $total_biaya = $biaya_operasional + $biaya_gaji + $biaya_lain;
-
-        // SHU
-        $shu_sebelum_pajak = $total_pendapatan - $total_biaya;
-        $pajak = $shu_sebelum_pajak * 0.10;
-        $shu_bersih = $shu_sebelum_pajak - $pajak;
+        // 4. Bagi SHU sesuai persentase
+        $porsi = [
+            'jasa_pinjaman' => $shu_bersih * 0.40,
+            'jasa_simpanan' => $shu_bersih * 0.35,
+            'dana_cadangan' => $shu_bersih * 0.15,
+            'dana_sosial'   => $shu_bersih * 0.05,
+            'pengurus'      => $shu_bersih * 0.05,
+        ];
 
         return view('admin.laporan.shu', compact(
-            'penjualan_barang',
-            'jasa_simpan_pinjam',
-            'pendapatan_lain',
-            'total_pendapatan',
-            'biaya_operasional',
-            'biaya_gaji',
-            'biaya_lain',
-            'total_biaya',
-            'shu_sebelum_pajak',
-            'pajak',
-            'shu_bersih'
+            'periode', 'pendapatan', 'biaya_operasional', 'shu_bersih', 'porsi'
         ));
     }
 

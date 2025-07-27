@@ -62,7 +62,7 @@
 
         <div class="flex justify-end gap-2">
             <button type="submit"
-                    class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
+                    class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full cursor-pointer">
                 Simpan
             </button>
             <a href="{{ route('tabungan_manasuka.tabungan_manasuka') }}"
