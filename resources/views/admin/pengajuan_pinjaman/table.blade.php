@@ -1,4 +1,8 @@
 {{-- File: resources/views/admin/pengajuan_pinjaman/table.blade.php --}}
+@once
+    @include('components.modal')
+@endonce
+
 <div class="p-4 bg-white rounded-2xl shadow mb-6">
     <h3 class="text-md font-semibold text-gray-800 mb-2">{{ $judul }}</h3>
 
@@ -75,15 +79,11 @@
                                 Bukti
                                 </a>
 
-                                <form action="{{ route('pengajuan_pinjaman.destroy', $item->id) }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
-                                        Hapus
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        onclick="showModal('{{ route('pengajuan_pinjaman.destroy', $item->id) }}')"
+                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                    Hapus
+                                </button>
                             </div>
                         </td>
 

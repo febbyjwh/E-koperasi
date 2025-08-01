@@ -52,7 +52,7 @@ class TabunganWajibController extends Controller
         ]);
 
         return redirect()->route('tabungan_wajib.tabungan_wajib')
-            ->with('success', 'Setoran tabungan wajib berhasil ditambahkan.');
+            ->with('pesan', 'Setoran tabungan wajib berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -90,7 +90,7 @@ class TabunganWajibController extends Controller
         ]);
 
         return redirect()->route('tabungan_wajib.tabungan_wajib')
-            ->with('success', 'Setoran berhasil diperbarui.');
+            ->with('edit', 'Setoran berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -98,6 +98,6 @@ class TabunganWajibController extends Controller
         $setoran = TabWajib::findOrFail($id);
         $setoran->delete();
 
-        return redirect()->route('tabungan_wajib.tabungan_wajib')->with('success', 'Setoran berhasil dihapus.');
+        return redirect()->route('tabungan_wajib.tabungan_wajib')->with('hapus', 'Setoran berhasil dihapus.');
     }
 }

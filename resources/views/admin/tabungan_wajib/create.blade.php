@@ -3,6 +3,8 @@
 @section('title', 'Setoran Tabungan Wajib')
 
 @section('content')
+@include('components.alert')
+
     <div class="p-6 bg-white rounded-2xl shadow-lg w-full">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold text-gray-700">Tambah Setoran Tabungan Wajib</h2>

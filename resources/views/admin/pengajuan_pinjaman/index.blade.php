@@ -3,6 +3,9 @@
 @section('title', 'Konfirmasi Pengajuan Pinjaman')
 
 @section('content')
+@include('components.alert')
+
+
 <div class="p-4 bg-white rounded-2xl shadow-lg mb-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h2 class="text-lg md:text-xl font-semibold text-gray-700">Daftar Pengajuan Pinjaman</h2>

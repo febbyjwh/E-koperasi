@@ -201,7 +201,7 @@ class PelunasanController extends Controller
         $pelunasan->metode_pembayaran = $request->metode_pembayaran ?? 'Tunai';
         $pelunasan->save();
 
-        return redirect()->back()->with('success', 'Pembayaran berhasil');
+        return redirect()->back()->with('pesan', 'Pembayaran berhasil');
     }
 
     public function konfirmasi(Request $request, $id)
@@ -250,7 +250,7 @@ class PelunasanController extends Controller
         ]);
 
         return redirect()->route('pelunasan_anggota.index')
-            ->with('success', 'Data pelunasan berhasil diperbarui.');
+            ->with('edit', 'Data pelunasan berhasil diperbarui.');
     }
 
     public function invoice($id)
@@ -302,6 +302,6 @@ class PelunasanController extends Controller
         $pelunasan->delete();
 
         return redirect()->route('pelunasan_anggota.index')
-            ->with('success', 'Data pelunasan berhasil dihapus.');
+            ->with('hapus', 'Data pelunasan berhasil dihapus.');
     }
 }

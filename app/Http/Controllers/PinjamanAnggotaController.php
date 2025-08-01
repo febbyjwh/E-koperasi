@@ -75,7 +75,7 @@ class PinjamanAnggotaController extends Controller
         ]);
 
         return redirect()->route('pinjaman_anggota.index')
-            ->with('success', 'Pengajuan pinjaman berhasil dikirim.');
+            ->with('pesan', 'Pengajuan pinjaman berhasil dikirim.');
     }
 
 }

@@ -3,6 +3,8 @@
 @section('title', 'Edit Tabungan Manasuka')
 
 @section('content')
+@include('components.alert')
+
 <div class="bg-white p-6 rounded-xl shadow-md overflow-x-auto">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold text-gray-700">Edit Anggota</h2>

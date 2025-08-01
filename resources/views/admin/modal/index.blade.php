@@ -3,6 +3,11 @@
 @section('title','Modal Masuk')
 
 @section('content')
+@include('components.alert')
+@once
+    @include('components.modal')
+@endonce
+
 <div class="p-4 bg-white rounded-2xl shadow-lg">
     {{-- Total Masuk & Keluar --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -90,17 +95,16 @@
                                     <span class="text-gray-500 text-sm">-</span>
                             @endswitch
                         </td>
-                        <td class="px-6 py-4 space-x-2">
-                            <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                                <a href="{{ route('modal.edit', $modal->id) }}"> Edit
-                            </button>
+                       <td class="px-6 py-4 space-x-2">
+                            <a href="{{ route('modal.edit', $modal->id) }}"
+                            class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-1 text-center">
+                            Edit
+                            </a>
 
-                            <form action="{{ route('modal.destroy', $modal->id) }}" method="POST" class="inline-block"
-                                  onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Hapus</button>
-                            </form>
+                            <button onclick="showModal('{{ route('modal.destroy', $modal->id) }}')" 
+                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium rounded-lg text-sm px-4 py-2">
+                                Hapus
+                            </button>
                         </td>
                     </tr>
                 @empty

@@ -56,7 +56,7 @@ class AnggotaController extends Controller
         ]);
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('success', 'Anggota berhasil ditambahkan.');
+                         ->with('pesan', 'Anggota berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -91,7 +91,7 @@ class AnggotaController extends Controller
         ]);
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('success', 'Data anggota berhasil diperbarui.');
+                         ->with('edit', 'Data anggota berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -100,7 +100,7 @@ class AnggotaController extends Controller
         $anggota->delete();
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('success', 'Data anggota berhasil dihapus.');
+                         ->with('hapus', 'Data anggota berhasil dihapus.');
     }
 
     public function index_anggota(){

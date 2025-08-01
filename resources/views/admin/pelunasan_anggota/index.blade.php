@@ -3,6 +3,11 @@
 @section('title', 'Daftar Pelunasan Pinjaman Anggota')
 
 @section('content')
+@include('components.alert')
+@once
+    @include('components.modal')
+@endonce
+
 <div class="p-4 bg-white rounded-2xl shadow-lg">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h2 class="text-lg md:text-xl font-semibold text-gray-700">Daftar Pelunasan Pinjaman Anggota</h2>
@@ -86,15 +91,18 @@
                                 Pelunasan
                                 </a>
 
-                                <form action="{{ route('pelunasan_anggota.destroy', $item->id) }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                <td class="space-x-2">
+                                    <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
+                                    class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
+                                        Edit
+                                    </a>
+
+                                    <button 
+                                        onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')" 
+                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
                                         Hapus
                                     </button>
-                                </form>
+                                </td>
                             </div>
                         </td>
                     </tr>

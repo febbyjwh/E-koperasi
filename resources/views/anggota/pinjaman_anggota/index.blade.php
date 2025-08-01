@@ -3,6 +3,8 @@
 @section('title', 'Pengajuan Pinjaman')
 
 @section('content')
+@include('components.alert')
+
 <div class="p-4 bg-white rounded-2xl shadow-lg w-full">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-sm md:text-xl font-semibold text-gray-700">Daftar Pengajuan Pinjaman</h2>

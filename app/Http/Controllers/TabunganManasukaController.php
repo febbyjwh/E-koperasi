@@ -63,7 +63,7 @@ class TabunganManasukaController extends Controller
         ]);
 
         return redirect()->route('tabungan_manasuka.tabungan_manasuka')
-            ->with('success', 'Tabungan berhasil ditambahkan.');
+            ->with('pesan', 'Tabungan berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -111,7 +111,7 @@ class TabunganManasukaController extends Controller
         ]);
 
         return redirect()->route('tabungan_manasuka.tabungan_manasuka')
-            ->with('success', 'Tabungan berhasil diperbarui.');
+            ->with('edit', 'Tabungan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -120,6 +120,6 @@ class TabunganManasukaController extends Controller
         $tabungan->delete();
 
         return redirect()->route('tabungan_manasuka.tabungan_manasuka')
-            ->with('success', 'Tabungan berhasil dihapus.');
+            ->with('hapus', 'Tabungan berhasil dihapus.');
     }
 }

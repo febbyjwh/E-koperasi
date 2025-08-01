@@ -104,7 +104,7 @@ class PengajuanController extends Controller
 
         $peminjaman = PengajuanPinjaman::create($validated);
 
-        return redirect()->route('pengajuan_pinjaman.index')->with('success', 'Pengajuan berhasil disimpan.');
+        return redirect()->route('pengajuan_pinjaman.index')->with('pesan', 'Pengajuan berhasil disimpan.');
     }
 
     // Tampilkan form edit
@@ -166,7 +166,7 @@ class PengajuanController extends Controller
         ]);
 
         return redirect()->route('pengajuan_pinjaman.index')
-            ->with('success', 'Pengajuan berhasil diperbarui.');
+            ->with('edit', 'Pengajuan berhasil diperbarui.');
     }
 
     // Hapus pengajuan
@@ -176,7 +176,7 @@ class PengajuanController extends Controller
         $pengajuan->delete();
 
         return redirect()->route('pengajuan_pinjaman.index')
-            ->with('success', 'Pengajuan berhasil dihapus.');
+            ->with('hapus', 'Pengajuan berhasil dihapus.');
     }
 
     // Konfirmasi pengajuan (admin)
@@ -212,7 +212,7 @@ class PengajuanController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Pengajuan berhasil dikonfirmasi.');
+        return redirect()->back()->with('pesan', 'Pengajuan berhasil dikonfirmasi.');
     }
 
     public function invoice($id)

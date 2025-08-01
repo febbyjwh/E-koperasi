@@ -3,6 +3,8 @@
 @section('title', 'Edit Pelunasan')
 
 @section('content')
+@include('components.alert')
+
 <div class="p-6 bg-white rounded-xl shadow-lg overflow-x-auto">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold text-gray-700">Edit Pelunasan Pinjaman Anggota</h2>

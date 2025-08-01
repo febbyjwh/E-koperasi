@@ -3,6 +3,11 @@
 @section('title', 'Kelola Anggota')
 
 @section('content')
+@include('components.alert')
+@once
+    @include('components.modal')
+@endonce
+
 <div class="p-4 bg-white rounded-2xl shadow-lg">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-sm md:text-xl font-semibold text-gray-700">Daftar Anggota</h2>
@@ -29,7 +34,7 @@
         <a href="{{ route('kelola_anggota.create') }}"
            class="inline-block px-2 sm:px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
             Tambah Anggota
-    </a>
+        </a>
     </div>
 
     <div class="overflow-x-auto w-full">
@@ -69,25 +74,21 @@
                         <td class="px-6 py-4 text-right">
                             <div class="flex flex-row justify-end space-x-2">
                                 <a href="{{ route('kelola_anggota.edit', $user->id) }}"
-                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
-                                Edit
+                                    class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
+                                    Edit
                                 </a>
 
-                                <form action="{{ route('kelola_anggota.destroy', $user->id) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
-                                        Delete
-                                    </button>
-                                </form>
+                                <button
+                                    onclick="showModal('{{ route('kelola_anggota.destroy', $user->id) }}')"
+                                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700">
+                                    Delete
+                                </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="text-center text-gray-500 py-4">Belum ada anggota yang terdaftar.</td>
+                        <td colspan="11" class="text-center text-gray-500 py-4">Belum ada anggota yang terdaftar.</td>
                     </tr>
                 @endforelse
             </tbody>

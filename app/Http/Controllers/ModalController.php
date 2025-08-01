@@ -51,7 +51,7 @@ class ModalController extends Controller
             'user_id' => auth()->id(), // ganti dari 
         ]);
 
-        return redirect()->route('modal.index')->with('success', 'Data modal berhasil ditambahkan.');
+        return redirect()->route('modal.index')->with('pesan', 'Data modal berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -79,7 +79,7 @@ class ModalController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('modal.index')->with('success', 'Data modal berhasil diperbarui.');
+        return redirect()->route('modal.index')->with('edit', 'Data modal berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -87,6 +87,6 @@ class ModalController extends Controller
         $modal = Modal::findOrFail($id);
         $modal->delete();
 
-        return redirect()->route('modal.index')->with('success', 'Data modal berhasil dihapus.');
+        return redirect()->route('modal.index')->with('hapus', 'Data modal berhasil dihapus.');
     }
 }

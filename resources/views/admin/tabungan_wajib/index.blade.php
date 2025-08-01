@@ -3,6 +3,11 @@
 @section('title', 'Tabungan Wajib')
 
 @section('content')
+@include('components.alert')
+@once
+    @include('components.modal')
+@endonce
+
 <div class="p-4 bg-white rounded-2xl shadow-lg">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-sm md:text-xl font-semibold text-gray-700">Daftar Setoran Tabungan Wajib</h2>
@@ -57,12 +62,12 @@
                         <td class="px-0 py-4 space-x-2">
                             <a href="{{ route('tabungan_wajib.edit', $setoran->id) }}"
                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Edit</a>
-                            <form action="{{ route('tabungan_wajib.destroy', $setoran->id) }}" method="POST" class="inline"
-                                  onsubmit="return confirm('Yakin ingin menghapus setoran ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Hapus</button>
-                            </form>
+                            <button 
+                                type="button"
+                                onclick="showModal('{{ route('tabungan_wajib.destroy', $setoran->id) }}')" 
+                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                Hapus
+                            </button>
                         </td>
                     </tr>
                 @empty
