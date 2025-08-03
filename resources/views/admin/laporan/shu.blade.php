@@ -15,7 +15,7 @@
             <input type="month" name="periode" value="{{ request('periode') }}"
                 class="p-2 border border-gray-300 rounded-lg text-sm focus:ring focus:ring-blue-300">
             <button type="submit"
-                class="px-4 py-2 text-sm text-white bg-blue-600 rounded-full hover:bg-blue-700">
+                class="cursor-pointer px-4 py-2 text-sm text-white bg-blue-600 rounded-full hover:bg-blue-700">
                 Tampilkan
             </button>
         </form>
@@ -25,7 +25,7 @@
     <div class="flex justify-start mb-4 print:hidden">
         <div class="relative inline-block text-left">
             <button id="dropdownExportButton"
-                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700">
+                class="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700">
                 Export
                 <svg class="w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 20 20">
@@ -37,9 +37,9 @@
             <div id="dropdownExport"
                 class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute right-0 mt-2">
                 <ul class="py-2 text-sm text-gray-700">
-                    <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a></li>
-                    {{-- <li><a href="{{ route('laporan.exportexcelshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export Excel</a></li>
-                    <li><a href="{{ route('laporan.exportpdfshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export PDF</a></li> --}}
+                    {{-- <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a></li> --}}
+                    <li><a href="{{ route('laporan.exportexcelshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export Excel</a></li>
+                    <li><a href="{{ route('laporan.exportpdfshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export PDF</a></li>
                 </ul>
             </div>
         </div>
@@ -101,6 +101,10 @@
                 <tr>
                     <td class="px-6 py-4 text-gray-700">Pengurus (5%)</td>
                     <td class="px-6 py-4 text-end">{{ number_format($porsi['pengurus'], 0, ',', '.') }}</td>
+                </tr>
+                <tr class="bg-gray-100 font-bold">
+                    <td class="px-6 py-4">Total Pembagian SHU</td>
+                    <td class="px-6 py-4 text-end">{{ number_format(array_sum($porsi), 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>

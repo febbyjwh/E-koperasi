@@ -115,9 +115,8 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/export/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('exportexcel');
         Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcelArusKas'])->name('exportexcelaruskas');
         Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdfArusKas'])->name('exportpdfaruskas');
-        Route::get('/laporan/shu-pdf', [LaporanController::class, 'exportPdfShu'])->name('laporan.exportpdfshu');
-        Route::get('/laporan/shu-excel', [LaporanController::class, 'exportPdfShu'])->name('laporan.exportshu');
-
+        Route::get('/laporan/shu-pdf', [LaporanController::class, 'exportPdfShu'])->name('exportpdfshu');
+        Route::get('/laporan/shu-excel', [LaporanController::class, 'exportExcelShu'])->name('exportexcelshu');
     });
 });
 
@@ -147,7 +146,7 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::get('/{id}/edit', [CicilanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [CicilanAnggotaController::class, 'update'])->name('update');
         Route::get('/cicilan_anggota/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');    
-        Route::get('/pelunasan/{id}/bukti', [PelunasanController::class, 'invoice'])->name('bukti');
+        Route::get('/{id}/bukti', [PelunasanController::class, 'invoice'])->name('bukti');
         Route::get('/pelunasan/{id}/bukti-pdf', [PelunasanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
         Route::delete('/{id}', [CicilanAnggotaController::class, 'destroy'])->name('destroy');
     });

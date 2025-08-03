@@ -2,15 +2,42 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+        .kop td {
+            border: none;
+        }
+        .center {
+            text-align: center;
+        }
+        .bold {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <!-- Kop Surat -->
-    <table>
+    <table class="kop">
         <tr>
             <td rowspan="3" style="width: 100px; text-align: center;">
                 <img src="{{ public_path('assets/img/logo-new.png') }}" alt="Logo" width="80">
             </td>
-            <td style="font-size: 16px; font-weight: bold;">KOPERASI SMPN 1 CISARUA</td>
+            <td class="bold" style="font-size: 16px;">KOPERASI SMPN 1 CISARUA</td>
         </tr>
         <tr>
             <td>Jl. Kolonel Masturi No.312, Kertawangi, Kec. Cisarua</td>
@@ -22,18 +49,18 @@
 
     <br><br>
 
-    <h3 style="text-align: center;">Laporan Neraca SMPN 1 Cisarua</h3>
-    <h4 style="text-align: center; font-weight: normal;">Laporan keuangan yang menunjukkan posisi keuangan koperasi</h4>
+    <h3 class="center">Laporan Neraca SMPN 1 Cisarua</h3>
+    <h4 class="center" style="font-weight: normal;">Laporan keuangan yang menunjukkan posisi keuangan koperasi</h4>
 
     <br>
 
     <!-- Tabel Data -->
-    <table border="1" cellspacing="0" cellpadding="6">
+    <table>
         <thead>
             <tr>
-                <th><strong>Kategori</strong></th>
-                <th><strong>Keterangan</strong></th>
-                <th><strong>Jumlah (Rp)</strong></th>
+                <th>Kategori</th>
+                <th>Keterangan</th>
+                <th>Jumlah (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -41,34 +68,34 @@
             <tr>
                 <td rowspan="2">Aset</td>
                 <td>Kas / Saldo Kas</td>
-                <td>{{ number_format($kas, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($kas, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td>Piutang Anggota</td>
-                <td>{{ number_format($piutang, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($piutang, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td colspan="2"><strong>Total Aset</strong></td>
-                <td><strong>{{ number_format($total_aset, 0, ',', '.') }}</strong></td>
+            <tr class="bold">
+                <td colspan="2">Total Aset</td>
+                <td>{{ number_format($total_aset, 0, ',', '.') }}</td>
             </tr>
 
             <!-- Modal -->
             <tr>
                 <td rowspan="3">Modal</td>
                 <td>Modal Awal</td>
-                <td>{{ number_format($modal_awal, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($modal_awal, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td>Modal Anggota</td>
-                <td>{{ number_format($modal_anggota, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($modal_anggota, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td>SHU Ditahan</td>
-                <td>{{ number_format($shu_ditahan, 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($shu_ditahan, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td colspan="2"><strong>Total Modal</strong></td>
-                <td><strong>{{ number_format($total_modal, 0, ',', '.') }}</strong></td>
+            <tr class="bold">
+                <td colspan="2">Total Modal</td>
+                <td>{{ number_format($total_modal, 0, ',', '.') }}</td>
             </tr>
         </tbody>
     </table>

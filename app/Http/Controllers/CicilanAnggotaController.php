@@ -12,7 +12,7 @@ class CicilanAnggotaController extends Controller
     public function index(Request $request)
     {
         $query = PelunasanPinjaman::with(['user', 'pinjaman'])
-            ->where('user_id', auth()->id()) // ambil data user berdasarkan user_id
+            ->where('user_id', auth()->id())
             ->whereHas('pinjaman', function ($q) {
                 $q->where('status', 'disetujui');
             });

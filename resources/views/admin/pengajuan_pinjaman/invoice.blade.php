@@ -112,7 +112,7 @@
       <!-- Buttons -->
       <div class="mt-5 flex justify-end gap-x-2">
         @php
-            $isAdmin = Auth::user()->role === 'admin'; // Ganti sesuai field & nilai role kamu
+            $isAdmin = Auth::user()->role === 'admin';
         @endphp
 
         <a href="{{ $isAdmin ? route('pengajuan_pinjaman.index') : route('pinjaman_anggota.index') }}"
@@ -124,10 +124,6 @@
           <!-- Download Icon -->
           Bukti PDF
         </a>
-        {{-- <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600" href="#">
-          <!-- Print Icon -->
-          Print
-        </a> --}}
       </div>
 
       <div class="mt-5 sm:mt-10">

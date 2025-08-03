@@ -53,7 +53,6 @@ class PelunasanController extends Controller
     {
         $user = auth()->user();
 
-        // Cek jika anggota hanya bisa lihat miliknya
         if ($user->role === 'anggota') {
             $pinjamanUser = PelunasanPinjaman::where('id', $id)->where('user_id', $user->id)->first();
             if (!$pinjamanUser) {
@@ -255,26 +254,29 @@ class PelunasanController extends Controller
 
     public function invoice($id)
     {
-        $pelunasan = PelunasanPinjaman::with(['pinjaman.user'])->findOrFail($id);
+        $pelunasan = Angsuran::with('peminjaman.user')->findOrFail($id);
 
-        // Cek apakah user boleh lihat
-        if (auth()->user()->role !== 'admin') {
-            if (!$pelunasan->pinjaman || auth()->id() !== $pelunasan->pinjaman->user_id) {
-                abort(403, 'Unauthorized');
-            }
+        // Cek akses
+         if (auth()->user()->role !== 'admin') {
+        // Anggota hanya bisa akses miliknya
+        if (!$pelunasan->peminjaman || auth()->id() !== $pelunasan->peminjaman->user_id) {
+            abort(403, 'Unauthorized');
         }
+    }
 
-        $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
+        $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
         $tanggal = $pelunasan->tanggal_bayar;
-        $nama = $pelunasan->pinjaman->user->name;
-        $jumlah_dibayar = $pelunasan->jumlah_dibayar;
+        $nama = optional(optional($pelunasan->peminjaman)->user)->name ?? '-';
+        $pokok = $pelunasan->pokok;
+        $bunga = $pelunasan->bunga;
+        $total_angsuran = $pelunasan->total_angsuran;
         $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
-        $keterangan = $pelunasan->keterangan ?? '-';
-
-        \Log::info('Pelunasan Invoice:', $pelunasan->toArray());
+        $keterangan = $pelunasan->keterangan ?? 'Pembayaran angsuran bulan ke-' . $pelunasan->bulan_ke;
 
         return view('admin.pelunasan_anggota.invoice', compact(
-            'pelunasan', 'invoiceId', 'tanggal', 'nama', 'jumlah_dibayar', 'metode', 'keterangan'
+            'pelunasan', 'invoiceId', 'tanggal', 'nama',
+            'pokok', 'bunga', 'total_angsuran',
+            'metode', 'keterangan'
         ));
     }
 
@@ -285,7 +287,7 @@ class PelunasanController extends Controller
         $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
         $tanggal = $pelunasan->tanggal_bayar;
         $nama = $pelunasan->pinjaman->user->name;
-        $jumlah_dibayar = $pelunasan->jumlah_dibayar;
+        $total_angsuran = $pelunasan->total_angsuran;
         $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
         $keterangan = $pelunasan->keterangan ?? '-';
 

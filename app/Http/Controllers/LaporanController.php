@@ -24,41 +24,52 @@ class LaporanController extends Controller
     }
 
     public function neraca()
-    {
-        $kas = Modal::where('status', 'masuk')->sum('jumlah')
+{
+    $kas = Modal::where('status', 'masuk')->sum('jumlah')
         - Modal::where('status', 'keluar')->sum('jumlah')
         + PelunasanPinjaman::sum('jumlah_dibayar');
 
-        $total_pinjaman = PengajuanPinjaman::where('status', 'disetujui')->sum('jumlah_harus_dibayar');
-        $piutang = $total_pinjaman - PelunasanPinjaman::sum('jumlah_dibayar');
+    $total_pinjaman = PengajuanPinjaman::where('status', 'disetujui')->sum('jumlah_harus_dibayar');
+    $piutang = $total_pinjaman - PelunasanPinjaman::sum('jumlah_dibayar');
 
-        $simpanan_wajib = TabWajib::sum('nominal');
-        $simpanan_manasuka = TabManasuka::sum('nominal_masuk') - TabManasuka::sum('nominal_keluar');
-        $simpanan = $simpanan_wajib + $simpanan_manasuka;
+    $simpanan_wajib = TabWajib::sum('nominal');
+    $simpanan_manasuka = TabManasuka::sum('nominal_masuk') - TabManasuka::sum('nominal_keluar');
+    $simpanan = $simpanan_wajib + $simpanan_manasuka;
 
-        $modal_awal = Modal::where('sumber', 'modal_awal')->sum('jumlah');
+    $modal_awal = Modal::where('sumber', 'modal_awal')->sum('jumlah');
+    $modal_anggota = $simpanan;
 
-        $modal_anggota = $simpanan;
+    // Hitung SHU ditahan (sementara ini dari awal tahun hingga sekarang)
+    $tahunIni = now()->year;
+    $awalTahun = now()->copy()->startOfYear();
+    $akhirTahun = now();
 
-        $shu_ditahan = Angsuran::whereMonth('tanggal_bayar', now()->month)
-            ->whereYear('tanggal_bayar', now()->year)
-            ->sum('bunga');
+    $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$awalTahun, $akhirTahun])
+        ->sum('bunga');
 
-        $total_aset = $kas + $piutang;
+    $biaya_operasional = $pendapatan * 0.10;
+    $shu_bersih = $pendapatan - $biaya_operasional;
 
-        $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
+    // SHU Ditahan (dana cadangan 15%)
+    $shu_ditahan = $shu_bersih * 0.15;
 
-        return view('admin.laporan.neraca', compact(
-            'kas', 'piutang', 'simpanan', 'modal_anggota', 'modal_awal', 'shu_ditahan',
-            'total_aset', 'total_modal'
-        ));
-    }
+    // Total Aset dan Modal
+    $total_aset = $kas + $piutang;
+    $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
+
+    return view('admin.laporan.neraca', compact(
+        'kas', 'piutang', 'simpanan', 'modal_anggota', 'modal_awal', 'shu_ditahan',
+        'total_aset', 'total_modal'
+    ));
+}
+
 
     public function arusKas(Request $request)
     {
-        // Ambil periode (misal: '2025-07')
-        $periode = $request->input('periode', now()->format('Y-m')); // default: bulan ini
-        $periodeCarbon = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+       $periode = $request->input('periode', now()->format('Y-m'));
+        $periodeCarbon = Carbon::createFromFormat('Y-m', $periode);
+        $start = $periodeCarbon->copy()->startOfMonth();
+        $end = $periodeCarbon->copy()->endOfMonth();
 
         // Saldo Kas Awal: semua kas masuk - kas keluar SEBELUM periode
         $kasMasukSebelumnya = TabWajib::where('created_at', '<', $periodeCarbon)->sum('nominal')
@@ -353,5 +364,39 @@ class LaporanController extends Controller
         return $pdf->download('laporan_arus_kas_' . $periode . '.pdf');
     }
 
+    public function exportPdfShu(Request $request)
+    {
+        // Ambil periode dari request atau default bulan ini
+        $periode = $request->input('periode', now()->format('Y-m'));
+        $periodeStart = \Carbon\Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+        $periodeEnd = $periodeStart->copy()->endOfMonth();
+
+        // 1. Hitung pendapatan (bunga pinjaman) berdasarkan tanggal_bayar
+        $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$periodeStart, $periodeEnd])
+            ->sum('bunga');
+
+        // 2. Hitung biaya operasional (10% dari pendapatan)
+        $biaya_operasional = $pendapatan * 0.10;
+
+        // 3. Hitung SHU bersih
+        $shu_bersih = $pendapatan - $biaya_operasional;
+
+        // 4. Bagi SHU sesuai persentase
+        $porsi = [
+            'jasa_pinjaman' => $shu_bersih * 0.40,
+            'jasa_simpanan' => $shu_bersih * 0.35,
+            'dana_cadangan' => $shu_bersih * 0.15,
+            'dana_sosial'   => $shu_bersih * 0.05,
+            'pengurus'      => $shu_bersih * 0.05,
+        ];
+
+        // Siapkan data untuk view
+        $data = compact('periode', 'pendapatan', 'biaya_operasional', 'shu_bersih', 'porsi');
+
+        // Generate PDF
+        $pdf = \PDF::loadView('admin.laporan.shupdf', $data)->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan_shu_' . $periode . '.pdf');
+    }
     
 }

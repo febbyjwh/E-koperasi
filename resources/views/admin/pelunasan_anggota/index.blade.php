@@ -91,18 +91,11 @@
                                 Pelunasan
                                 </a>
 
-                                <td class="space-x-2">
-                                    <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
-                                    class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
-                                        Edit
-                                    </a>
-
-                                    <button 
-                                        onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')" 
-                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
-                                        Hapus
-                                    </button>
-                                </td>
+                                <button 
+                                    onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')" 
+                                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
+                                    Hapus
+                                </button>
                             </div>
                         </td>
                     </tr>

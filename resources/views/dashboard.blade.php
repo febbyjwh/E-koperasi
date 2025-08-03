@@ -9,4 +9,5 @@
 <h1 class="text-gray-800 dark:text-gray-100 font-bold">Dashboard</h1>
     @include('partial.card')
     @include('partial.simulasi')
+    @include('partial.tren')
 @endsection

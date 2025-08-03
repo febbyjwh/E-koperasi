@@ -32,7 +32,7 @@
       <div class="mt-5 sm:mt-10 flex flex-col sm:flex-row justify-between gap-5">
         <div>
           <span class="block text-xs uppercase text-gray-500 dark:text-neutral-500">Jumlah Dibayar:</span>
-          <span class="block text-sm font-medium text-gray-800 dark:text-neutral-200">Rp{{ number_format($jumlah_dibayar, 2, ',', '.') }}</span>
+          <span class="block text-sm font-medium text-gray-800 dark:text-neutral-200">Rp{{ number_format($total_angsuran, 2, ',', '.') }}</span>
         </div>
         <div>
           <span class="block text-xs uppercase text-gray-500 dark:text-neutral-500">Tanggal:</span>
@@ -55,16 +55,20 @@
             <span>{{ $nama }}</span>
           </li>
           <li class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-            <span>Jumlah Dibayar</span>
-            <span>Rp{{ number_format($jumlah_dibayar, 2, ',', '.') }}</span>
+            <span>Pokok</span>
+            <span>Rp{{ number_format($pokok, 2, ',', '.') }}</span>
+          </li>
+          <li class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
+            <span>Bunga</span>
+            <span>Rp{{ number_format($bunga, 2, ',', '.') }}</span>
           </li>
           <li class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
             <span>Keterangan</span>
             <span>{{ $keterangan }}</span>
           </li>
           <li class="inline-flex items-center justify-between py-3 px-4 text-sm font-semibold bg-gray-50 border border-gray-200 dark:bg-neutral-800 dark:border-neutral-700">
-            <span>Total</span>
-            <span>Rp{{ number_format($jumlah_dibayar, 2, ',', '.') }}</span>
+            <span>Total Angsuran</span>
+            <span>Rp{{ number_format($total_angsuran, 2, ',', '.') }}</span>
           </li>
         </ul>
       </div>
@@ -72,7 +76,7 @@
       <div class="mt-5 flex justify-end gap-x-2">
         @php $isAdmin = auth()->user()->role === 'admin'; @endphp
 
-        <a href="{{ $isAdmin ? route('pelunasan_anggota.index') : route('pelunasan_anggota.index') }}"
+        <a href="{{ $isAdmin ? route('pelunasan_anggota.index') : route('pelunasan_anggota.show') }}"
            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
           Kembali
         </a>

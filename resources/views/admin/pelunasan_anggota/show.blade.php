@@ -99,7 +99,7 @@
                                             Bukti
                                         </a>
                                     @else
-                                        <a href="#"
+                                        <a href=""
                                             class="text-white bg-blue-400 dark:bg-blue-500 cursor-not-allowed font-medium rounded-full text-sm px-5 py-1 text-center"
                                             aria-disabled="true" title="Menunggu konfirmasi pembayaran admin">
                                             Bukti

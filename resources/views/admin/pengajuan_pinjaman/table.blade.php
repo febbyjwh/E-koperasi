@@ -17,7 +17,6 @@
                     <th class="px-6 py-3">Jumlah Harus Dibayar</th>
                     <th class="px-6 py-3">Jumlah Diterima</th>
                     <th class="px-6 py-3">Tenor</th>
-                    {{-- <th class="px-6 py-3">Cicilan / Bulan</th> --}}
                     <th class="px-6 py-3">Tujuan</th>
                     <th class="px-6 py-3">Tanggal</th>
                     <th class="px-6 py-3">Status</th>
