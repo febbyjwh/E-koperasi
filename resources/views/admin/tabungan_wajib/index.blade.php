@@ -16,7 +16,7 @@
             <div class="relative">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Cari nama anggota...">
+                    placeholder="Cari...">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 20 20">
@@ -51,28 +51,57 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($setoranWajib as $setoran)
-                    <tr class="bg-white hover:bg-gray-50">
-                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4">{{ $setoran->anggota->name ?? '-' }}</td>
-                        <td class="px-6 py-4 capitalize">{{ $setoran->jenis }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($setoran->nominal, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($setoran->total, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($setoran->tanggal)->format('d M Y') }}</td>
-                        <td class="px-0 py-4 space-x-2">
-                            <a href="{{ route('tabungan_wajib.edit', $setoran->id) }}"
-                               class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Edit</a>
-                            <button 
-                                type="button"
-                                onclick="showModal('{{ route('tabungan_wajib.destroy', $setoran->id) }}')" 
-                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                                Hapus
-                            </button>
+                @php
+                    $grouped = $setoranWajib->sortBy(fn($item) => $item->anggota->name ?? '')->groupBy('user_id');
+                    $groupIndex = 1;
+                @endphp
+
+                @forelse ($grouped as $userId => $items)
+                    <tr class="bg-gray-100">
+                        <td class="px-6 py-2"></td>
+                        <td class="px-6 py-2 font-bold text-gray-800">{{ $items->first()->anggota->name ?? '-' }}</td>
+                        <td colspan="5"></td>
+                    </tr>
+
+                    @foreach ($items as $i => $setoran)
+                        <tr class="bg-white hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ $groupIndex }}.{{ $loop->iteration }}</td>
+                            <td class="px-6 py-4"></td>
+                            <td class="px-6 py-4 capitalize">{{ $setoran->jenis }}</td>
+                            <td class="px-6 py-4">
+                                Rp {{ number_format($setoran->nominal, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                Rp {{ number_format($setoran->total, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($setoran->tanggal)->format('d M Y') }}</td>
+                            <td class="px-0 py-4 space-x-2">
+                                <a href="{{ route('tabungan_wajib.edit', $setoran->id) }}"
+                                   class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-full text-sm px-5 py-1">
+                                    Edit
+                                </a>
+                                <button type="button"
+                                        onclick="showModal('{{ route('tabungan_wajib.destroy', $setoran->id) }}')"
+                                        class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-full text-sm px-5 py-1">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+
+                    @php
+                        $totalSaldo = $items->sum('nominal');
+                    @endphp
+                    <tr class="bg-white">
+                        <td colspan="7" class="px-6 py-2 font-semibold text-right text-gray-700">
+                            Total Tabungan Wajib {{ $items->first()->anggota->name ?? 'Anggota' }}:
+                            <span class="text-blue-700">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</span>
                         </td>
                     </tr>
+                    @php $groupIndex++; @endphp
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-4">Belum ada data tabungan wajib.</td>
+                        <td colspan="7" class="text-center text-gray-500 py-4">Belum ada data tabungan wajib.</td>
                     </tr>
                 @endforelse
             </tbody>

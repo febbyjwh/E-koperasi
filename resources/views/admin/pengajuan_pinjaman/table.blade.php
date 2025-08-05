@@ -18,7 +18,8 @@
                     <th class="px-6 py-3">Jumlah Diterima</th>
                     <th class="px-6 py-3">Tenor</th>
                     <th class="px-6 py-3">Tujuan</th>
-                    <th class="px-6 py-3">Tanggal</th>
+                    <th class="px-6 py-3">Tanggal Pengajuan</th>
+                    <th class="px-6 py-3">Tanggal Dikonfirmasi</th>
                     <th class="px-6 py-3">Status</th>
                     @if (!empty($showKonfirmasi)) <th class="px-6 py-3">Konfirmasi</th> @endif
                     <th class="px-6 py-3">Aksi</th>
@@ -34,11 +35,17 @@
                         <td class="px-6 py-4">Rp {{ number_format($item->jumlah_harus_dibayar, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($item->jumlah_diterima, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">{{ $item->lama_angsuran }} bulan</td>
-                        {{-- <td class="px-6 py-4" title="{{ $item->cicilan_detail }}">
-                            Rp {{ number_format($item->cicilan_per_bulan, 0, ',', '.') }}
-                        </td> --}}
                         <td class="px-6 py-4">{{ $item->tujuan }}</td>
-                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y') }}</td>
+                        <td class="px-6 py-4">
+                            {{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->translatedFormat('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            @if ($item->tanggal_dikonfirmasi)
+                                {{ \Carbon\Carbon::parse($item->tanggal_dikonfirmasi)->translatedFormat('d M Y') }}
+                            @else
+                                <span class="text-gray-400 italic">-</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 capitalize">
                             @php
                                 $statusColor = match ($item->status) {

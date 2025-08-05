@@ -53,14 +53,14 @@
         </div>
 
         {{-- Tanggal Bayar --}}
-        <div class="mb-4">
+        {{-- <div class="mb-4">
             <label class="block text-sm text-gray-600 mb-1">Tanggal Bayar</label>
             <input type="date" name="tanggal_bayar" value="{{ old('tanggal_bayar', $pelunasan->tanggal_bayar) }}"
                    class="w-full px-3 py-2 border rounded @error('tanggal_bayar') border-red-500 @enderror">
             @error('tanggal_bayar')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
-        </div>
+        </div> --}}
 
         {{-- Status --}}
         {{-- <div class="mb-4">
