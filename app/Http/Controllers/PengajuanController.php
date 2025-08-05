@@ -186,7 +186,21 @@ class PengajuanController extends Controller
             'status' => 'required|in:disetujui,ditolak',
         ]);
 
+        $modal_awal = Modal::where('sumber', 'modal_awal')->orderByDesc('id')->first();
+
         $pengajuan = PengajuanPinjaman::findOrFail($id);
+
+        // dd($modal_awal);
+
+        if ($modal_awal->jumlah <= 0) {
+            return redirect()->back()->with('hapus', 'Modal tersedia namun jumlahnya 0. Tidak bisa menyetujui pengajuan ini.');
+        }
+
+        if ($modal_awal->jumlah < $pengajuan->jumlah) {
+            return redirect()->back()->with('hapus', 'Modal tidak mencukupi untuk menyetujui pengajuan ini.');
+        }
+
+
         $pengajuan->status = $request->status;
         $pengajuan->save();
 

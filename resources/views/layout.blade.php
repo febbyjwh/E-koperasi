@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/assets/fontawesome/all.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="./assets/vendor/apexcharts/dist/apexcharts.css">
+    {{-- <link rel="stylesheet" href="./assets/vendor/apexcharts/dist/apexcharts.css"> --}}
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"> --}}
     <title>@yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -74,12 +74,12 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
     <script src="/assets/fontawesome/pro.min.js"></script>
     <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
-    <script src="/node_modules/apexcharts/dist/apexcharts.min.js"></script>
+    {{-- <script src="/node_modules/apexcharts/dist/apexcharts.min.js"></script> --}}
     <script src="https://unpkg.com/alpinejs" defer></script>
 
-    <script src="./assets/vendor/lodash/lodash.min.js"></script>
+    {{-- <script src="./assets/vendor/lodash/lodash.min.js"></script>
     <script src="./assets/vendor/apexcharts/dist/apexcharts.min.js"></script>
-    <script src="./assets/vendor/preline/dist/helper-apexcharts.js"></script>
+    <script src="./assets/vendor/preline/dist/helper-apexcharts.js"></script> --}}
     <!-- end script -->
 </body>
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\SimulasiController;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Http\Controllers\PinjamanAnggotaController;
@@ -128,6 +129,8 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::get('/home', [AnggotaController::class, 'index_anggota'])->name('anggota');
     });
 
+    Route::get('/invoice/{id}', [PelunasanController::class, 'invoice'])->name('invoice');
+
     Route::prefix('pinjaman_anggota')->name('pinjaman_anggota.')->group(function () {
         Route::get('/', [PinjamanAnggotaController::class, 'index'])->name('index');
         Route::get('/create', [PinjamanAnggotaController::class, 'create'])->name('create');
@@ -145,7 +148,7 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::post('/', [CicilanAnggotaController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [CicilanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [CicilanAnggotaController::class, 'update'])->name('update');
-        Route::get('/cicilan_anggota/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');    
+        Route::get('/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');    
         Route::get('/{id}/bukti', [PelunasanController::class, 'invoice'])->name('bukti');
         Route::get('/pelunasan/{id}/bukti-pdf', [PelunasanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
         Route::delete('/{id}', [CicilanAnggotaController::class, 'destroy'])->name('destroy');

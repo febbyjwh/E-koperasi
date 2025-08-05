@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\PelunasanPinjaman;
 use Illuminate\Http\Request;
 use App\Models\PengajuanPinjaman;
 use Illuminate\Support\Facades\Auth;
+use App\Models\TabWajib;
 use Carbon\Carbon;
 
 class PinjamanAnggotaController extends Controller
@@ -31,6 +33,18 @@ class PinjamanAnggotaController extends Controller
             'jenis_pinjaman' => 'required|in:kms,barang',
         ]);
 
+        $pelunasan = PelunasanPinjaman::where('user_id', Auth::id())->first();
+        $tab_wajib = TabWajib::where('user_id', Auth::id())->first();
+        // dd($pelunasan);
+
+        if(is_null($tab_wajib)) {
+            return redirect()->back()->with('hapus', 'Anda belum memiliki tabungan wajib Iuran Pokok. Silakan setor tabungan wajib terlebih dahulu sebelum mengajukan pinjaman.');
+        } 
+        
+        if ($pelunasan->status !== 'lunas') {
+            return redirect()->back()->with('hapus', 'Anda masih memiliki pinjaman yang belum lunas. Silakan lunasi terlebih dahulu sebelum mengajukan pinjaman baru.');
+        }
+        
         $jumlah = $request->jumlah;
         $tenor = $request->lama_angsuran;
         $jenis = $request->jenis_pinjaman;

@@ -94,7 +94,7 @@
 
                                 @elseif(auth()->user()->role === 'anggota')
                                     @if ($isLunas)
-                                        <a href="{{ route('pelunasan_anggota.invoice', $pelunasan->id) }}"
+                                        <a href="{{ route('invoice', $pelunasan->id) }}"
                                             class="text-white bg-green-600 hover:bg-green-700 font-medium rounded-full text-sm px-5 py-1">
                                             Bukti
                                         </a>

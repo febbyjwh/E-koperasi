@@ -252,8 +252,11 @@ class PelunasanController extends Controller
             ->with('edit', 'Data pelunasan berhasil diperbarui.');
     }
 
+    
+
     public function invoice($id)
     {
+        // dd("masuk invoice");
         $pelunasan = Angsuran::with('peminjaman.user')->findOrFail($id);
 
         // Cek akses

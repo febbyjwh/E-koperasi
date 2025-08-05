@@ -67,6 +67,6 @@
         },
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+    var chartView = new ApexCharts(document.querySelector("#chart"), options);
+    chartView.render();
 </script>

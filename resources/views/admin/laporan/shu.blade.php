@@ -24,8 +24,8 @@
     <!-- Export Button -->
     <div class="flex justify-start mb-4 print:hidden">
         <div class="relative inline-block text-left">
-            <button id="dropdownExportButton"
-                class="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700">
+            <button id="dropdownExportButton" data-dropdown-toggle="dropdownExport"
+                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 Export
                 <svg class="w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 20 20">
@@ -36,10 +36,13 @@
 
             <div id="dropdownExport"
                 class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute right-0 mt-2">
-                <ul class="py-2 text-sm text-gray-700">
-                    {{-- <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a></li> --}}
-                    <li><a href="{{ route('laporan.exportexcelshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export Excel</a></li>
-                    <li><a href="{{ route('laporan.exportpdfshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export PDF</a></li>
+                <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownExportButton">
+                    {{-- <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a>
+                    </li> --}}
+                    <li><a href="{{ route('laporan.exportexcelshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export
+                            Excel</a></li>
+                    <li><a href="{{ route('laporan.exportpdfshu') }}" class="block px-4 py-2 hover:bg-gray-100">Export
+                            PDF</a></li>
                 </ul>
             </div>
         </div>
@@ -61,7 +64,8 @@
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-gray-700">Biaya Operasional (10%)</td>
-                    <td class="px-6 py-4 text-end text-red-600">- {{ number_format($biaya_operasional, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4 text-end text-red-600">- {{ number_format($biaya_operasional, 0, ',', '.') }}
+                    </td>
                 </tr>
                 <tr class="bg-gray-100 font-bold">
                     <td class="px-6 py-4">SHU Bersih</td>

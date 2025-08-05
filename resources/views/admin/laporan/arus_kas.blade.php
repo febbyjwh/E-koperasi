@@ -38,9 +38,12 @@
             <div id="dropdownExport"
                 class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 absolute right-0 mt-2">
                 <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownExportButton">
-                    {{-- <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a></li> --}}
-                    <li><a href="{{ route('laporan.exportexcelaruskas', ['jenis' => 'aruskas']) }}" class="block px-4 py-2 hover:bg-gray-100">Export Excel</a></li>
-                    <li><a href="{{ route('laporan.exportpdfaruskas', ['jenis' => 'aruskas']) }}" class="block px-4 py-2 hover:bg-gray-100">Export PDF</a></li>
+                    {{-- <li><a href="#" onclick="window.print()" class="block px-4 py-2 hover:bg-gray-100">Print</a>
+                    </li> --}}
+                    <li><a href="{{ route('laporan.exportexcelaruskas', ['jenis' => 'aruskas']) }}"
+                            class="block px-4 py-2 hover:bg-gray-100">Export Excel</a></li>
+                    <li><a href="{{ route('laporan.exportpdfaruskas', ['jenis' => 'aruskas']) }}"
+                            class="block px-4 py-2 hover:bg-gray-100">Export PDF</a></li>
                 </ul>
             </div>
         </div>
@@ -54,9 +57,12 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Keterangan</th>
-                                <th class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Jumlah (Rp)</th>
+                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Kategori
+                                </th>
+                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Keterangan
+                                </th>
+                                <th class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Jumlah (Rp)
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -68,12 +74,14 @@
                             <tr>
                                 <td class="px-6 py-4"></td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $item['keterangan'] }}</td>
-                                <td class="px-6 py-4 text-end text-sm text-gray-800">{{ number_format($item['jumlah'], 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-end text-sm text-gray-800">{{ number_format($item['jumlah'],
+                                    0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                             <tr class="bg-gray-100 font-semibold">
                                 <td colspan="2" class="px-6 py-3 text-gray-700">Total Kas Masuk</td>
-                                <td class="px-6 py-3 text-end text-gray-900">{{ number_format($totalKasMasuk, 0, ',', '.') }}</td>
+                                <td class="px-6 py-3 text-end text-gray-900">{{ number_format($totalKasMasuk, 0, ',',
+                                    '.') }}</td>
                             </tr>
 
                             {{-- Kas Keluar --}}
@@ -84,26 +92,31 @@
                             <tr>
                                 <td class="px-6 py-4"></td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $item['keterangan'] }}</td>
-                                <td class="px-6 py-4 text-end text-sm text-gray-800">{{ number_format($item['jumlah'], 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-end text-sm text-gray-800">{{ number_format($item['jumlah'],
+                                    0, ',', '.') }}</td>
                             </tr>
                             @endforeach
                             <tr class="bg-gray-100 font-semibold">
                                 <td colspan="2" class="px-6 py-3 text-gray-700">Total Kas Keluar</td>
-                                <td class="px-6 py-3 text-end text-gray-900">{{ number_format($totalKasKeluar, 0, ',', '.') }}</td>
+                                <td class="px-6 py-3 text-end text-gray-900">{{ number_format($totalKasKeluar, 0, ',',
+                                    '.') }}</td>
                             </tr>
 
                             {{-- Summary --}}
                             <tr class="bg-gray-100 font-bold">
                                 <td colspan="2" class="px-6 py-4 text-sm text-gray-700">Kenaikan Kas Bersih</td>
-                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($kasBersih, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($kasBersih, 0,
+                                    ',', '.') }}</td>
                             </tr>
                             <tr class="bg-gray-100 font-bold">
                                 <td colspan="2" class="px-6 py-4 text-sm text-gray-700">Saldo Kas Awal</td>
-                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($saldoKasAwal, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($saldoKasAwal, 0,
+                                    ',', '.') }}</td>
                             </tr>
                             <tr class="bg-gray-200 font-bold">
                                 <td colspan="2" class="px-6 py-4 text-sm text-gray-700">Saldo Kas Akhir</td>
-                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($saldoKas, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-end text-sm text-gray-900">{{ number_format($saldoKas, 0, ',',
+                                    '.') }}</td>
                             </tr>
                         </tbody>
                     </table>

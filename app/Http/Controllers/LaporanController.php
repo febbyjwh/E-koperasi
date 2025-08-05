@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ArusKasExport;
+use App\Exports\ShuExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Exports\NeracaExport;
@@ -238,53 +240,75 @@ class LaporanController extends Controller
             ['Kategori', 'Keterangan', 'Jumlah (Rp)'],
             ['Aset', 'Kas / Saldo Kas', $kas],
             ['', 'Piutang Anggota', $piutang],
-            ['', 'Total Aset', $total_aset],
+            ['Total Aset', '', $total_aset],
+            // ['', '', ''],
             ['Modal', 'Modal Awal', $modal_awal],
             ['', 'Modal Anggota', $modal_anggota],
             ['', 'SHU Ditahan', $shu_ditahan],
-            ['', 'Total Modal', $total_modal],
+            ['Total Modal', '', $total_modal],
         ];
 
         return Excel::download(new NeracaExport($data), 'laporan_neraca.xlsx');
     }
 
-    public function exportExcelArusKas()
+
+    public function exportExcelArusKas(Request $request)
     {
-        // Perhitungan neraca dipindah dari export ke sini
-        $kas = Modal::where('status', 'masuk')->sum('jumlah')
-            - Modal::where('status', 'keluar')->sum('jumlah')
-            + PelunasanPinjaman::sum('jumlah_dibayar');
+        $periode = $request->input('periode', now()->format('Y-m'));
+        $periodeCarbon = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+        $periodeAkhir = $periodeCarbon->copy()->endOfMonth();
 
-        $total_pinjaman = PengajuanPinjaman::where('status', 'disetujui')->sum('jumlah_harus_dibayar');
-        $piutang = $total_pinjaman - PelunasanPinjaman::sum('jumlah_dibayar');
+        $kasMasukSebelumnya = TabWajib::where('created_at', '<', $periodeCarbon)->sum('nominal')
+            + TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
+            + PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
+            + Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga');
 
-        $simpanan_wajib = TabWajib::sum('nominal');
-        $simpanan_manasuka = TabManasuka::sum('nominal_masuk') - TabManasuka::sum('nominal_keluar');
-        $simpanan = $simpanan_wajib + $simpanan_manasuka;
+        $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
+            + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)
+                ->where('status', 'disetujui')->sum('jumlah_diterima');
 
-        $modal_awal = Modal::where('sumber', 'modal_awal')->sum('jumlah');
-        $modal_anggota = $simpanan;
+        $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
 
-        $shu_ditahan = Angsuran::whereMonth('tanggal_bayar', now()->month)
-            ->whereYear('tanggal_bayar', now()->year)
-            ->sum('bunga');
+        $kasMasuk = [
+            ['Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
+            ['Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
+            ['Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
+            ['Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
+        ];
+        $totalKasMasuk = array_sum(array_column($kasMasuk, 1));
 
-        $total_aset = $kas + $piutang;
-        $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
+        $kasKeluar = [
+            ['Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
+                ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_diterima')],
+            ['Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
+        ];
+        $totalKasKeluar = array_sum(array_column($kasKeluar, 1));
+
+        $kasBersih = $totalKasMasuk - $totalKasKeluar;
+        $saldoKas = $saldoKasAwal + $kasBersih;
 
         $data = [
             ['Kategori', 'Keterangan', 'Jumlah (Rp)'],
-            ['Aset', 'Kas / Saldo Kas', $kas],
-            ['', 'Piutang Anggota', $piutang],
-            ['', 'Total Aset', $total_aset],
-            ['Modal', 'Modal Awal', $modal_awal],
-            ['', 'Modal Anggota', $modal_anggota],
-            ['', 'SHU Ditahan', $shu_ditahan],
-            ['', 'Total Modal', $total_modal],
+            ['Kas Masuk', '', ''],
+            ['','Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
+            ['','Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
+            ['','Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
+            ['','Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
+            ['Total Kas Masuk', '', $totalKasMasuk],
+            ['Kas Keluar', '', ''],
+            ['','Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
+                ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_diterima')],
+            ['','Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
+            ['Total Kas Keluar', '', $totalKasKeluar],
+            ['Kenaikan Kas Bersih', '', $kasBersih],
+            ['Saldo Kas Awal', '', $saldoKasAwal],
+            ['Saldo Kas Akhir', '', $saldoKas],
         ];
 
-        return Excel::download(new NeracaExport($data), 'laporan_ArusKas.xlsx');
+        // Export
+        return Excel::download(new ArusKasExport($data), 'laporan_ArusKas_' . $periode . '.xlsx');
     }
+
     
     public function exportPdfArusKas(Request $request)
     {
@@ -399,4 +423,41 @@ class LaporanController extends Controller
         return $pdf->download('laporan_shu_' . $periode . '.pdf');
     }
     
+    public function exportExcelShu(Request $request)
+    {
+        $periode = $request->input('periode', now()->format('Y-m'));
+        $periodeStart = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
+        $periodeEnd = $periodeStart->copy()->endOfMonth();
+
+        $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$periodeStart, $periodeEnd])
+            ->sum('bunga');
+
+        $biaya_operasional = $pendapatan * 0.10;
+
+        $shu_bersih = $pendapatan - $biaya_operasional;
+
+        $porsi = [
+            'Jasa Pinjaman' => $shu_bersih * 0.40,
+            'Jasa Simpanan' => $shu_bersih * 0.35,
+            'Dana Cadangan' => $shu_bersih * 0.15,
+            'Dana Sosial'   => $shu_bersih * 0.05,
+            'Pengurus'      => $shu_bersih * 0.05,
+        ];
+
+            $data = [
+            ['Keterangan', '', 'Jumlah (Rp)'],
+            ['Pendapatan (Bunga Pinjaman)', '',$pendapatan],
+            ['Biaya Operasional (10%)', '','-'.$biaya_operasional],
+            ['SHU Bersih', '',$shu_bersih],
+            [''],
+            ['Pembagian SHU', '','Jumlah (Rp)'],
+            ['Jasa Pinjaman', '',$porsi['Jasa Pinjaman']],
+            ['Jasa Simpanan', '',$porsi['Jasa Simpanan']],
+            ['Dana Cadangan', '',$porsi['Dana Cadangan']],
+            ['Dana Sosial', '',$porsi['Dana Sosial']],
+            ['Pengurus', '',$porsi['Pengurus']],
+            ['Total Pembagian SHU', '', $shu_bersih],
+        ];
+        return Excel::download(new ShuExport($data), 'laporan_shu_' . $periode . '.xlsx');
+    }
 }

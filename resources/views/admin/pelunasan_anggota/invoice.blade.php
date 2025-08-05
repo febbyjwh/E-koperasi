@@ -76,7 +76,7 @@
       <div class="mt-5 flex justify-end gap-x-2">
         @php $isAdmin = auth()->user()->role === 'admin'; @endphp
 
-        <a href="{{ $isAdmin ? route('pelunasan_anggota.index') : route('pelunasan_anggota.show') }}"
+        <a href="{{ $isAdmin ? route('pelunasan_anggota.index') : route('cicilan_anggota.pelunasan_anggota.show', $pelunasan->id) }}"
            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
           Kembali
         </a>
