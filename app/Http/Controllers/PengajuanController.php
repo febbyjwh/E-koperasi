@@ -188,6 +188,7 @@ class PengajuanController extends Controller
 
         $pengajuan = PengajuanPinjaman::findOrFail($id);
         $pengajuan->status = $request->status;
+        $pengajuan->tanggal_dikonfirmasi = now();
         $pengajuan->save();
 
         $this->generateAngsuran($pengajuan, $pengajuan->user_id, $pengajuan->jumlah, $pengajuan->lama_angsuran);

@@ -16,7 +16,7 @@
             <div class="relative">
                 <input type="text" name="search" value="{{ request('search') }}"
                     class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Cari nama anggota...">
+                    placeholder="Cari...">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 20 20">
@@ -47,7 +47,9 @@
                     <th class="px-6 py-3">Jumlah dibayar</th>
                     <th class="px-6 py-3">Sisa Cicilan</th>
                     <th class="px-6 py-3">Metode Pembayaran</th>
-                    <th class="px-6 py-3">Tanggal Bayar</th>
+                    <th class="px-6 py-3">Tanggal Pengajuan</th>
+                    <th class="px-6 py-3">Tanggal Dikonfirmasi</th>
+                    <th class="px-6 py-3">Tanggal Dibayar</th>
                     <th class="px-6 py-3">Status</th>
                     <th class="px-6 py-3">Keterangan</th>
                     <th class="px-6 py-3 text-right">Aksi</th>
@@ -66,12 +68,18 @@
                         };
                     @endphp
                     <tr class="bg-white hover:bg-gray-50 border-b">
-                        <td class="px-6 py-4">{{ $pelunasans->firstItem() + $i }}</td>
+                        <td class="px-6 py-4">{{ $i + 1 }}</td>
                         <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($item->sisa_pinjaman, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">{{ ucfirst($item->metode_pembayaran ?? 'Tunai') }}</td>
+                        <td class="px-6 py-4">
+                            {{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ \Carbon\Carbon::parse($item->tanggal_dikonfirmasi)->format('d M Y') }}
+                        </td>
                         <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 text-xs rounded-full font-medium {{ $statusColor }}">
@@ -107,9 +115,9 @@
             </tbody>
         </table>
 
-        <div class="mt-4">
+        {{-- <div class="mt-4">
             {{ $pelunasans->withQueryString()->links() }}
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection

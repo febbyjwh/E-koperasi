@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('total_jasa', 15, 2)->nullable();
             $table->decimal('cicilan_per_bulan', 15, 2)->nullable();
             $table->date('tanggal_pengajuan');
+            $table->date('tanggal_dikonfirmasi')->nullable();
             $table->enum('status', ['pending', 'disetujui', 'ditolak', 'keluar'])->default('pending');
             $table->timestamps();
 

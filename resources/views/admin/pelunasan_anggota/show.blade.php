@@ -15,6 +15,7 @@
                     <th class="px-6 py-3">Bunga</th>
                     <th class="px-6 py-3">Total Angsuran</th>
                     <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Tanggal Tengat</th>
                     <th class="px-6 py-3">Tanggal Bayar</th>
                     <th class="px-6 py-3 text-center">Aksi</th>
                 </tr>
@@ -40,6 +41,8 @@
                                     {{ Str::title(str_replace('_', ' ', $pelunasan->status)) }}
                                 </span>
                             </td>
+                            <td>{{ \Carbon\Carbon::parse($pelunasan->tanggal_jatuh_tempo)->translatedFormat('d F Y') }}</td>
+                            {{-- <td>{{ \Carbon\Carbon::parse($item->tanggal_jatuh_tempo)->translatedFormat('d F Y') }}</td> --}}
                             <td class="px-6 py-4">{{ $pelunasan->tanggal_bayar ?? '-' }}</td>
 
                             {{-- Aksi --}}

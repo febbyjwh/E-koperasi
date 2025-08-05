@@ -22,7 +22,8 @@ class PelunasanController extends Controller
             });
         }
 
-        $pelunasans = $query->latest()->paginate(10);
+        // $pelunasans = $query->latest()->paginate(10);
+        $pelunasans = $query->latest()->get();
 
         foreach ($pelunasans as $item) {
             $pinjaman = $item->pinjaman;
