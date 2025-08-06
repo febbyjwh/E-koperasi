@@ -18,7 +18,8 @@ class ModalController extends Controller
                     ->orWhere('status', 'like', "%{$search}%");
             })
             ->orderBy('tanggal', 'desc')
-            ->get();
+            ->paginate(10); // tampilkeun 10 data per halaman
+
         
         $totalMasuk = Modal::where('status', 'masuk')->sum('jumlah');
         $totalKeluar = Modal::where('status', 'keluar')->sum('jumlah');

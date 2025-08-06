@@ -3,7 +3,7 @@
 @section('title', 'Tambah Pelunasan Pinjaman')
 
 @section('content')
-@include('components.alert')
+
 
 <div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
     <h2 class="text-xl font-semibold mb-6 text-gray-700">Form Tambah Pelunasan Pinjaman</h2>

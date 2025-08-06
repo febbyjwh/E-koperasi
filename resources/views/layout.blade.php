@@ -58,6 +58,9 @@
             'mt-14' => $admin,
             'sm:mt-16' => $anggota,
         ])">
+            {{-- ✅ Alert sukses/edit/hapus akan muncul otomatis --}}
+            @include('components.alert')
+            
             @yield('content')
 
             @if ($anggota)
@@ -81,6 +84,22 @@
     <script src="./assets/vendor/apexcharts/dist/apexcharts.min.js"></script>
     <script src="./assets/vendor/preline/dist/helper-apexcharts.js"></script> --}}
     <!-- end script -->
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const closeButtons = document.querySelectorAll('[data-hs-remove-element]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const selector = button.getAttribute('data-hs-remove-element');
+                const target = document.querySelector(selector);
+                if (target) {
+                    target.remove();
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 
 </html>

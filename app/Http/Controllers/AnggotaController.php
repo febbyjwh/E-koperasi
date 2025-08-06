@@ -20,7 +20,7 @@ class AnggotaController extends Controller
             });
         }
 
-        $anggota = $query->latest()->get();
+        $anggota = $query->latest()->paginate(10); // 10 data per halaman, bebas atur
 
         return view('admin.kelola_anggota.index', compact('anggota'));
     }

@@ -23,7 +23,8 @@ class CicilanAnggotaController extends Controller
             });
         }
 
-        $pelunasans = $query->latest()->paginate(10);
+        $pelunasans = $query->latest()->paginate(10)
+                    ->withQueryString();
 
         foreach ($pelunasans as $item) {
             $pinjaman = $item->pinjaman;

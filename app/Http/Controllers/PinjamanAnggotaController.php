@@ -14,8 +14,9 @@ class PinjamanAnggotaController extends Controller
 {
     public function index(){
         $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString();
 
         return view('anggota.pinjaman_anggota.index', compact('pengajuan'));
     }
@@ -41,7 +42,7 @@ class PinjamanAnggotaController extends Controller
             return redirect()->back()->with('hapus', 'Anda belum memiliki tabungan wajib Iuran Pokok. Silakan setor tabungan wajib terlebih dahulu sebelum mengajukan pinjaman.');
         } 
         
-        if ($pelunasan->status !== 'lunas') {
+        if ($pelunasan && $pelunasan->status !== 'lunas') {
             return redirect()->back()->with('hapus', 'Anda masih memiliki pinjaman yang belum lunas. Silakan lunasi terlebih dahulu sebelum mengajukan pinjaman baru.');
         }
         

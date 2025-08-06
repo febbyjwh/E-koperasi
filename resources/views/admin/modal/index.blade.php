@@ -3,7 +3,7 @@
 @section('title','Modal Masuk')
 
 @section('content')
-@include('components.alert')
+
 @once
     @include('components.modal')
 @endonce
@@ -71,7 +71,7 @@
             <tbody>
                 @forelse ($modals as $modal)
                     <tr class="bg-white hover:bg-gray-50 border-b">
-                        <td class="px-6 py-4 font-medium text-gray-900">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900">{{ $loop->iteration + $modals->firstItem() - 1 }}</td>
                         <td class="px-6 py-4">{{ \Carbon\Carbon::parse($modal->tanggal)->format('d-m-Y') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($modal->jumlah, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">{{ $modal->keterangan ?? '-' }}</td>
@@ -114,6 +114,9 @@
                 @endforelse
             </tbody>
         </table>
+        <div class="mt-4">
+    {{ $modals->withQueryString()->links('vendor.pagination.tailwind') }}
+        </div>
     </div>
 </div>
 @endsection

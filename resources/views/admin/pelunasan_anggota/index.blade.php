@@ -3,7 +3,7 @@
 @section('title', 'Daftar Pelunasan Pinjaman Anggota')
 
 @section('content')
-@include('components.alert')
+
 @once
     @include('components.modal')
 @endonce
@@ -68,7 +68,9 @@
                         };
                     @endphp
                     <tr class="bg-white hover:bg-gray-50 border-b">
-                        <td class="px-6 py-4">{{ $i + 1 }}</td>
+                        <td class="px-6 py-4">
+                            {{ $pelunasans->firstItem() ? $pelunasans->firstItem() + $i : $i + 1 }}
+                        </td>
                         <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
@@ -115,9 +117,9 @@
             </tbody>
         </table>
 
-        {{-- <div class="mt-4">
-            {{ $pelunasans->withQueryString()->links() }}
-        </div> --}}
+        <div class="mt-4">
+            {{ $pelunasans->links() }}
+        </div>
     </div>
 </div>
 @endsection

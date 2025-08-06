@@ -3,7 +3,7 @@
 @section('title', 'Tabungan Manasuka')
 
 @section('content')
-@include('components.alert')
+
 @once
     @include('components.modal')
 @endonce

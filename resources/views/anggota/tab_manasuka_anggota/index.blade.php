@@ -57,5 +57,8 @@
             </tbody>
         </table>
     </div>
+    <div class="mt-4">
+        {{ $tabunganManasuka->withQueryString()->links('vendor.pagination.tailwind') }}
+    </div>
 </div>
 @endsection

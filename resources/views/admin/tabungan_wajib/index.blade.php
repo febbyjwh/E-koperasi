@@ -3,7 +3,7 @@
 @section('title', 'Tabungan Wajib')
 
 @section('content')
-@include('components.alert')
+
 @once
     @include('components.modal')
 @endonce

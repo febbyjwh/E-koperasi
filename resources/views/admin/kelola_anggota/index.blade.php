@@ -3,7 +3,6 @@
 @section('title', 'Kelola Anggota')
 
 @section('content')
-@include('components.alert')
 @once
     @include('components.modal')
 @endonce
@@ -57,7 +56,7 @@
             <tbody>
                 @forelse ($anggota as $user)
                     <tr class="bg-white hover:bg-gray-50">
-                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-4">{{ $loop->iteration + $anggota->firstItem() - 1 }}</td>
                         <td class="px-6 py-4">AG{{ str_pad($user->id, 3, '0', STR_PAD_LEFT) }}</td>
                         <td class="px-6 py-4">{{ $user->name }}</td>
                         <td class="px-6 py-4">{{ $user->username }}</td>
@@ -94,5 +93,11 @@
             </tbody>
         </table>
     </div>
+      <!-- PAGINATION -->
+    <div class="mt-4">
+        {{ $anggota->withQueryString()->links('vendor.pagination.tailwind') }}
+    </div>
 </div>
+</div>
+
 @endsection

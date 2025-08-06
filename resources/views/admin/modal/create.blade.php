@@ -3,7 +3,6 @@
 @section('title','Tambah Modal Utama')
 
 @section('content')
-@include('components.alert')
 
 <div class="p-6 bg-white rounded-2xl shadow-lg w-full">
     <h2 class="text-xl font-semibold text-gray-700 mb-4">Tambah Sumber Modal</h2>
