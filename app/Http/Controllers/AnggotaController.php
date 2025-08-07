@@ -106,4 +106,10 @@ class AnggotaController extends Controller
     public function index_anggota(){
         return view('anggota.index');
     }
+
+    public function profile(){
+        $user = auth()->user();
+        return view('anggota.profile_anggota.index', compact('user'));
+    }
+
 }

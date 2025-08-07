@@ -50,10 +50,14 @@ class AuthController extends Controller
         return redirect()->back()->with(['pesan' => 'Akun tidak terdaftar!']);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('login')->with('pesan', 'Anda telah berhasil logout.');
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('auth.login'); // arahkan ke halaman login
     }
 
     public function register()

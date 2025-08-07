@@ -13,6 +13,7 @@ use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SimulasiController;
+use App\Http\Controllers\AdminController;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Http\Controllers\PinjamanAnggotaController;
@@ -35,6 +36,15 @@ Route::middleware(['isAdmin'])->group(function () {
     // DataAnggotaUpdate::dispatch('lorem ipsum dolor sit amet');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/simulasi', [SimulasiController::class, 'calculate'])->name('simulasi.calculate');
+    
+    Route::prefix('profile_admin')->name('profile_admin.')->group(function () {
+        Route::get('/', [AdminController::class, 'index'])->name('index');
+        Route::get('/changepass', [AdminController::class, 'changepass'])->name('changepass');
+        Route::post('/updatepassword', [AdminController::class, 'updatePassword'])->name('updatepassword');
+        Route::get('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
+        
+    });
+
     // Modal Utama
     Route::prefix('modal')->name('modal.')->group(function () {
         Route::get('/', [ModalController::class, 'index'])->name('index');
@@ -127,6 +137,10 @@ Route::middleware(['isAdmin'])->group(function () {
 Route::middleware(['isAnggota'])->group(function () {
     Route::prefix('anggota')->name('anggota.')->group(function () {
         Route::get('/home', [AnggotaController::class, 'index_anggota'])->name('anggota');
+    });
+
+    Route::prefix('profile_anggota')->name('profile_anggota.')->group(function () {
+        Route::get('/', [AnggotaController::class, 'profile'])->name('profile');
     });
 
     Route::get('/invoice/{id}', [PelunasanController::class, 'invoice'])->name('invoice');

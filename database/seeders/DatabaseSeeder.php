@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call(UserSeeder::class);
-        $this->call(ModalSeeder::class);
-        $this->call(PeminjamanSeeder::class);
-        $this->call(PelunasanSeeder::class);
-        $this->call(TabunganWajibSeeder::class);
-        $this->call(TabunganManasukaSeeder::class);
+        // $this->call(ModalSeeder::class);
+        // $this->call(PeminjamanSeeder::class);
+        // $this->call(PelunasanSeeder::class);
+        // $this->call(TabunganWajibSeeder::class);
+        // $this->call(TabunganManasukaSeeder::class);
     }
 }

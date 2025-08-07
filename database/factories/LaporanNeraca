@@ -1,0 +1,21 @@
+// database/factories/LaporanNeracaFactory.php
+
+namespace Database\Factories;
+
+use App\Models\LaporanNeraca;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class LaporanNeracaFactory extends Factory
+{
+    protected $model = LaporanNeraca::class;
+
+    public function definition(): array
+    {
+        return [
+            'tanggal' => $this->faker->dateTimeBetween('-6 months', 'now'),
+            'aset' => $this->faker->numberBetween(100_000_000, 500_000_000),
+            'kewajiban' => $this->faker->numberBetween(50_000_000, 300_000_000),
+            'ekuitas' => $this->faker->numberBetween(50_000_000, 200_000_000),
+        ];
+    }
+}
