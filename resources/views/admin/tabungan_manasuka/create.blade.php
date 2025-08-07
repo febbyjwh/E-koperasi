@@ -3,7 +3,7 @@
 @section('title', 'Tambah Tabungan Manasuka')
 
 @section('content')
-@include('components.alert')
+
 
 <div class="p-6 bg-white rounded-2xl shadow-lg">
     <h2 class="text-lg font-semibold mb-4 text-gray-700">Tambah Tabungan Manasuka</h2>

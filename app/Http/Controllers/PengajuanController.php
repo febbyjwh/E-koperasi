@@ -27,7 +27,9 @@ class PengajuanController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
             })
-            ->latest()->get();
+            ->latest()
+            ->paginate(2)
+            ->withQueryString();
 
         $pengajuanDisetujui = PengajuanPinjaman::with('user')
             ->where('status', 'disetujui')
@@ -36,7 +38,9 @@ class PengajuanController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
             })
-            ->latest()->get();
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         $pengajuanDitolak = PengajuanPinjaman::with('user')
             ->where('status', 'ditolak')
@@ -45,7 +49,9 @@ class PengajuanController extends Controller
                     $q->where('name', 'like', "%{$search}%");
                 });
             })
-            ->latest()->get();
+            ->latest()
+            ->paginate(2)
+            ->withQueryString();
 
         return view('admin.pengajuan_pinjaman.index', compact(
             'pengajuanPending',
@@ -379,13 +385,15 @@ class PengajuanController extends Controller
             $colspan = $showKonfirmasi ? 13 : 12;
             echo "<tr><td colspan='{$colspan}' class='px-6 py-4 text-center text-gray-500'>Tidak ada data.</td></tr>";
         } else {
-            foreach ($data as $i => $item) {
-                $cicilanList = hitungCicilanBulanan($item);
-                $jumlahDiterima = hitungJumlahDiterima($item);
+            $start = method_exists($data, 'firstItem') ? $data->firstItem() : 0;
 
-                $tooltip = collect($cicilanList)->map(function ($val, $i) {
-                    return 'Bulan ' . ($i + 1) . ': Rp ' . number_format($val, 0, ',', '.');
-                })->implode("\n");
+            foreach ($data as $i => $item) {
+            $cicilanList = self::hitungCicilanBulanan($item);
+            $jumlahDiterima = self::hitungJumlahDiterima($item);
+
+            $tooltip = collect($cicilanList)->map(function ($val, $i) {
+                return 'Bulan ' . ($i + 1) . ': Rp ' . number_format($val, 0, ',', '.');
+            })->implode("\n");
 
                 $statusColor = match ($item->status) {
                     'pending' => 'bg-yellow-100 text-yellow-800',
@@ -395,7 +403,7 @@ class PengajuanController extends Controller
                 };
 
                 echo '<tr class="bg-white hover:bg-gray-50 border-b">';
-                echo '<td class="px-6 py-4 font-medium text-gray-900">' . ($i + 1) . '</td>';
+                echo '<td class="px-6 py-4 font-medium text-gray-900">' . ($start + $i) . '</td>';
                 echo '<td class="px-6 py-4">' . e($item->user->name ?? '-') . '</td>';
                 echo '<td class="px-6 py-4 capitalize">' . ($item->jenis_pinjaman === 'barang' ? 'Kredit Barang' : 'Kredit Manasuka (KMS)') . '</td>';
                 echo '<td class="px-6 py-4">Rp ' . number_format($item->jumlah, 0, ',', '.') . '</td>';

@@ -3,7 +3,7 @@
 @section('title', 'Konfirmasi Pengajuan Pinjaman')
 
 @section('content')
-@include('components.alert')
+
 
 
 <div class="p-4 bg-white rounded-2xl shadow-lg mb-6">
@@ -36,19 +36,29 @@
 </div>
 
 {{-- Tabel Pengajuan --}}
+
 @include('admin.pengajuan_pinjaman.table', [
     'judul' => 'Pengajuan Menunggu Konfirmasi',
     'data' => $pengajuanPending,
     'showKonfirmasi' => true,
 ])
+<div class="mt-4 mb-8">
+    {{ $pengajuanPending->links('vendor.pagination.tailwind') }}
+</div>
 
 @include('admin.pengajuan_pinjaman.table', [
     'judul' => 'Pengajuan Disetujui',
     'data' => $pengajuanDisetujui,
 ])
+<div class="mt-4 mb-8">
+    {{ $pengajuanDisetujui->links('vendor.pagination.tailwind') }}
+</div>
 
 @include('admin.pengajuan_pinjaman.table', [
     'judul' => 'Pengajuan Ditolak',
     'data' => $pengajuanDitolak,
 ])
+<div class="mt-4 mb-8">
+    {{ $pengajuanDitolak->links('vendor.pagination.tailwind') }}
+</div>
 @endsection

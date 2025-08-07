@@ -14,8 +14,9 @@ class PinjamanAnggotaController extends Controller
 {
     public function index(){
         $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+                    ->latest()
+                    ->paginate(10)
+                    ->withQueryString();
 
         return view('anggota.pinjaman_anggota.index', compact('pengajuan'));
     }

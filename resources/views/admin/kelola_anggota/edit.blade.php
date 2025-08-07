@@ -3,7 +3,7 @@
 @section('title', 'Edit Anggota')
 
 @section('content')
-@include('components.alert')
+
 
 <div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
     <div class="flex items-center justify-between mb-4">

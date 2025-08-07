@@ -92,5 +92,9 @@
             </tbody>
         </table>
     </div>
+      <!-- PAGINATION -->
+    <div class="mt-4">
+        {{ $pengajuan->withQueryString()->links('vendor.pagination.tailwind') }}
+    </div>
 </div>
 @endsection
