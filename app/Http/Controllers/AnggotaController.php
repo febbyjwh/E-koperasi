@@ -20,7 +20,7 @@ class AnggotaController extends Controller
             });
         }
 
-        $anggota = $query->latest()->paginate(10); // 10 data per halaman, bebas atur
+        $anggota = $query->latest()->paginate(10); 
 
         return view('admin.kelola_anggota.index', compact('anggota'));
     }
@@ -65,7 +65,6 @@ class AnggotaController extends Controller
         return view('admin.kelola_anggota.edit', compact('anggota'));
     }
 
-    // ✅ Proses update data anggota
     public function update(Request $request, $id)
     {
         $anggota = User::findOrFail($id);
@@ -110,6 +109,10 @@ class AnggotaController extends Controller
     public function profile(){
         $user = auth()->user();
         return view('anggota.profile_anggota.index', compact('user'));
+    }
+
+    public function identitas(){
+        return view('anggota.profile_anggota.identitas');
     }
 
 }

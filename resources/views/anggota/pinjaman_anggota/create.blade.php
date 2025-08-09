@@ -4,7 +4,6 @@
 
 @section('content')
 
-
 <div class="p-6 bg-white rounded-2xl shadow-lg w-full">
     <h2 class="text-2xl font-semibold mb-6 text-gray-700">Form Pengajuan Pinjaman</h2>
 

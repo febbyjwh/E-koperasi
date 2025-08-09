@@ -41,7 +41,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::get('/changepass', [AdminController::class, 'changepass'])->name('changepass');
         Route::post('/updatepassword', [AdminController::class, 'updatePassword'])->name('updatepassword');
-        Route::get('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
+        Route::post('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
         
     });
 
@@ -141,6 +141,8 @@ Route::middleware(['isAnggota'])->group(function () {
 
     Route::prefix('profile_anggota')->name('profile_anggota.')->group(function () {
         Route::get('/', [AnggotaController::class, 'profile'])->name('profile');
+        Route::get('/identitas', [AnggotaController::class, 'identitas'])->name('identitas');
+        Route::post('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
     });
 
     Route::get('/invoice/{id}', [PelunasanController::class, 'invoice'])->name('invoice');

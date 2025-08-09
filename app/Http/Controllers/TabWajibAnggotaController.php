@@ -12,17 +12,19 @@ class TabWajibAnggotaController extends Controller
     {
         $search = $request->search;
 
-        $setoranWajib = TabWajib::with('anggota')
+        $query = TabWajib::with('anggota')
             ->where('user_id', Auth::id()) // anggota login
             ->when($search, function ($query, $search) {
                 $query->whereHas('anggota', function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                    ->orwhere('jenis', 'like', "%$search%");
+                    ->orWhere('jenis', 'like', "%$search%");
                 });
             })
-            ->latest()
-            ->get();
+            ->latest();
+
+        $setoranWajib = $query->paginate(10)->withQueryString();
 
         return view('anggota.tab_wajib_anggota.index', compact('setoranWajib'));
     }
+
 }

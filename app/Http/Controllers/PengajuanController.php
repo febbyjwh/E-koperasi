@@ -192,48 +192,55 @@ class PengajuanController extends Controller
             'status' => 'required|in:disetujui,ditolak',
         ]);
 
-        $modal_awal = Modal::where('sumber', 'modal_awal')->orderByDesc('id')->first();
+        $modal_awal = Modal::where('sumber', 'modal_awal')->latest('id')->first();
+        $pengajuan  = PengajuanPinjaman::findOrFail($id);
 
-        $pengajuan = PengajuanPinjaman::findOrFail($id);
-
-        // dd($modal_awal);
+        // Cek modal awal
+        if (!$modal_awal) {
+            return back()->with('hapus', 'Modal awal tidak ditemukan. Tidak bisa menyetujui pengajuan ini.');
+        }
 
         if ($modal_awal->jumlah <= 0) {
-            return redirect()->back()->with('hapus', 'Modal tersedia namun jumlahnya 0. Tidak bisa menyetujui pengajuan ini.');
+            return back()->with('hapus', 'Modal tersedia namun jumlahnya 0. Tidak bisa menyetujui pengajuan ini.');
         }
 
         if ($modal_awal->jumlah < $pengajuan->jumlah) {
-            return redirect()->back()->with('hapus', 'Modal tidak mencukupi untuk menyetujui pengajuan ini.');
+            return back()->with('hapus', 'Modal tidak mencukupi untuk menyetujui pengajuan ini.');
         }
 
+        // Update status pengajuan
+        $pengajuan->update([
+            'status'               => $request->status,
+            'tanggal_dikonfirmasi' => now(),
+        ]);
 
-        $pengajuan->status = $request->status;
-        $pengajuan->tanggal_dikonfirmasi = now();
-        $pengajuan->save();
+        // Generate angsuran
+        $this->generateAngsuran(
+            $pengajuan,
+            $pengajuan->user_id,
+            $pengajuan->jumlah,
+            $pengajuan->lama_angsuran
+        );
 
-        $this->generateAngsuran($pengajuan, $pengajuan->user_id, $pengajuan->jumlah, $pengajuan->lama_angsuran);
-
-        // Jika pengajuan disetujui, kurangi modal dan log
+        // Jika disetujui, catat modal keluar
         if ($request->status === 'disetujui') {
-            // Catat ke modal_logs
             ModalLog::create([
-                'tipe' => 'keluar',
+                'tipe'   => 'keluar',
                 'jumlah' => $pengajuan->jumlah,
                 'sumber' => 'Pinjaman untuk ' . $pengajuan->user->name,
             ]);
 
-            // Catat ke modals (supaya tampil di modal utama)
             Modal::create([
-                'tanggal' => now(),
-                'jumlah' => $pengajuan->jumlah,
+                'tanggal'    => now(),
+                'jumlah'     => $pengajuan->jumlah,
                 'keterangan' => 'Pengeluaran untuk pinjaman ' . $pengajuan->user->name,
-                'sumber' => 'pinjaman',
-                'status' => 'keluar', // pastikan validasi `status` menerima 'keluar'
-                'user_id' => auth()->id(),
+                'sumber'     => 'pinjaman',
+                'status'     => 'keluar',
+                'user_id'    => auth()->id(),
             ]);
         }
 
-        return redirect()->back()->with('pesan', 'Pengajuan berhasil dikonfirmasi.');
+        return back()->with('pesan', 'Pengajuan berhasil dikonfirmasi.');
     }
 
     public function invoice($id)

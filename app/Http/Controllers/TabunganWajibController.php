@@ -18,8 +18,10 @@ class TabunganWajibController extends Controller
             });
         }
 
-        $setoranWajib = $query->get();
+        $setoranWajib = $query->latest()->paginate(10); 
+        // $setoranWajib = $query->paginate(10)->withQueryString();
 
+        // dd(get_class($setoranWajib));
         return view('admin.tabungan_wajib.index', compact('setoranWajib'));
     }
 
