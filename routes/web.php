@@ -20,9 +20,10 @@ use App\Http\Controllers\PinjamanAnggotaController;
 use App\Http\Controllers\CicilanAnggotaController;
 use App\Http\Controllers\TabWajibAnggotaController;
 use App\Http\Controllers\TabManasukaAnggotaController;
+use App\Http\Controllers\DatadiriController;
 use Pusher\Pusher;
 
-Route::get('/', [AuthController::class, 'formlogin'])->name('login');
+Route::get('/', [AuthController::class, 'formlogin'])->name('formlogin');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 
 Route::prefix('auth')->name('auth.')->group(function () {
@@ -142,6 +143,8 @@ Route::middleware(['isAnggota'])->group(function () {
     Route::prefix('profile_anggota')->name('profile_anggota.')->group(function () {
         Route::get('/', [AnggotaController::class, 'profile'])->name('profile');
         Route::get('/identitas', [AnggotaController::class, 'identitas'])->name('identitas');
+        Route::post('/datadiri', [DatadiriController::class, 'store'])
+        ->name('datadiri.store');
         Route::post('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
     });
 
@@ -187,4 +190,6 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::put('/{id}', [TabManasukaAnggotaController::class, 'update'])->name('update');
         Route::delete('/{id}', [TabManasukaAnggotaController::class, 'destroy'])->name('destroy');
     });
+
+    
 });

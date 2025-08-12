@@ -57,7 +57,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('auth.login'); // arahkan ke halaman login
+        return redirect()->route('formlogin'); // arahkan ke halaman login
     }
 
     public function register()
@@ -86,6 +86,6 @@ class AuthController extends Controller
         'role' => 'anggota', // default role
     ]);
 
-    return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login.');
+    return redirect()->route('formlogin')->with('success', 'Registrasi berhasil. Silakan login.');
     }
 }
