@@ -19,7 +19,8 @@ class TabunganManasukaController extends Controller
             });
         }
 
-        $tabunganManasuka = $query->get();
+        // $tabunganManasuka = $query->get();
+        $tabunganManasuka = $query->paginate(10)->withQueryString();
 
         return view('admin.tabungan_manasuka.index', compact('tabunganManasuka'));
     }

@@ -67,6 +67,10 @@ class PelunasanController extends Controller
 
     public function bayar(Request $request, $id)
     {
+        // Bersihkan input dari format Rp dan titik
+        $jumlahBayar = preg_replace('/\D/', '', $request->jumlah_bayar);
+        $jumlahBayar = (int) $jumlahBayar; // integer
+
         $pinjaman = Angsuran::with('peminjaman')->findOrFail($id);
         $pinjaman->update([
             'status' => 'sudah_bayar',
@@ -76,29 +80,25 @@ class PelunasanController extends Controller
         $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pinjaman->pinjaman_id)->firstOrFail();
         $jenis = $pinjaman->peminjaman->jenis_pinjaman;
 
-        // Hitung sisa baru berdasarkan jenis pinjaman
         if ($jenis === 'barang') {
-            // Barang → bunga flat
-            $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
-            $sisaBaru = max($pelunasan->sisa_pinjaman - $request->jumlah_bayar, 0);
+            $pelunasan->increment('jumlah_dibayar', $jumlahBayar);
+            $sisaBaru = max($pelunasan->sisa_pinjaman - $jumlahBayar, 0);
             $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
         } elseif ($jenis === 'kms') {
-            // KMS → bunga menurun
-            $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
-            $sisaBaru = max($pelunasan->sisa_pinjaman - $request->jumlah_bayar, 0);
+            $pelunasan->increment('jumlah_dibayar', $jumlahBayar);
+            $sisaBaru = max($pelunasan->sisa_pinjaman - $jumlahBayar, 0);
             $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
         }
 
-        $pesan = 'Pembayaran cicilan berhasil dilakukan.';
+        $redirect = redirect()->route('pelunasan_anggota.show', $pinjaman->pinjaman_id)
+            ->with('pesan', 'Pembayaran cicilan berhasil dilakukan.');
 
         if ($pelunasan->sisa_pinjaman <= 0) {
             $pelunasan->update(['status' => 'lunas']);
-            $pesan .= ' Pinjaman sudah LUNAS 🎉';
+            $redirect->with('lunas', 'Pinjaman sudah LUNAS');
         }
 
-        return redirect()
-            ->route('pelunasan_anggota.show', $pelunasan->id)
-            ->with('pesan', $pesan);
+        return $redirect;
     }
 
     private function hitungCicilanBulanan($pinjaman)

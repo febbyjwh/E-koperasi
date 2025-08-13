@@ -91,8 +91,14 @@ class PengajuanController extends Controller
         }
 
         // Cek apakah masih ada pinjaman belum lunas
-        $pelunasan = PelunasanPinjaman::where('user_id', $validated['user_id'])->first();
-        if ($pelunasan && $pelunasan->status !== 'lunas') {
+        $pelunasan = PelunasanPinjaman::where('user_id', $validated['user_id'])
+            ->whereHas('pinjaman', function ($q) {
+                $q->where('status', 'disetujui');
+            })
+            ->where('status', '!=', 'lunas')
+            ->first();
+
+        if ($pelunasan) {
             return redirect()
                 ->route('pengajuan_pinjaman.index')
                 ->with('hapus', "{$user->name} masih memiliki pinjaman yang belum lunas.");

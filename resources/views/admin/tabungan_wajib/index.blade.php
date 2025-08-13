@@ -111,7 +111,8 @@
                                                 </div>
 
                                                 <!-- Judul -->
-                                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Tabungan Manasuka?</h2>
+                                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Tabungan
+                                                    Manasuka?</h2>
                                                 <p class="text-sm text-gray-500 text-center mb-6">Tindakan ini tidak dapat
                                                     dibatalkan. Apakah Anda yakin ingin menghapus data ini?</p>
 
@@ -155,6 +156,9 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="mt-4">
+            {{ $setoranWajib->withQueryString()->links('vendor.pagination.tailwind') }}
         </div>
     </div>
     <script>

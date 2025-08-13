@@ -17,8 +17,8 @@
         <div>
             <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal</label>
             <input type="date" name="tanggal" id="tanggal"
-                   class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
-                   value="{{ old('tanggal', $modal->tanggal) }}" required>
+                class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
+                value="{{ old('tanggal', $modal->tanggal ? $modal->tanggal->format('Y-m-d') : '') }}" required>
         </div>
 
         <div>

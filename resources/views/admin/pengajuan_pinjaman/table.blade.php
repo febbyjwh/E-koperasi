@@ -65,21 +65,62 @@
                         </td>
                         @if (!empty($showKonfirmasi))
                             <td class="px-6 py-4 space-x-2">
-                                <form action="{{ route('pengajuan_pinjaman.konfirmasi', $item->id) }}" method="POST"
-                                    class="inline-block">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button name="status" value="disetujui"
-                                        class="px-2 py-2 rounded hover:bg-green-100 text-xs cursor-pointer" title="Setujui">
-                                        <i class="bx bx-check-circle" style="color:#40ce3b; font-size: 1.2rem"></i>
-                                    </button>
-                                    <button name="status" value="ditolak"
-                                        class="px-2 py-2 rounded hover:bg-red-100 text-xs cursor-pointer" title="Tolak">
-                                        <i class="bx bx-x-circle" style="color:#e91919; font-size: 1.2rem"></i>
-                                    </button>
-                                </form>
+                                <button type="button"
+                                    onclick="showKonfirmasiModal('{{ route('pengajuan_pinjaman.konfirmasi', $item->id) }}', 'disetujui')"
+                                    class="px-2 py-2 rounded hover:bg-green-100 text-xs cursor-pointer" title="Setujui">
+                                    <i class="bx bx-check-circle" style="color:#40ce3b; font-size: 1.2rem"></i>
+                                </button>
+
+                                <button type="button"
+                                    onclick="showKonfirmasiModal('{{ route('pengajuan_pinjaman.konfirmasi', $item->id) }}', 'ditolak')"
+                                    class="px-2 py-2 rounded hover:bg-red-100 text-xs cursor-pointer" title="Tolak">
+                                    <i class="bx bx-x-circle" style="color:#e91919; font-size: 1.2rem"></i>
+                                </button>
                             </td>
                         @endif
+
+                        <!-- Modal Konfirmasi -->
+                        <div id="konfirmasiModal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+                            <!-- Overlay -->
+                            <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+
+                            <!-- Konten Modal -->
+                            <div class="relative bg-white w-full max-w-sm mx-4 rounded-2xl shadow-xl p-6">
+                                <!-- Icon -->
+                                <div
+                                    class="flex items-center justify-center w-16 h-16 rounded-full bg-yellow-100 mb-4 mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14" />
+                                    </svg>
+                                </div>
+
+                                <!-- Judul -->
+                                <h2 id="modalTitle" class="text-lg font-semibold text-gray-700 text-center mb-2">
+                                    Konfirmasi?</h2>
+                                <p class="text-sm text-gray-500 text-center mb-6" id="modalMessage">
+                                    Apakah Anda yakin ingin melanjutkan tindakan ini?
+                                </p>
+
+                                <!-- Tombol -->
+                                <div class="flex justify-center space-x-3">
+                                    <button type="button" onclick="closeKonfirmasiModal()"
+                                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm font-medium">
+                                        Batal
+                                    </button>
+                                    <form id="konfirmasiForm" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" id="statusInput">
+                                        <button type="submit"
+                                            class="px-5 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm font-semibold">
+                                            Ya, Lanjutkan
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <td class="px-6 py-4 text-right">
                             <div class="flex flex-row justify-end space-x-2">
                                 <a href="{{ route('pengajuan_pinjaman.edit', $item->id) }}"
@@ -122,7 +163,8 @@
                                             </div>
 
                                             <!-- Judul -->
-                                            <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Peminjaman?</h2>
+                                            <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Peminjaman?
+                                            </h2>
                                             <p class="text-sm text-gray-500 text-center mb-6">Tindakan ini tidak dapat
                                                 dibatalkan. Apakah Anda yakin ingin menghapus data ini?</p>
 
@@ -165,5 +207,26 @@
 
     function closeDeleteModal() {
         document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
+<script>
+    function showKonfirmasiModal(actionUrl, status) {
+        document.getElementById('konfirmasiForm').action = actionUrl;
+        document.getElementById('statusInput').value = status;
+
+        // Ubah teks modal sesuai status
+        if (status === 'disetujui') {
+            document.getElementById('modalTitle').innerText = 'Setujui Pengajuan?';
+            document.getElementById('modalMessage').innerText = 'Apakah Anda yakin ingin menyetujui pengajuan ini?';
+        } else {
+            document.getElementById('modalTitle').innerText = 'Tolak Pengajuan?';
+            document.getElementById('modalMessage').innerText = 'Apakah Anda yakin ingin menolak pengajuan ini?';
+        }
+
+        document.getElementById('konfirmasiModal').classList.remove('hidden');
+    }
+
+    function closeKonfirmasiModal() {
+        document.getElementById('konfirmasiModal').classList.add('hidden');
     }
 </script>
