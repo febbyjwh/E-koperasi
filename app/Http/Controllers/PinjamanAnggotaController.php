@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\PengajuanPinjaman;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TabWajib;
+use App\Models\Datadiri;
 use Carbon\Carbon;
 
 class PinjamanAnggotaController extends Controller
@@ -37,10 +38,23 @@ class PinjamanAnggotaController extends Controller
         $pelunasan = PelunasanPinjaman::where('user_id', Auth::id())->first();
         $tab_wajib = TabWajib::where('user_id', Auth::id())->first();
         // dd($pelunasan);
+        $identitas = Datadiri::where('user_id', Auth::id())->first();
+        $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->first();
+        
+        if (!$identitas) {
+            return back()->with('hapus', 'Isi Identitas terlebih dahulu untuk mengajukan pinjaman.');
+        }
+
 
         if(is_null($tab_wajib)) {
             return redirect()->back()->with('hapus', 'Anda belum memiliki tabungan wajib Iuran Pokok. Silakan setor tabungan wajib terlebih dahulu sebelum mengajukan pinjaman.');
-        } 
+        }
+
+        if ($pengajuan) {
+            return redirect()->back()->with('hapus', 'Anda sudah memiliki pengajuan pinjaman yang belum diproses.');
+        }   
         
         if ($pelunasan && $pelunasan->status !== 'lunas') {
             return redirect()->back()->with('hapus', 'Anda masih memiliki pinjaman yang belum lunas. Silakan lunasi terlebih dahulu sebelum mengajukan pinjaman baru.');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Datadiri;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -112,7 +113,9 @@ class AnggotaController extends Controller
     }
 
     public function identitas(){
-        return view('anggota.profile_anggota.identitas');
+        $user = auth()->user();
+        $anggota = Datadiri::where('user_id', $user->id)->first();
+        return view('anggota.profile_anggota.identitas', compact('user', 'anggota'));
     }
 
 }
