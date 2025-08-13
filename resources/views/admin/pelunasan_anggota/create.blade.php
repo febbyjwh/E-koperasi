@@ -51,9 +51,9 @@
         {{-- Tombol --}}
         <div class="flex justify-end gap-2">
             <a href="{{ route('pelunasan_anggota.index') }}"
-               class="px-4 py-2 text-gray-600 hover:underline">Batal</a>
+               class="px-4 py-2 text-gray-600 hover:underline cursor-pointer">Batal</a>
             <button type="submit"
-                class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition">
+                class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition cursor-pointer">
                 Simpan
             </button>
         </div>

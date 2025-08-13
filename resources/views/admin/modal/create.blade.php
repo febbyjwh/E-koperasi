@@ -21,7 +21,7 @@
             <label for="jumlah" class="block text-sm font-medium text-gray-700">Jumlah Modal</label>
             <input type="number" name="jumlah" id="jumlah" 
                    class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring focus:ring-indigo-200"
-                   placeholder="Contoh: 5000000" required>
+                   placeholder="Contoh: Rp5000.000" required>
         </div>
 
         <div>
@@ -56,10 +56,10 @@
 
         <div class="flex justify-end gap-2">
             <button type="submit" 
-                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">Simpan
+                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full cursor-pointer">Simpan
             </button>
             <a href="{{ route('modal.index') }}" 
-               class="px-4 py-2 text-gray-600 hover:underline">Batal
+               class="px-4 py-2 text-gray-600 hover:underline cursor-pointer">Batal
             </a>
         </div>
     </form>

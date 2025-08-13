@@ -18,10 +18,19 @@ class TabunganManasukaSeeder extends Seeder
             $jumlahTransaksi = rand(2, 5);
 
             for ($i = 0; $i < $jumlahTransaksi; $i++) {
-                $masuk = rand(50000, 200000);
-                $keluar = rand(0, $total > 0 ? min($total, 100000) : 0); // tarik max 100rb atau saldo
+                // Tentukan jenis transaksi: true = masuk, false = keluar
+                $isMasuk = $total <= 0 || rand(0, 1) === 1;
+                // Jika saldo 0 atau negatif, wajib masuk
 
-                $total += $masuk - $keluar;
+                if ($isMasuk) {
+                    $masuk = rand(50000, 200000);
+                    $keluar = 0;
+                    $total += $masuk;
+                } else {
+                    $keluar = rand(10000, min($total, 100000)); // max 100rb atau saldo
+                    $masuk = 0;
+                    $total -= $keluar;
+                }
 
                 TabManasuka::create([
                     'user_id'        => $anggota->id,

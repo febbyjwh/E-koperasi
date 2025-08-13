@@ -80,12 +80,12 @@
                                                             <div class="mb-4">
                                                                 <label class="block mb-2 text-sm font-medium text-gray-700">Jumlah Bayar</label>
                                                                 <input type="text" name="jumlah_bayar"
-                                                                    value="{{ $pelunasan->total_angsuran }}"
+                                                                    value="Rp.{{ $pelunasan->total_angsuran }}"
                                                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
                                                                     required />
                                                             </div>
                                                             <button type="submit"
-                                                                class="w-full text-white bg-yellow-600 hover:bg-yellow-700 font-medium rounded-lg text-sm px-5 py-2.5">
+                                                                class="w-full text-white bg-yellow-600 hover:bg-yellow-700 font-medium rounded-lg text-sm px-5 py-2.5 cursor-pointer">
                                                                 Bayar Sekarang
                                                             </button>
                                                         </form>

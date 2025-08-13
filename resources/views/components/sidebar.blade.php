@@ -34,7 +34,7 @@
                         'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
                         'text-teal-400' => request()->routeIs('modal.index'),
                     ])></i>
-                    <span class="ms-3">Management Modal</span>
+                    <span class="ms-3">Kelola Modal</span>
                 </a>
 
                 <a href="{{ route('pengajuan_pinjaman.index') }}" @class([

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Models\ModalLog;
 use App\Models\Modal;
 use App\Models\Angsuran;
 use App\Models\PelunasanPinjaman;
+use App\Models\TabWajib;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -78,6 +80,23 @@ class PengajuanController extends Controller
             'lama_angsuran' => 'required|integer|min:1',
             'tujuan' => 'required|string',
         ]);
+
+        $user = User::find($validated['user_id']); // ambil user berdasarkan ID
+
+        $tabWajib = TabWajib::where('user_id', $validated['user_id'])->first();
+        if (is_null($tabWajib)) {
+            return redirect()
+                ->route('pengajuan_pinjaman.index')
+                ->with('hapus', "{$user->name} belum memiliki tabungan wajib. Harap setor terlebih dahulu.");
+        }
+
+        // Cek apakah masih ada pinjaman belum lunas
+        $pelunasan = PelunasanPinjaman::where('user_id', $validated['user_id'])->first();
+        if ($pelunasan && $pelunasan->status !== 'lunas') {
+            return redirect()
+                ->route('pengajuan_pinjaman.index')
+                ->with('hapus', "{$user->name} masih memiliki pinjaman yang belum lunas.");
+        }
 
         $validated['tanggal_pengajuan'] = now();
 
@@ -197,11 +216,11 @@ class PengajuanController extends Controller
 
         // Cek modal awal
         if (!$modal_awal) {
-            return back()->with('hapus', 'Modal awal tidak ditemukan. Tidak bisa menyetujui pengajuan ini.');
+            return back()->with('hapus', 'Modal koperasi Rp0. Tidak bisa menyetujui pengajuan ini.');
         }
 
         if ($modal_awal->jumlah <= 0) {
-            return back()->with('hapus', 'Modal tersedia namun jumlahnya 0. Tidak bisa menyetujui pengajuan ini.');
+            return back()->with('hapus', 'Modal koperasi Rp.. Tidak bisa menyetujui pengajuan ini.');
         }
 
         if ($modal_awal->jumlah < $pengajuan->jumlah) {
@@ -248,12 +267,12 @@ class PengajuanController extends Controller
         $pinjaman = PengajuanPinjaman::with('user')->findOrFail($id);
 
         if (Auth::user()->role !== 'admin' && Auth::id() !== $pinjaman->user_id) {
-        abort(403, 'Unauthorized');
+            abort(403, 'Unauthorized');
         }
-        
+
         $nama = $pinjaman->user->name;
         $tanggal = $pinjaman->created_at;
-        $jumlah_pinjaman = $pinjaman->jumlah; 
+        $jumlah_pinjaman = $pinjaman->jumlah;
         $propisi = $pinjaman->potongan_propisi;
         $jenis_pinjaman = $pinjaman->jenis_pinjaman;
         $lama_angsuran = $pinjaman->lama_angsuran;
@@ -280,7 +299,7 @@ class PengajuanController extends Controller
         $tanggal = now();
         $nama = $pinjaman->user->name;
         $tanggal = $pinjaman->created_at;
-        $jumlah_pinjaman = $pinjaman->jumlah; 
+        $jumlah_pinjaman = $pinjaman->jumlah;
         $propisi = $pinjaman->potongan_propisi;
         $jenis_pinjaman = $pinjaman->jenis_pinjaman;
         $lama_angsuran = $pinjaman->lama_angsuran;
@@ -288,8 +307,15 @@ class PengajuanController extends Controller
         $status_konfirmasi = $pinjaman->status;
 
         $pdf = Pdf::loadView('admin.pengajuan_pinjaman.invoicepdf', compact(
-            'pinjaman', 'tanggal', 'jumlah_diterima', 'jumlah_pinjaman',
-            'propisi', 'nama', 'jenis_pinjaman', 'lama_angsuran', 'status_konfirmasi'
+            'pinjaman',
+            'tanggal',
+            'jumlah_diterima',
+            'jumlah_pinjaman',
+            'propisi',
+            'nama',
+            'jenis_pinjaman',
+            'lama_angsuran',
+            'status_konfirmasi'
         ))->setPaper('a5', 'portrait');
 
         return $pdf->download('bukti-pencairan-' . $pinjaman->id . '.pdf');
@@ -366,7 +392,8 @@ class PengajuanController extends Controller
             : $pengajuan->jumlah;
     }
 
-    function renderTable($data, $judul, $showKonfirmasi = false) {
+    function renderTable($data, $judul, $showKonfirmasi = false)
+    {
         echo "<h3 class='text-md font-semibold text-gray-800 mb-2 mt-6'>$judul</h3>";
         echo '<div class="overflow-x-auto w-full mb-6">';
         echo '<table class="min-w-full text-sm text-left text-gray-500 border rounded-lg">';
@@ -395,12 +422,12 @@ class PengajuanController extends Controller
             $start = method_exists($data, 'firstItem') ? $data->firstItem() : 0;
 
             foreach ($data as $i => $item) {
-            $cicilanList = self::hitungCicilanBulanan($item);
-            $jumlahDiterima = self::hitungJumlahDiterima($item);
+                $cicilanList = self::hitungCicilanBulanan($item);
+                $jumlahDiterima = self::hitungJumlahDiterima($item);
 
-            $tooltip = collect($cicilanList)->map(function ($val, $i) {
-                return 'Bulan ' . ($i + 1) . ': Rp ' . number_format($val, 0, ',', '.');
-            })->implode("\n");
+                $tooltip = collect($cicilanList)->map(function ($val, $i) {
+                    return 'Bulan ' . ($i + 1) . ': Rp ' . number_format($val, 0, ',', '.');
+                })->implode("\n");
 
                 $statusColor = match ($item->status) {
                     'pending' => 'bg-yellow-100 text-yellow-800',
@@ -449,5 +476,4 @@ class PengajuanController extends Controller
 
         echo '</tbody></table></div>';
     }
-
 }

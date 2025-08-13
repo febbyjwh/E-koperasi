@@ -67,23 +67,38 @@ class PelunasanController extends Controller
 
     public function bayar(Request $request, $id)
     {
-        // dd($request->all());
-        $pinjaman = Angsuran::findOrFail($id);
+        $pinjaman = Angsuran::with('peminjaman')->findOrFail($id);
         $pinjaman->update([
             'status' => 'sudah_bayar',
             'tanggal_bayar' => now(),
         ]);
 
         $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pinjaman->pinjaman_id)->firstOrFail();
-        $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
-        $pelunasan->decrement('sisa_pinjaman', $request->jumlah_bayar);
+        $jenis = $pinjaman->peminjaman->jenis_pinjaman;
+
+        // Hitung sisa baru berdasarkan jenis pinjaman
+        if ($jenis === 'barang') {
+            // Barang → bunga flat
+            $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
+            $sisaBaru = max($pelunasan->sisa_pinjaman - $request->jumlah_bayar, 0);
+            $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
+        } elseif ($jenis === 'kms') {
+            // KMS → bunga menurun
+            $pelunasan->increment('jumlah_dibayar', $request->jumlah_bayar);
+            $sisaBaru = max($pelunasan->sisa_pinjaman - $request->jumlah_bayar, 0);
+            $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
+        }
+
+        $pesan = 'Pembayaran cicilan berhasil dilakukan.';
 
         if ($pelunasan->sisa_pinjaman <= 0) {
             $pelunasan->update(['status' => 'lunas']);
+            $pesan .= ' Pinjaman sudah LUNAS 🎉';
         }
 
-        return redirect()->route('pelunasan_anggota.index')
-            ->with('success', 'Pembayaran cicilan berhasil dilakukan.');
+        return redirect()
+            ->route('pelunasan_anggota.show', $pelunasan->id)
+            ->with('pesan', $pesan);
     }
 
     private function hitungCicilanBulanan($pinjaman)
@@ -143,19 +158,36 @@ class PelunasanController extends Controller
         $sisa = $totalHarusDibayar;
 
         $riwayat = [];
+        $tenor = $pinjaman->lama_angsuran;
+        $jenis = $pinjaman->jenis_pinjaman;
+        $jumlah = $pinjaman->jumlah;
 
         $pelunasanTerverifikasi = $pinjaman->pelunasan
             ->where('status', 'terverifikasi')
             ->sortBy('tanggal_bayar');
 
-        foreach ($pelunasanTerverifikasi as $cicilan) {
+        $sisaPokok = $jumlah;
+        $pokokBulanan = $jumlah / $tenor;
+
+        foreach ($pelunasanTerverifikasi as $index => $cicilan) {
+            // Hitung bunga bulan itu
+            if ($jenis === 'barang') {
+                $bunga = $jumlah * 0.02; // flat
+            } else {
+                $bunga = $sisaPokok * 0.025; // menurun
+            }
+
+            $totalCicilan = $pokokBulanan + $bunga;
+            $sisa -= $cicilan->jumlah_dibayar;
+            $sisaPokok -= $pokokBulanan;
+
             $riwayat[] = [
+                'cicilan_ke' => $index + 1,
                 'tanggal_bayar' => $cicilan->tanggal_bayar,
                 'jumlah_dibayar' => $cicilan->jumlah_dibayar,
-                'sisa_setelah' => $sisa - $cicilan->jumlah_dibayar,
+                'bunga' => $bunga,
+                'sisa_setelah' => max($sisa, 0),
             ];
-
-            $sisa -= $cicilan->jumlah_dibayar;
         }
 
         return $riwayat;
@@ -227,10 +259,11 @@ class PelunasanController extends Controller
 
     public function update(Request $request, $id)
     {
+        // dd($id, $request->all());
         $request->validate([
             'pinjaman_id' => 'required|exists:pengajuan_pinjaman,id',
             'jumlah_dibayar' => 'required|numeric|min:0',
-            'tanggal_bayar' => 'required|date',
+            'tanggal_bayar' => 'nullable|date',
             'metode_pembayaran' => 'required|string|max:50',
             // 'status' => 'required|in:pending,terverifikasi,ditolak',
             'keterangan' => 'nullable|string',
@@ -253,20 +286,18 @@ class PelunasanController extends Controller
             ->with('edit', 'Data pelunasan berhasil diperbarui.');
     }
 
-    
-
     public function invoice($id)
     {
         // dd("masuk invoice");
         $pelunasan = Angsuran::with('peminjaman.user')->findOrFail($id);
 
         // Cek akses
-         if (auth()->user()->role !== 'admin') {
-        // Anggota hanya bisa akses miliknya
-        if (!$pelunasan->peminjaman || auth()->id() !== $pelunasan->peminjaman->user_id) {
-            abort(403, 'Unauthorized');
+        if (auth()->user()->role !== 'admin') {
+            // Anggota hanya bisa akses miliknya
+            if (!$pelunasan->peminjaman || auth()->id() !== $pelunasan->peminjaman->user_id) {
+                abort(403, 'Unauthorized');
+            }
         }
-    }
 
         $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
         $tanggal = $pelunasan->tanggal_bayar;
@@ -278,9 +309,15 @@ class PelunasanController extends Controller
         $keterangan = $pelunasan->keterangan ?? 'Pembayaran angsuran bulan ke-' . $pelunasan->bulan_ke;
 
         return view('admin.pelunasan_anggota.invoice', compact(
-            'pelunasan', 'invoiceId', 'tanggal', 'nama',
-            'pokok', 'bunga', 'total_angsuran',
-            'metode', 'keterangan'
+            'pelunasan',
+            'invoiceId',
+            'tanggal',
+            'nama',
+            'pokok',
+            'bunga',
+            'total_angsuran',
+            'metode',
+            'keterangan'
         ));
     }
 
@@ -296,7 +333,13 @@ class PelunasanController extends Controller
         $keterangan = $pelunasan->keterangan ?? '-';
 
         $pdf = Pdf::loadView('admin.pelunasan_anggota.invoicepdf', compact(
-            'pelunasan', 'invoiceId', 'tanggal', 'nama', 'jumlah_dibayar', 'metode', 'keterangan'
+            'pelunasan',
+            'invoiceId',
+            'tanggal',
+            'nama',
+            'jumlah_dibayar',
+            'metode',
+            'keterangan'
         ));
 
         return $pdf->download($invoiceId . '.pdf');
