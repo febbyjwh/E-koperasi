@@ -5,7 +5,7 @@
 @section('content')
 
 @once
-    @include('components.modal')
+@include('components.modal')
 @endonce
 
 <div class="p-4 bg-white rounded-2xl shadow-lg">
@@ -18,8 +18,8 @@
                     class="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Cari...">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
@@ -27,7 +27,7 @@
                 <button type="submit" style="cursor: pointer"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-lightgray-700 text-gray font-medium rounded-lg text-sm px-4 py-2 h-10">
                     Cari
-                </button>   
+                </button>
             </div>
         </form>
 
@@ -57,62 +57,61 @@
             </thead>
             <tbody>
                 @forelse($pelunasans as $i => $item)
-                    @php
-                        $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
-                        $statusColor = match($item->status) {
-                            'pending' => 'bg-yellow-100 text-yellow-800',
-                            'terverifikasi' => 'bg-blue-100 text-blue-800',
-                            'lunas' => 'bg-green-100 text-green-800',
-                            'ditolak' => 'bg-red-100 text-red-800',
-                            default => 'bg-yellow-100 text-yellow-800',
-                        };
-                    @endphp
-                    <tr class="bg-white hover:bg-gray-50 border-b">
-                        <td class="px-6 py-4">
-                            {{ $pelunasans->firstItem() ? $pelunasans->firstItem() + $i : $i + 1 }}
-                        </td>
-                        <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">Rp {{ number_format($item->sisa_pinjaman, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4">{{ ucfirst($item->metode_pembayaran ?? 'Tunai') }}</td>
-                        <td class="px-6 py-4">
-                            {{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y') }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ \Carbon\Carbon::parse($item->tanggal_dikonfirmasi)->format('d M Y') }}
-                        </td>
-                        <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 text-xs rounded-full font-medium {{ $statusColor }}">
-                                {{ ucfirst($item->status) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex flex-row justify-end space-x-2">
-                                <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
+                @php
+                $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
+                $statusColor = match($item->status) {
+                'pending' => 'bg-yellow-100 text-yellow-800',
+                'terverifikasi' => 'bg-blue-100 text-blue-800',
+                'lunas' => 'bg-green-100 text-green-800',
+                'ditolak' => 'bg-red-100 text-red-800',
+                default => 'bg-yellow-100 text-yellow-800',
+                };
+                @endphp
+                <tr class="bg-white hover:bg-gray-50 border-b">
+                    <td class="px-6 py-4">
+                        {{ $pelunasans->firstItem() ? $pelunasans->firstItem() + $i : $i + 1 }}
+                    </td>
+                    <td class="px-6 py-4">{{ $item->user->name ?? '-' }}</td>
+                    <td class="px-6 py-4">Rp {{ number_format($jumlahPinjaman, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4">Rp {{ number_format($item->jumlah_dibayar, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4">Rp {{ number_format($item->sisa_pinjaman, 0, ',', '.') }}</td>
+                    <td class="px-6 py-4">{{ ucfirst($item->metode_pembayaran ?? 'Tunai') }}</td>
+                    <td class="px-6 py-4">
+                        {{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y') }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ \Carbon\Carbon::parse($item->tanggal_dikonfirmasi)->format('d M Y') }}
+                    </td>
+                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($item->tanggal_bayar)->format('d M Y') }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full font-medium {{ $statusColor }}">
+                            {{ ucfirst($item->status) }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm">{{ $item->keterangan ?? '-' }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex flex-row justify-end space-x-2">
+                            <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
                                 class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
                                 Edit
-                                </a>
+                            </a>
 
-                                <a href="{{ route('pelunasan_anggota.show', $item->id) }}"
+                            <a href="{{ route('pelunasan_anggota.show', $item->id) }}"
                                 class="text-white bg-yellow-700 hover:bg-yellow-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700">
                                 Pelunasan
-                                </a>
+                            </a>
 
-                                <button 
-                                    onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')" 
-                                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
-                                    Hapus
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            <button onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
+                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
+                                Hapus
+                            </button>
+                        </div>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="12" class="px-6 py-4 text-center text-gray-500">Tidak ada data pelunasan.</td>
-                    </tr>
+                <tr>
+                    <td colspan="12" class="px-6 py-4 text-center text-gray-500">Tidak ada data pelunasan.</td>
+                </tr>
                 @endforelse
             </tbody>
         </table>

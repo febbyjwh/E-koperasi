@@ -23,6 +23,7 @@ class PelunasanController extends Controller
         }
 
         $pelunasans = $query->latest()->paginate(10)->withQueryString();
+        // dd($pelunasans->pluck('id'));
 
 
         foreach ($pelunasans as $item) {

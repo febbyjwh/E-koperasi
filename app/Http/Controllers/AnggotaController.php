@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Datadiri;
+use App\Models\PelunasanPinjaman;
+use App\Models\PengajuanPinjaman;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AnggotaController extends Controller
 {
@@ -103,9 +106,39 @@ class AnggotaController extends Controller
                          ->with('hapus', 'Data anggota berhasil dihapus.');
     }
 
-    public function index_anggota(){
-        return view('anggota.index');
+    public function index_anggota()
+    {
+        $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
+            ->where('status', 'disetujui')
+            ->latest()
+            ->first();
+
+        $pelunasan = null;
+
+        if ($pengajuan) {
+            $pelunasan = PelunasanPinjaman::where('user_id', Auth::id())
+                ->where('pinjaman_id', $pengajuan->id)
+                ->latest()
+                ->first();
+
+            if ($pelunasan && $pelunasan->status === 'lunas') {
+                return view('anggota.index', [
+                    'pengajuan' => null,
+                    'pelunasan' => null
+                ]);
+            }
+        }
+
+        if ($pengajuan || $pelunasan) {
+            return view('anggota.index', compact('pengajuan', 'pelunasan'));
+        }
+
+        return view('anggota.index', [
+            'pengajuan' => null,
+            'pelunasan' => null
+        ]);
     }
+
 
     public function profile(){
         $user = auth()->user();

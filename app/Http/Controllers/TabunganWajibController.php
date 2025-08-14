@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TabWajib;
 use App\Models\User;
+use App\Models\Datadiri;
 
 class TabunganWajibController extends Controller
 {
@@ -39,6 +40,12 @@ class TabunganWajibController extends Controller
             'nominal' => 'required|integer|min:1',
             'tanggal' => 'required|date',
         ]);
+
+        $identitas = Datadiri::where('user_id', $request->user_id)->first();
+
+        if (!$identitas) {
+            return back()->with('hapus', 'Anggota belum melengkapi data identitas. Silakan lengkapi terlebih dahulu.');
+        }
 
         // Hitung total nominal dari user
         $existingTotal = TabWajib::where('user_id', $request->user_id)->sum('nominal');

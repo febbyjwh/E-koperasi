@@ -10,6 +10,8 @@ class PelunasanPinjaman extends Model
     use HasFactory;
 
     protected $table = 'pelunasan_pinjaman';
+    protected $primaryKey = 'id';
+
 
     protected $fillable = [
         'user_id',
