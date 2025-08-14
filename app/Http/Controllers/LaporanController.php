@@ -18,57 +18,64 @@ use App\Models\Angsuran;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+
 class LaporanController extends Controller
 {
     public function index()
     {
-        return view ('admin.laporan.index');
+        return view('admin.laporan.index');
     }
 
     public function neraca()
-{
-    $kas = Modal::where('status', 'masuk')->sum('jumlah')
-        - Modal::where('status', 'keluar')->sum('jumlah')
-        + PelunasanPinjaman::sum('jumlah_dibayar');
+    {
+        $kas = Modal::where('status', 'masuk')->sum('jumlah')
+            - Modal::where('status', 'keluar')->sum('jumlah')
+            + PelunasanPinjaman::sum('jumlah_dibayar');
 
-    $total_pinjaman = PengajuanPinjaman::where('status', 'disetujui')->sum('jumlah_harus_dibayar');
-    $piutang = $total_pinjaman - PelunasanPinjaman::sum('jumlah_dibayar');
+        $total_pinjaman = PengajuanPinjaman::where('status', 'disetujui')->sum('jumlah_harus_dibayar');
+        $piutang = $total_pinjaman - PelunasanPinjaman::sum('jumlah_dibayar');
 
-    $simpanan_wajib = TabWajib::sum('nominal');
-    $simpanan_manasuka = TabManasuka::sum('nominal_masuk') - TabManasuka::sum('nominal_keluar');
-    $simpanan = $simpanan_wajib + $simpanan_manasuka;
+        $simpanan_wajib = TabWajib::sum('nominal');
+        $simpanan_manasuka = TabManasuka::sum('nominal_masuk') - TabManasuka::sum('nominal_keluar');
+        $simpanan = $simpanan_wajib + $simpanan_manasuka;
 
-    $modal_awal = Modal::where('sumber', 'modal_awal')->sum('jumlah');
-    $modal_anggota = $simpanan;
+        $modal_awal = Modal::where('sumber', 'modal_awal')->sum('jumlah');
+        $modal_anggota = $simpanan;
 
-    // Hitung SHU ditahan (sementara ini dari awal tahun hingga sekarang)
-    $tahunIni = now()->year;
-    $awalTahun = now()->copy()->startOfYear();
-    $akhirTahun = now();
+        // Hitung SHU ditahan (sementara ini dari awal tahun hingga sekarang)
+        $tahunIni = now()->year;
+        $awalTahun = now()->copy()->startOfYear();
+        $akhirTahun = now();
 
-    $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$awalTahun, $akhirTahun])
-        ->sum('bunga');
+        $pendapatan = Angsuran::whereBetween('tanggal_bayar', [$awalTahun, $akhirTahun])
+            ->sum('bunga');
 
-    $biaya_operasional = $pendapatan * 0.10;
-    $shu_bersih = $pendapatan - $biaya_operasional;
+        $biaya_operasional = $pendapatan * 0.10;
+        $shu_bersih = $pendapatan - $biaya_operasional;
 
-    // SHU Ditahan (dana cadangan 15%)
-    $shu_ditahan = $shu_bersih * 0.15;
+        // SHU Ditahan (dana cadangan 15%)
+        $shu_ditahan = $shu_bersih * 0.15;
 
-    // Total Aset dan Modal
-    $total_aset = $kas + $piutang;
-    $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
+        // Total Aset dan Modal
+        $total_aset = $kas + $piutang;
+        $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
 
-    return view('admin.laporan.neraca', compact(
-        'kas', 'piutang', 'simpanan', 'modal_anggota', 'modal_awal', 'shu_ditahan',
-        'total_aset', 'total_modal'
-    ));
-}
+        return view('admin.laporan.neraca', compact(
+            'kas',
+            'piutang',
+            'simpanan',
+            'modal_anggota',
+            'modal_awal',
+            'shu_ditahan',
+            'total_aset',
+            'total_modal'
+        ));
+    }
 
 
     public function arusKas(Request $request)
     {
-       $periode = $request->input('periode', now()->format('Y-m'));
+        $periode = $request->input('periode', now()->format('Y-m'));
         $periodeCarbon = Carbon::createFromFormat('Y-m', $periode);
         $start = $periodeCarbon->copy()->startOfMonth();
         $end = $periodeCarbon->copy()->endOfMonth();
@@ -169,11 +176,16 @@ class LaporanController extends Controller
         ];
 
         return view('admin.laporan.shu', compact(
-            'periode', 'pendapatan', 'biaya_operasional', 'shu_bersih', 'porsi'
+            'periode',
+            'pendapatan',
+            'biaya_operasional',
+            'shu_bersih',
+            'porsi'
         ));
     }
 
-    public function anggota() {
+    public function anggota()
+    {
         $anggota = User::with('tabunganWajib', 'tabunganManasuka')->get();
         return view('laporan.anggota', compact('anggota'));
     }
@@ -202,8 +214,13 @@ class LaporanController extends Controller
         $total_modal = $modal_awal + $modal_anggota + $shu_ditahan;
 
         $data = compact(
-            'kas', 'piutang', 'modal_awal', 'modal_anggota', 'shu_ditahan',
-            'total_aset', 'total_modal'
+            'kas',
+            'piutang',
+            'modal_awal',
+            'modal_anggota',
+            'shu_ditahan',
+            'total_aset',
+            'total_modal'
         );
 
         $tanggal_cetak = Carbon::now()->translatedFormat('d F Y') . ' pukul ' . Carbon::now()->format('H:i') . ' WIB';
@@ -265,7 +282,7 @@ class LaporanController extends Controller
 
         $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
             + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)
-                ->where('status', 'disetujui')->sum('jumlah_diterima');
+            ->where('status', 'disetujui')->sum('jumlah_diterima');
 
         $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
 
@@ -290,15 +307,15 @@ class LaporanController extends Controller
         $data = [
             ['Kategori', 'Keterangan', 'Jumlah (Rp)'],
             ['Kas Masuk', '', ''],
-            ['','Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
-            ['','Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
-            ['','Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
-            ['','Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
+            ['', 'Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
+            ['', 'Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
+            ['', 'Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
+            ['', 'Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
             ['Total Kas Masuk', '', $totalKasMasuk],
             ['Kas Keluar', '', ''],
-            ['','Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
+            ['', 'Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
                 ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_diterima')],
-            ['','Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
+            ['', 'Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
             ['Total Kas Keluar', '', $totalKasKeluar],
             ['Kenaikan Kas Bersih', '', $kasBersih],
             ['Saldo Kas Awal', '', $saldoKasAwal],
@@ -309,7 +326,7 @@ class LaporanController extends Controller
         return Excel::download(new ArusKasExport($data), 'laporan_ArusKas_' . $periode . '.xlsx');
     }
 
-    
+
     public function exportPdfArusKas(Request $request)
     {
         $periode = $request->input('periode', now()->format('Y-m')); // default bulan ini
@@ -324,7 +341,7 @@ class LaporanController extends Controller
 
         $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
             + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)
-                ->where('status', 'disetujui')->sum('jumlah_diterima');
+            ->where('status', 'disetujui')->sum('jumlah_diterima');
 
         $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
 
@@ -422,7 +439,7 @@ class LaporanController extends Controller
 
         return $pdf->download('laporan_shu_' . $periode . '.pdf');
     }
-    
+
     public function exportExcelShu(Request $request)
     {
         $periode = $request->input('periode', now()->format('Y-m'));
@@ -444,18 +461,18 @@ class LaporanController extends Controller
             'Pengurus'      => $shu_bersih * 0.05,
         ];
 
-            $data = [
+        $data = [
             ['Keterangan', '', 'Jumlah (Rp)'],
-            ['Pendapatan (Bunga Pinjaman)', '',$pendapatan],
-            ['Biaya Operasional (10%)', '','-'.$biaya_operasional],
-            ['SHU Bersih', '',$shu_bersih],
+            ['Pendapatan (Bunga Pinjaman)', '', $pendapatan],
+            ['Biaya Operasional (10%)', '', '-' . $biaya_operasional],
+            ['SHU Bersih', '', $shu_bersih],
             [''],
-            ['Pembagian SHU', '','Jumlah (Rp)'],
-            ['Jasa Pinjaman', '',$porsi['Jasa Pinjaman']],
-            ['Jasa Simpanan', '',$porsi['Jasa Simpanan']],
-            ['Dana Cadangan', '',$porsi['Dana Cadangan']],
-            ['Dana Sosial', '',$porsi['Dana Sosial']],
-            ['Pengurus', '',$porsi['Pengurus']],
+            ['Pembagian SHU', '', 'Jumlah (Rp)'],
+            ['Jasa Pinjaman', '', $porsi['Jasa Pinjaman']],
+            ['Jasa Simpanan', '', $porsi['Jasa Simpanan']],
+            ['Dana Cadangan', '', $porsi['Dana Cadangan']],
+            ['Dana Sosial', '', $porsi['Dana Sosial']],
+            ['Pengurus', '', $porsi['Pengurus']],
             ['Total Pembagian SHU', '', $shu_bersih],
         ];
         return Excel::download(new ShuExport($data), 'laporan_shu_' . $periode . '.xlsx');

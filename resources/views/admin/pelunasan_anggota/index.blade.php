@@ -3,6 +3,7 @@
 @section('title', 'Daftar Pelunasan Pinjaman Anggota')
 
 @section('content')
+{{-- @include('components.alert') --}}
 
 @once
 @include('components.modal')
@@ -59,7 +60,7 @@
                 @forelse($pelunasans as $i => $item)
                 @php
                 $jumlahPinjaman = $item->pinjaman->jumlah ?? 0;
-                $statusColor = match($item->status) {
+                $statusColor = match ($item->status) {
                 'pending' => 'bg-yellow-100 text-yellow-800',
                 'terverifikasi' => 'bg-blue-100 text-blue-800',
                 'lunas' => 'bg-green-100 text-green-800',
@@ -92,19 +93,70 @@
                     <td class="px-6 py-4 text-right">
                         <div class="flex flex-row justify-end space-x-2">
                             <a href="{{ route('pelunasan_anggota.edit', $item->id) }}"
-                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
+                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
                                 Edit
                             </a>
 
                             <a href="{{ route('pelunasan_anggota.show', $item->id) }}"
-                                class="text-white bg-yellow-700 hover:bg-yellow-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700">
+                                class="text-white bg-orange-700 hover:bg-orange-800 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center dark:bg-orange-600 dark:hover:bg-orange-700">
                                 Pelunasan
                             </a>
 
-                            <button onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
+                            {{-- <button onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
                                 class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
                                 Hapus
+                            </button> --}}
+                            <button type="button"
+                                onclick="showDeleteModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
+                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium rounded-full text-sm px-4 py-1 cursor-pointer">
+                                Hapus
                             </button>
+
+                            <!-- Modal -->
+                            <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+                                <!-- Overlay -->
+                                <div
+                                    class="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300">
+                                </div>
+
+                                <!-- Konten Modal -->
+                                <div
+                                    class="relative bg-white w-full max-w-sm mx-4 rounded-2xl shadow-xl transform transition-all duration-300 scale-95">
+                                    <div class="flex flex-col items-center p-6">
+                                        <!-- Icon Warning -->
+                                        <div
+                                            class="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.664 1.732-3L13.732 4a2 2 0 00-3.464 0L4.34 16c-.77 1.336.192 3 1.732 3z" />
+                                            </svg>
+                                        </div>
+
+                                        <!-- Judul -->
+                                        <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Pelunasan
+                                            Cicilan?</h2>
+                                        <p class="text-sm text-gray-500 text-center mb-6">Tindakan ini tidak dapat
+                                            dibatalkan. Apakah Anda yakin ingin menghapus data ini?</p>
+
+                                        <!-- Tombol Aksi -->
+                                        <div class="flex space-x-3">
+                                            <button type="button" onclick="closeDeleteModal()"
+                                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm font-medium cursor-pointer">
+                                                Batal
+                                            </button>
+                                            <form id="deleteForm" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-semibold cursor-pointer">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -121,4 +173,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    function showDeleteModal(actionUrl) {
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('deleteForm').setAttribute('action', actionUrl);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+</script>
 @endsection

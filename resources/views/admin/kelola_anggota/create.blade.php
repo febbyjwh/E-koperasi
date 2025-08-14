@@ -14,7 +14,7 @@
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                 <input type="email" name="email" id="email"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
-                    placeholder="name@flowbite.com" required />
+                    placeholder="name@gmail.com" required />
             </div>
             <div class="mb-4">
                 <label for="nama" class="block text-gray-700 font-medium mb-2">Nama Lengkap</label>
@@ -55,9 +55,9 @@
             </div>
 
             <div class="flex justify-end gap-2">
-                <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition">Simpan</button>
+                <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition cursor-pointer">Simpan</button>
                 <a href="{{ route('kelola_anggota.kelola_anggota') }}"
-                    class="px-4 py-2 text-gray-600 hover:underline">
+                    class="px-4 py-2 text-gray-600 hover:underline cursor-pointer">
                     Kembali
                 </a>
             </div>

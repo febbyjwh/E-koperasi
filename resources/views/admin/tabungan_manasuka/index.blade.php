@@ -83,12 +83,60 @@
                             <td class="px-0 py-4 space-x-2">
                                 <a href="{{ route('tabungan_manasuka.edit', $tabungan->id) }}"
                                 class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Edit</a>
-                                <button 
-                                    type="button"
-                                    onclick="showModal('{{ route('tabungan_manasuka.destroy', $tabungan->id) }}')" 
-                                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+
+                                <button type="button"
+                                    onclick="showDeleteModal('{{ route('tabungan_manasuka.destroy', $tabungan->id) }}')"
+                                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium rounded-full text-sm px-4 py-1 cursor-pointer">
                                     Hapus
                                 </button>
+
+                                <!-- Modal -->
+                                <div id="deleteModal"
+                                    class="hidden fixed inset-0 z-50 flex items-center justify-center">
+                                    <!-- Overlay -->
+                                    <div
+                                        class="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300">
+                                    </div>
+
+                                    <!-- Konten Modal -->
+                                    <div
+                                        class="relative bg-white w-full max-w-sm mx-4 rounded-2xl shadow-xl transform transition-all duration-300 scale-95">
+                                        <div class="flex flex-col items-center p-6">
+                                            <!-- Icon Warning -->
+                                            <div
+                                                class="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.664 1.732-3L13.732 4a2 2 0 00-3.464 0L4.34 16c-.77 1.336.192 3 1.732 3z" />
+                                                </svg>
+                                            </div>
+
+                                            <!-- Judul -->
+                                            <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Tabungan Wajib?</h2>
+                                            <p class="text-sm text-gray-500 text-center mb-6">Tindakan ini tidak dapat
+                                                dibatalkan. Apakah Anda yakin ingin menghapus data ini?</p>
+
+                                            <!-- Tombol Aksi -->
+                                            <div class="flex space-x-3">
+                                                <button type="button" onclick="closeDeleteModal()"
+                                                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm font-medium cursor-pointer">
+                                                    Batal
+                                                </button>
+                                                <form id="deleteForm" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-semibold cursor-pointer">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </td>
                         </tr>
                     @endforeach
@@ -111,5 +159,19 @@
             </tbody>
         </table>
     </div>
+    <div class="mt-4">
+        {{ $tabunganManasuka->withQueryString()->links('vendor.pagination.tailwind') }}
+    </div>
 </div>
+
+<script>
+    function showDeleteModal(actionUrl) {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteForm').setAttribute('action', actionUrl);
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+</script>
 @endsection

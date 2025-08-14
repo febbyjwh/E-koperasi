@@ -41,7 +41,7 @@
                 </button>
 
                 <a href="{{ route('profile_admin.changepass') }}"
-                    class="cursor-pointer block w-full text-left px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm">
+                    class="cursor-pointer block w-full text-left px-4 py-2 bg-blue-100 rounded hover:bg-blue-200 text-sm">
                     🔐 Ganti Kata Sandi
                 </a>
 
@@ -50,10 +50,10 @@
                     🧑‍💼 Ganti Foto Profile
                 </a>
 
-                <button
+                {{-- <button
                     class="cursor-pointer w-full text-left px-4 py-2 bg-red-100 rounded hover:bg-red-200 text-sm text-red-700">
                     ❌ Hapus Akun Pengguna
-                </button>
+                </button> --}}
             </div>
         </div>
 

@@ -82,11 +82,11 @@
         {{-- Tombol --}}
         <div class="flex justify-end">
             <button type="submit"
-                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full">
+                class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full cursor-pointer">
                 Ajukan
             </button>
             <a href="{{ route('pengajuan_pinjaman.index') }}" 
-               class="px-4 py-2 text-gray-600 hover:underline">Batal
+               class="px-4 py-2 text-gray-600 hover:underline cursor-pointer">Batal
             </a>
         </div>
     </form>
