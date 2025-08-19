@@ -1,72 +1,38 @@
-<!-- Tambahkan di blade dashboard -->
-<div id="chart" class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow my-6"></div>
+<div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm mb-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        Jumlah Pinjaman per Jenis
+        <hr class="mt-2 h-0.5 bg-teal-300 border-0 dark:bg-teal-600 rounded-full">
+    </h2>
+    <div id="bar-pinjaman" style="height: 350px;"></div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    // Ambil data dari backend (Blade)
-    const pengajuanData = @json($pengajuanPerBulan);
-
-    const data = pengajuanData.map(item => {
-        return {
-            x: new Date(item.bulan + '-01').getTime(),
-            y: item.jumlah
-        };
-    });
-
-    const XAXISRANGE = 365 * 24 * 60 * 60 * 1000; // 1 tahun
-
-    var options = {
-        series: [{
-            data: data.slice()
-        }],
+document.addEventListener('DOMContentLoaded', function() {
+    var optionsPinjaman = {
         chart: {
-            id: 'realtime',
-            height: 350,
-            type: 'line',
-            animations: {
-                enabled: true,
-                easing: 'linear',
-                dynamicAnimation: {
-                    speed: 1000
-                }
-            },
-            toolbar: {
-                show: true
-            },
-            zoom: {
-                enabled: false
+            type: 'bar',
+            height: 350
+        },
+        series: [{
+            name: 'Jumlah Pinjaman',
+            data: [{{ $pinjamanBarang }}, {{ $pinjamanManasuka }}]
+        }],
+        xaxis: {
+            categories: ['Barang', 'Manasuka']
+        },
+        colors: ['#0d9488'],
+        plotOptions: {
+            bar: {
+                borderRadius: 5,
+                horizontal: false,
             }
         },
         dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth'
-        },
-        title: {
-            text: 'Tren Pengajuan Pinjaman per Bulan',
-            align: 'left'
-        },
-        markers: {
-            size: 4
-        },
-        xaxis: {
-            type: 'datetime',
-            labels: {
-                format: 'MMM yyyy'
-            },
-            range: XAXISRANGE
-        },
-        yaxis: {
-            title: {
-                text: 'Jumlah Pengajuan'
-            }
-        },
-        legend: {
-            show: false
-        },
+            enabled: true
+        }
     };
 
-    var chartView = new ApexCharts(document.querySelector("#chart"), options);
-    chartView.render();
+    var chartPinjaman = new ApexCharts(document.querySelector("#bar-pinjaman"), optionsPinjaman);
+    chartPinjaman.render();
+});
 </script>

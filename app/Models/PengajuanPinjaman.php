@@ -23,6 +23,7 @@ class PengajuanPinjaman extends Model
     'total_jasa',
     'cicilan_per_bulan',
     'tanggal_pengajuan',
+    'tanggal_dikonfirmasi',
     'status',
     ];
 

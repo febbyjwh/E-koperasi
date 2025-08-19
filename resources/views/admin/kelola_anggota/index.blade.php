@@ -46,9 +46,9 @@
                         <th class="px-6 py-3">Username</th>
                         <th class="px-6 py-3">Email</th>
                         <th class="px-6 py-3">No HP</th>
-                        <th class="px-6 py-3">Jenis Kelamin</th>
+                        {{-- <th class="px-6 py-3">Jenis Kelamin</th> --}}
                         <th class="px-6 py-3">Alamat</th>
-                        <th class="px-6 py-3">Tanggal Lahir</th>
+                        {{-- <th class="px-6 py-3">Tanggal Lahir</th> --}}
                         <th class="px-6 py-3">Tanggal Registrasi</th>
                         <th class="px-6 py-3">Aksi</th>
                     </tr>
@@ -62,16 +62,22 @@
                             <td class="px-6 py-4">{{ $user->username }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
                             <td class="px-6 py-4">{{ $user->no_hp ?? '-' }}</td>
-                            <td class="px-6 py-4">{{ $user->jenis_kelamin ?? '-' }}</td>
+                            {{-- <td class="px-6 py-4">{{ $user->jenis_kelamin ?? '-' }}</td> --}}
                             <td class="px-6 py-4">{{ $user->alamat ?? '-' }}</td>
-                            <td class="px-6 py-4">
+                            {{-- <td class="px-6 py-4">
                                 {{ $user->tanggal_lahir ? \Carbon\Carbon::parse($user->tanggal_lahir)->format('d M Y') : '-' }}
-                            </td>
+                            </td> --}}
                             <td class="px-6 py-4">
                                 {{ optional($user->created_at)->format('d M Y') ?? '-' }}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex flex-row justify-end space-x-2">
+
+                                    <a href="{{ route('kelola_anggota.show', $user->id) }}"
+                                        class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center">
+                                        Lihat
+                                    </a>
+
                                     <a href="{{ route('kelola_anggota.edit', $user->id) }}"
                                         class="text-white bg-green-700 hover:bg-green-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center dark:bg-green-600 dark:hover:bg-green-700">
                                         Edit
@@ -107,7 +113,8 @@
                                                 </div>
 
                                                 <!-- Judul -->
-                                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Anggota?</h2>
+                                                <h2 class="text-lg font-semibold text-gray-700 mb-2">Hapus Data Anggota?
+                                                </h2>
                                                 <p class="text-sm text-gray-500 text-center mb-6">Tindakan ini tidak dapat
                                                     dibatalkan. Apakah Anda yakin ingin menghapus data ini?</p>
 

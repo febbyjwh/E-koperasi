@@ -4,49 +4,49 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Modal;
+use App\Models\PengajuanPinjaman;
 use Illuminate\Support\Carbon;
 
 class ModalSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Modal masuk awal
+        $modalAwal = 300_000_000;
+
+        // 1. Simpan modal awal
         Modal::create([
             'user_id'    => 1, // ID admin
-            'tanggal'    => now()->toDateString(),
-            'jumlah'     => 200_000_000,
+            'tanggal'    => Carbon::create(2025, 6, 1)->toDateString(),
+            'jumlah'     => $modalAwal,
             'keterangan' => 'Modal awal koperasi',
             'sumber'     => 'investor',
             'status'     => 'masuk',
         ]);
 
-        // 2. Buat 30 data modal keluar total 175jt
-        $totalKeluar = 175_000_000;
-        $jumlahTransaksi = 30;
-        $sisa = $totalKeluar;
-        $keluarList = [];
+        // 2. Ambil semua pinjaman yang disetujui
+        $pinjamanDisetujui = PengajuanPinjaman::where('status', 'disetujui')->get();
 
-        // Bagi ke 30 bagian acak
-        for ($i = 0; $i < $jumlahTransaksi; $i++) {
-            $max = $sisa - ($jumlahTransaksi - $i - 1) * 3_000_000;
-            $min = 3_000_000;
-            $jumlah = $i === $jumlahTransaksi - 1 ? $sisa : rand($min, min(10_000_000, $max));
-            $keluarList[] = $jumlah;
-            $sisa -= $jumlah;
-        }
+        $totalKeluar = 0;
 
-        // 3. Simpan data modal keluar
-        foreach ($keluarList as $i => $jumlah) {
+        foreach ($pinjamanDisetujui as $pinjaman) {
             Modal::create([
-                'user_id'    => 1,
-                'tanggal'    => Carbon::now()->subDays(rand(1, 60))->toDateString(),
-                'jumlah'     => $jumlah,
-                'keterangan' => 'Penyaluran pinjaman ke anggota #' . ($i + 1),
-                'sumber'     => 'peminjaman',
-                'status'     => 'keluar',
+                'user_id'   => 1, // admin
+                'tanggal'   => $pinjaman->tanggal_dikonfirmasi ?? now(),
+                'jumlah'    => $pinjaman->jumlah ?? 0, // cegah null
+                'keterangan' => "Pencairan pinjaman ID #{$pinjaman->id} untuk anggota #{$pinjaman->user_id}",
+                'sumber'    => 'peminjaman',
+                'status'    => 'keluar',
             ]);
+
+            $totalKeluar += $pinjaman->jumlah_diterima;
         }
 
-        echo "Modal seeding selesai. Total modal keluar: Rp " . number_format($totalKeluar, 0, ',', '.') . "\n";
+        // 3. Hitung saldo akhir
+        $saldoAkhir = $modalAwal - $totalKeluar;
+
+        echo "✅ Modal seeding selesai.\n";
+        echo "Modal Awal: Rp " . number_format($modalAwal, 0, ',', '.') . "\n";
+        echo "Total Modal Keluar (pinjaman disetujui): Rp " . number_format($totalKeluar, 0, ',', '.') . "\n";
+        echo "Saldo Modal Akhir: Rp " . number_format($saldoAkhir, 0, ',', '.') . "\n";
     }
 }

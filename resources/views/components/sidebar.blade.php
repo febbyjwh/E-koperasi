@@ -146,15 +146,15 @@
             @elseif (auth()->check() && auth()->user()->role === 'anggota')
             <li>
                 <p class="uppercase text-xs text-gray-400 mb-4 tracking-wider">Homes</p>
-                <a href="{{ route('anggota.anggota') }}" @class([
+                <a href="{{ route('anggota.dashboard') }}" @class([
                     'flex items-center p-2 rounded-lg transition ease-in-out duration-500 group',
                     'text-gray-900 hover:text-teal-400 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700',
-                    'text-teal-400 bg-gray-100' => request()->routeIs('anggota.anggota'),
+                    'text-teal-400 bg-gray-100' => request()->routeIs('anggota.dashboard'),
                 ])>
                     <i @class([
                         'fas fa-chart-pie mr-3 transition duration-500',
                         'text-gray-500 dark:text-gray-400 group-hover:text-teal-400 dark:group-hover:text-white',
-                        'text-teal-400' => request()->routeIs('anggota.anggota'),
+                        'text-teal-400' => request()->routeIs('anggota.dashboard'),
                     ])></i>
                     <span class="ms-3">Dashboard</span>
                 </a>

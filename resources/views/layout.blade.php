@@ -64,9 +64,9 @@
             @yield('content')
 
             @if ($anggota)
-            <div @class(['block', 'md:hidden', 'sm:hidden'])>
+            {{-- <div @class(['block', 'md:hidden', 'sm:hidden'])>
                 @include('components.bottombar')
-            </div>
+            </div> --}}
             @endif
         </div>
     </div>

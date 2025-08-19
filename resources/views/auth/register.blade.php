@@ -69,7 +69,7 @@
 
             <div>
                 <button type="submit"
-                    class="bg-green-500 w-full text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                    class="bg-green-500 w-full text-white font-semibold py-2 px-4 rounded-lg transition duration-300 cursor-pointer">
                     Daftar
                 </button>
             </div>

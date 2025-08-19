@@ -3,7 +3,6 @@
 @section('title', 'Pengajuan Pinjaman')
 
 @section('content')
-@include('components.alert')
 
 <div class="p-4 bg-white rounded-2xl shadow-lg w-full">
     <div class="flex items-center justify-between mb-4">

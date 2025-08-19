@@ -23,8 +23,8 @@ class User extends Authenticatable
         'email',
         'no_hp',
         'alamat',
-        'jenis_kelamin',   
-        'tanggal_lahir', 
+        'jenis_kelamin',
+        'tanggal_lahir',
         'password',
         'role',
     ];
@@ -59,4 +59,8 @@ class User extends Authenticatable
         return $this->hasMany(TabManasuka::class, 'user_id');
     }
 
+    public function datadiri()
+    {
+        return $this->hasOne(\App\Models\Datadiri::class);
+    }
 }

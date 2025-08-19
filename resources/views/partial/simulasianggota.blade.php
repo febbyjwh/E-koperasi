@@ -1,28 +1,28 @@
-<div class="max-w-sm w-full bg-gray-900 rounded-lg shadow-sm p-4 md:p-6">
-    <h2 class="text-xl md:text-1xl font-semibold text-gray-100 mb-4">
+<div class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+    <h2 class="text-xl md:text-1xl font-semibold text-gray-900 dark:text-white mb-4">
         Simulasi Peminjaman
-        <hr class="mt-2 h-1 bg-teal-400 border-0 rounded-full">
+        <hr class="mt-2 h-1 bg-teal-300 border-0 dark:bg-teal-600 rounded-full">
     </h2>
     <div>
         <form class="w-full">
-            <label for="nominal" class="block mb-2 text-sm font-medium text-gray-200">
+            <label for="nominal" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Masukan Nominal:
             </label>
             <input type="number" id="nominal" value="1000000"
-                class="bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded-lg focus:ring-teal-400 focus:border-teal-400 block w-full p-2.5 dark:placeholder-gray-400"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="1.000.000" required>
 
-            <label for="tenor" class="block mt-4 mb-2 text-sm font-medium text-gray-200">
+            <label for="tenor" class="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Masukan Tenor:
             </label>
             <input type="number" id="tenor" value="5"
-                class="bg-gray-800 border border-gray-700 text-gray-100 text-sm rounded-lg focus:ring-teal-400 focus:border-teal-400 block w-full p-2.5 dark:placeholder-gray-400"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="5" required>
         </form>
     </div>
 
     <div class="mt-4">
-        <p id="total-semua" class="inline-flex items-center text-gray-400 leading-none font-normal">
+        <p id="total-semua" class="inline-flex items-center text-gray-500 dark:text-gray-400 leading-none font-normal">
             Jumlah uang yang harus dibayar
         </p>
     </div>
@@ -30,11 +30,11 @@
         <div class="grid gap-4 grid-cols-2">
             <!-- Kredit Manasuka -->
             <div>
-                <h5 class="inline-flex items-center text-gray-400 leading-none font-normal mb-2">
+                <h5 class="inline-flex items-center text-gray-500 dark:text-gray-400 leading-none font-normal mb-2">
                     Kredit Manasuka
                     <svg data-popover-target="kms-info" data-popover-placement="bottom"
-                        class="w-3 h-3 text-gray-400 hover:text-teal-400 cursor-pointer ms-1" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        class="w-3 h-3 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
+                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                     </svg>
@@ -55,16 +55,16 @@
                         <div data-popper-arrow></div>
                     </div>
                 </h5>
-                <p id="total-kms" class="text-gray-100 text-2xl leading-none font-bold">Rp0</p>
+                <p id="total-kms" class="text-gray-900 dark:text-white text-2xl leading-none font-bold">Rp0</p>
             </div>
 
             <!-- Kredit Barang -->
             <div>
-                <h5 class="inline-flex items-center text-gray-400 leading-none font-normal mb-2">
+                <h5 class="inline-flex items-center text-gray-500 dark:text-gray-400 leading-none font-normal mb-2">
                     Kredit Barang
                     <svg data-popover-target="barang-info" data-popover-placement="bottom"
-                        class="w-3 h-3 text-gray-400 hover:text-teal-400 cursor-pointer ms-1" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        class="w-3 h-3 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer ms-1"
+                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                     </svg>
@@ -84,14 +84,13 @@
                         <div data-popper-arrow></div>
                     </div>
                 </h5>
-                <p id="total-barang" class="text-gray-100 text-2xl leading-none font-bold">Rp0</p>
+                <p id="total-barang" class="text-gray-900 dark:text-white text-2xl leading-none font-bold">Rp0</p>
             </div>
         </div>
     </div>
 
     <div id="line-chart"></div>
 </div>
-
 
 <script>
     function hitungSimulasiPinjaman(nominal, tenor) {
@@ -169,17 +168,13 @@
                 categories,
                 labels: {
                     style: {
-                        fontFamily: "Inter, sans-serif",
-                        colors: '#ffffff'
+                        fontFamily: "Inter, sans-serif"
                     }
                 }
             },
             yaxis: {
                 labels: {
-                    formatter: (val) => `Rp${val.toLocaleString()}`,
-                    style: {
-                        colors: '#ffffff'
-                    }
+                    formatter: (val) => `Rp${val.toLocaleString()}`
                 }
             }
         };

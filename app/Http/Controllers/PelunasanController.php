@@ -6,7 +6,7 @@ use App\Models\Angsuran;
 use App\Models\PelunasanPinjaman;
 use App\Models\PengajuanPinjaman;
 use Illuminate\Http\Request;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class PelunasanController extends Controller
 {
     public function index(Request $request)
@@ -68,8 +68,8 @@ class PelunasanController extends Controller
     public function bayar(Request $request, $id)
     {
         // Bersihkan input dari format Rp dan titik
-        $jumlahBayar = preg_replace('/\D/', '', $request->jumlah_bayar);
-        $jumlahBayar = (int) $jumlahBayar; // integer
+        $jumlahBayar = floatval(str_replace(',', '', $request->jumlah_bayar));
+        $jumlahBayar = (int) $jumlahBayar;
 
         $pinjaman = Angsuran::with('peminjaman')->findOrFail($id);
         $pinjaman->update([
@@ -81,11 +81,14 @@ class PelunasanController extends Controller
         $jenis = $pinjaman->peminjaman->jenis_pinjaman;
 
         if ($jenis === 'barang') {
+            // dd($pelunasan->jumlah_dibayar, $jumlahBayar);
             $pelunasan->increment('jumlah_dibayar', $jumlahBayar);
+
             $sisaBaru = max($pelunasan->sisa_pinjaman - $jumlahBayar, 0);
             $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
         } elseif ($jenis === 'kms') {
             $pelunasan->increment('jumlah_dibayar', $jumlahBayar);
+
             $sisaBaru = max($pelunasan->sisa_pinjaman - $jumlahBayar, 0);
             $pelunasan->update(['sisa_pinjaman' => $sisaBaru]);
         }
@@ -288,12 +291,10 @@ class PelunasanController extends Controller
 
     public function invoice($id)
     {
-        // dd("masuk invoice");
         $pelunasan = Angsuran::with('peminjaman.user')->findOrFail($id);
 
         // Cek akses
         if (auth()->user()->role !== 'admin') {
-            // Anggota hanya bisa akses miliknya
             if (!$pelunasan->peminjaman || auth()->id() !== $pelunasan->peminjaman->user_id) {
                 abort(403, 'Unauthorized');
             }
@@ -302,6 +303,7 @@ class PelunasanController extends Controller
         $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
         $tanggal = $pelunasan->tanggal_bayar;
         $nama = optional(optional($pelunasan->peminjaman)->user)->name ?? '-';
+        $jenis_kredit = optional($pelunasan->peminjaman)->jenis_pinjaman ?? '-';
         $pokok = $pelunasan->pokok;
         $bunga = $pelunasan->bunga;
         $total_angsuran = $pelunasan->total_angsuran;
@@ -313,6 +315,7 @@ class PelunasanController extends Controller
             'invoiceId',
             'tanggal',
             'nama',
+            'jenis_kredit',
             'pokok',
             'bunga',
             'total_angsuran',
@@ -323,26 +326,78 @@ class PelunasanController extends Controller
 
     public function exportPdfInvoice($id)
     {
-        $pelunasan = PelunasanPinjaman::with(['pinjaman.user'])->findOrFail($id);
+        // Ambil data pelunasan dengan relasi peminjaman dan user
+        $pelunasan = PelunasanPinjaman::with('pinjaman.user')->findOrFail($id);
 
-        $invoiceId = 'INV-' . str_pad($pelunasan->id, 5, '0', STR_PAD_LEFT);
+        // Generate ID invoice
+        $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
+
+        // Data untuk PDF
         $tanggal = $pelunasan->tanggal_bayar;
-        $nama = $pelunasan->pinjaman->user->name;
+        $nama = optional(optional($pelunasan->pinjaman)->user)->name ?? '-';
+        $jenis_kredit = optional($pelunasan->pinjaman)->jenis_pinjaman ?? '-';
+        $pokok = $pelunasan->pokok;
+        $bunga = $pelunasan->bunga;
         $total_angsuran = $pelunasan->total_angsuran;
         $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
-        $keterangan = $pelunasan->keterangan ?? '-';
+        $keterangan = $pelunasan->keterangan ?? 'Pembayaran angsuran bulan ke-' . $pelunasan->bulan_ke;
 
+        // Load view invoice PDF
         $pdf = Pdf::loadView('admin.pelunasan_anggota.invoicepdf', compact(
             'pelunasan',
             'invoiceId',
             'tanggal',
             'nama',
-            'jumlah_dibayar',
+            'jenis_kredit',
+            'pokok',
+            'bunga',
+            'total_angsuran',
             'metode',
             'keterangan'
-        ));
+        ))->setPaper('a5', 'portrait');
 
-        return $pdf->download($invoiceId . '.pdf');
+        return $pdf->download('bukti-pelunasan-' . $pelunasan->id . '.pdf');
+    }
+
+    public function bukti($id)
+    {
+        $pelunasan = PelunasanPinjaman::with('pinjaman.user')->findOrFail($id);
+
+        if (auth()->user()->role !== 'admin') {
+            if (!$pelunasan->pinjaman || auth()->id() !== $pelunasan->pinjaman->user_id) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
+        $nama = optional($pelunasan->pinjaman->user)->name ?? '-';
+        $jumlahPinjaman = $pelunasan->pinjaman->jumlah ?? 0;
+        $jumlahDibayar = $pelunasan->jumlah_dibayar;
+        $sisaCicilan = $pelunasan->sisa_pokok;
+        $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
+        $tanggalPengajuan = $pelunasan->pinjaman->tanggal_pengajuan ?? '-';
+        $tanggalDikonfirmasi = $pelunasan->pinjaman->tanggal_dikonfirmasi ?? '-';
+        $tanggalBayar = $pelunasan->tanggal_bayar;
+        $status = $pelunasan->status;
+        $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
+
+        return view('admin.pelunasan_anggota.bukti', compact(
+            'pelunasan',
+            'invoiceId',
+            'nama',
+            'jumlahPinjaman',
+            'jumlahDibayar',
+            'sisaCicilan',
+            'metode',
+            'tanggalPengajuan',
+            'tanggalDikonfirmasi',
+            'tanggalBayar',
+            'status'
+        ));
+    }
+
+    public function exportPdfbukti()
+    {
+        return view('admin.pelunsan_anggota.bukti');
     }
 
     public function destroy($id)

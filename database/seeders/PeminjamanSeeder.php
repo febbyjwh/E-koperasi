@@ -3,98 +3,57 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\PengajuanPinjaman;
+use App\Models\Modal;
+use Faker\Factory as Faker;
 use Illuminate\Support\Carbon;
 
 class PeminjamanSeeder extends Seeder
 {
     public function run(): void
     {
-        $anggota = User::where('role', 'anggota')->get();
-        $totalPinjaman = 0;
-        $maxTotal = 175_000_000;
+        $faker = Faker::create('id_ID');
+        $anggotaIds = range(2, 10); // contoh user anggota mulai dari id 2
+        $totalPinjaman = 20;
 
-        $approvedCount = 0;
-        $pendingCount = 0;
-        $juliCount = 0;
-        $agustusCount = 0;
+        foreach (range(1, $totalPinjaman) as $i) {
+            $userId = $anggotaIds[array_rand($anggotaIds)];
+            $jumlah = rand(5_000_000, 20_000_000);
+            $lama = [6, 12, 24][array_rand([6, 12, 24])];
+            $jenis = rand(0, 1) ? 'barang' : 'kms';
 
-        $i = 0;
-        while ($i < 30) {
-            $user = $anggota->random();
-            $jumlah = rand(3, 10) * 1_000_000;
-            $tenor = rand(3, 18);
-            $jenis = ['barang', 'kms'][rand(0, 1)];
+            // 3 data pending, sisanya disetujui
+            $status = $i <= 3 ? 'pending' : 'disetujui';
 
-            $propisi = $jumlah * 0.02;
-            $totalJasa = 0;
+            $tanggalPengajuan   = Carbon::now()->subDays(rand(10, 90));
+            $tanggalKonfirmasi  = $status === 'disetujui'
+                ? $tanggalPengajuan->copy()->addDays(rand(1, 5))
+                : null;
 
-            if ($jenis === 'barang') {
-                $jasaFlat = $jumlah * 0.02;
-                $totalJasa = $jasaFlat * $tenor;
-            } else {
-                $pokokBulanan = $jumlah / $tenor;
-                $sisaPokok = $jumlah;
-                for ($j = 1; $j <= $tenor; $j++) {
-                    $jasaBulan = $sisaPokok * 0.025;
-                    $totalJasa += $jasaBulan;
-                    $sisaPokok -= $pokokBulanan;
-                }
-            }
-
-            $jumlahDiterima = $jenis === 'barang' ? $jumlah - $propisi : $jumlah;
-            $jumlahHarusDibayar = $jumlah + $totalJasa;
-
-            // Tentukan tanggal pengajuan
-            if ($juliCount < 15) {
-                $bulan = 7;
-                $juliCount++;
-            } else {
-                $bulan = 8;
-                $agustusCount++;
-            }
-            $tanggalPengajuan = Carbon::create(2025, $bulan, rand(1, 28));
-
-            // Tentukan status dan cek plafon hanya untuk disetujui
-            if ($i >= 28) {
-                $status = 'pending';
-                $tanggalDikonfirmasi = null;
-                $pendingCount++;
-            } else {
-                if ($totalPinjaman + $jumlah > $maxTotal) {
-                    continue; // Skip dan coba jumlah baru
-                }
-
-                $status = 'disetujui';
-                $tanggalDikonfirmasi = $tanggalPengajuan->copy()->addDays(rand(1, 3));
-                $approvedCount++;
-                $totalPinjaman += $jumlah;
-            }
-
-            PengajuanPinjaman::create([
-                'user_id'               => $user->id,
-                'jumlah'                => $jumlah,
-                'lama_angsuran'         => $tenor,
-                'tujuan'                => fake()->sentence(3),
-                'jenis_pinjaman'        => $jenis,
-                'potongan_propisi'      => $propisi,
-                'jumlah_diterima'       => $jumlahDiterima,
-                'jumlah_harus_dibayar'  => $jumlahHarusDibayar,
-                'total_jasa'            => $totalJasa,
-                'cicilan_per_bulan'     => null,
-                'tanggal_pengajuan'     => $tanggalPengajuan->toDateString(),
-                'tanggal_dikonfirmasi'  => $tanggalDikonfirmasi?->toDateString(),
-                'status'                => $status,
+            $pinjaman = PengajuanPinjaman::create([
+                'user_id'   => $userId,
+                'jumlah'    => $faker->numberBetween(1000000, 20000000), // wajib angka
+                'lama_angsuran' => $faker->randomElement([6, 12, 24]),
+                'jenis_pinjaman' => 'kms',
+                'tujuan'    => $faker->sentence(3),
+                'status'    => 'disetujui',
+                'tanggal_pengajuan' => now()->subDays(rand(1, 30)),
+                'tanggal_dikonfirmasi' => now(),
             ]);
 
-            $i++;
+            // kalau status disetujui → kurangi modal
+            if ($status === 'disetujui') {
+                Modal::create([
+                    'user_id'    => 1, // admin
+                    'tanggal'    => $tanggalKonfirmasi,
+                    'jumlah'     => $jumlah,
+                    'keterangan' => "Penyaluran pinjaman ID #{$pinjaman->id} ke anggota #{$userId}",
+                    'sumber'     => 'peminjaman',
+                    'status'     => 'keluar',
+                ]);
+            }
         }
 
-        // echo "✅ Seeder selesai.\n";
-        echo "Disetujui: $approvedCount\n";
-        echo "Pending: $pendingCount\n";
-        echo "Juli: $juliCount, Agustus: $agustusCount\n";
-        echo "Total pinjaman: Rp " . number_format($totalPinjaman, 0, ',', '.') . "\n";
+        echo "✅ Seeder Pengajuan Pinjaman selesai. (Disetujui otomatis kurangi modal)\n";
     }
 }

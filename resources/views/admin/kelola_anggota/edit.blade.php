@@ -45,7 +45,7 @@
                 required>{{ old('alamat', $anggota->alamat) }}</textarea>
         </div>
 
-        <div class="mb-4">
+        {{-- <div class="mb-4">
             <label for="jenis_kelamin" class="block text-gray-700 font-medium mb-2">Jenis Kelamin</label>
             <select name="jenis_kelamin" id="jenis_kelamin"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5" required>
@@ -59,7 +59,7 @@
             <label for="tanggal_lahir" class="block text-gray-700 font-medium mb-2">Tanggal Lahir</label>
             <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $anggota->tanggal_lahir) }}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5" required>
-        </div>
+        </div> --}}
 
         <div class="flex justify-end gap-2">
             <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-full cursor-pointer">Perbaharui</button>

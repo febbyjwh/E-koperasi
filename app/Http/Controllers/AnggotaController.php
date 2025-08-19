@@ -19,12 +19,12 @@ class AnggotaController extends Controller
         if ($request->has('search') && $request->search != '') {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('username', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
+                    ->orWhere('username', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
             });
         }
 
-        $anggota = $query->latest()->paginate(10); 
+        $anggota = $query->latest()->paginate(10);
 
         return view('admin.kelola_anggota.index', compact('anggota'));
     }
@@ -60,7 +60,7 @@ class AnggotaController extends Controller
         ]);
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('pesan', 'Anggota berhasil ditambahkan.');
+            ->with('pesan', 'Anggota berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -94,7 +94,7 @@ class AnggotaController extends Controller
         ]);
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('edit', 'Data anggota berhasil diperbarui.');
+            ->with('edit', 'Data anggota berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -103,7 +103,7 @@ class AnggotaController extends Controller
         $anggota->delete();
 
         return redirect()->route('kelola_anggota.kelola_anggota')
-                         ->with('hapus', 'Data anggota berhasil dihapus.');
+            ->with('hapus', 'Data anggota berhasil dihapus.');
     }
 
     public function index_anggota()
@@ -113,42 +113,44 @@ class AnggotaController extends Controller
             ->latest()
             ->first();
 
-        $pelunasan = null;
-
+        $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pengajuan->id)->where('user_id', Auth::id())->latest()->first();
+        // dd($pelunasan->status);
+        $sisaCicilan = 0;
         if ($pengajuan) {
-            $pelunasan = PelunasanPinjaman::where('user_id', Auth::id())
-                ->where('pinjaman_id', $pengajuan->id)
+            $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
                 ->latest()
                 ->first();
 
-            if ($pelunasan && $pelunasan->status === 'lunas') {
-                return view('anggota.index', [
-                    'pengajuan' => null,
-                    'pelunasan' => null
-                ]);
+            // Hitung sisa cicilan kalau pinjaman masih berjalan
+            if ($pelunasan && $pelunasan->status !== 'lunas') {
+                $totalPinjaman = $pengajuan->jumlah_diterima;
+                // dd($totalPinjaman);
+                $totalDibayar = $pelunasan
+                    ->sum('jumlah_dibayar');
+
+                $sisaCicilan = $totalPinjaman - $totalDibayar;
+                // dd($sisaCicilan);                
             }
         }
 
-        if ($pengajuan || $pelunasan) {
-            return view('anggota.index', compact('pengajuan', 'pelunasan'));
-        }
-
-        return view('anggota.index', [
-            'pengajuan' => null,
-            'pelunasan' => null
-        ]);
+        return view('anggota.index', compact('pengajuan', 'pelunasan', 'sisaCicilan'));
     }
 
-
-    public function profile(){
+    public function profile()
+    {
         $user = auth()->user();
         return view('anggota.profile_anggota.index', compact('user'));
     }
 
-    public function identitas(){
+    public function identitas()
+    {
         $user = auth()->user();
         $anggota = Datadiri::where('user_id', $user->id)->first();
         return view('anggota.profile_anggota.identitas', compact('user', 'anggota'));
     }
 
+    public function dashboard()
+    {
+        return $this->index_anggota();
+    }
 }

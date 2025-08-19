@@ -38,7 +38,7 @@
                 <label for="alamat" class="block text-gray-700 font-medium mb-2">Alamat</label>
                 <textarea name="alamat" id="alamat" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500" required></textarea>
             </div>
-            <div class="mb-4">
+            {{-- <div class="mb-4">
                 <label for="jenis_kelamin" class="block text-gray-700 font-medium mb-2">Jenis Kelamin</label>
                 <select name="jenis_kelamin" id="jenis_kelamin"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500"
@@ -52,7 +52,7 @@
                 <label for="tanggal_lahir" class="block text-gray-700 font-medium mb-2">Tanggal Lahir</label>
                 <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                     class="shadow-xs bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-teal-500 dark:focus:border-teal-500 dark:shadow-xs-light" required>
-            </div>
+            </div> --}}
 
             <div class="flex justify-end gap-2">
                 <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition cursor-pointer">Simpan</button>

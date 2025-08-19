@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Bukti Cicilan Pinjaman')
+@section('title', 'Bukti Pelunasan Pinjaman')
 
 @section('content')
     <div class="w-full max-w-3xl mx-auto p-4">
@@ -35,12 +35,12 @@
                     <div>
                         <span class="block text-xs uppercase text-gray-500 dark:text-neutral-500">Jumlah Dibayar:</span>
                         <span
-                            class="block text-sm font-medium text-gray-800 dark:text-neutral-200">Rp{{ number_format($total_angsuran, 2, ',', '.') }}</span>
+                            class="block text-sm font-medium text-gray-800 dark:text-neutral-200">Rp{{ number_format($jumlahDibayar, 2, ',', '.') }}</span>
                     </div>
                     <div>
                         <span class="block text-xs uppercase text-gray-500 dark:text-neutral-500">Tanggal:</span>
                         <div class="text-sm font-medium text-gray-800 dark:text-neutral-200">
-                            <span>{{ \Carbon\Carbon::parse($tanggal)->format('d M Y') }}</span><br>
+                            <span>{{ \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('d M Y') }}</span>
                             {{-- <span class="text-xs text-gray-500 dark:text-neutral-400">Jam:
                                 {{ \Carbon\Carbon::parse($tanggal)->format('H:i') }}</span> --}}
                         </div>
@@ -55,35 +55,41 @@
                 <div class="mt-5 sm:mt-10">
                     <h4 class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">Rincian</h4>
                     <ul class="mt-3 flex flex-col">
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-                            <span>Nama Peminjam</span>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Nama Anggota</span>
                             <span>{{ $nama }}</span>
                         </li>
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-                            <span>Jenis Kredit</span>
-                            <span>{{ $jenis_kredit }}</span>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Jumlah Pinjaman</span>
+                            <span>Rp{{ number_format($jumlahPinjaman, 2, ',', '.') }}</span>
                         </li>
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-                            <span>Pokok</span>
-                            <span>Rp{{ number_format($pokok, 2, ',', '.') }}</span>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Jumlah Dibayar</span>
+                            Rp{{ number_format($jumlahDibayar, 2, ',', '.') }}
                         </li>
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-                            <span>Bunga</span>
-                            <span>Rp{{ number_format($bunga, 2, ',', '.') }}</span>
+                        {{-- <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Sisa Cicilan</span>
+                            <span>Rp{{ number_format($sisaCicilan, 2, ',', '.') }}</span>
+                        </li> --}}
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Metode Pembayaran</span>
+                            <span>{{ $metode }}</span>
                         </li>
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm border border-gray-200 dark:border-neutral-700">
-                            <span>Keterangan</span>
-                            <span>{{ $keterangan }}</span>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Tanggal Pengajuan</span>
+                            <span>{{ \Carbon\Carbon::parse($tanggalPengajuan)->format('d M Y') }}</span>
                         </li>
-                        <li
-                            class="inline-flex items-center justify-between py-3 px-4 text-sm font-semibold bg-gray-50 border border-gray-200 dark:bg-neutral-800 dark:border-neutral-700">
-                            <span>Total Angsuran</span>
-                            <span>Rp{{ number_format($total_angsuran, 2, ',', '.') }}</span>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Tanggal Dikonfirmasi</span>
+                            <span>{{ \Carbon\Carbon::parse($tanggalDikonfirmasi)->format('d M Y') }}</span>
+                        </li>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Tanggal Dibayar</span>
+                            <span>{{ \Carbon\Carbon::parse($tanggalBayar)->format('d M Y H:i') }}</span>
+                        </li>
+                        <li class="inline-flex justify-between py-2 px-4 border">
+                            <span>Status</span>
+                            <span>{{ ucfirst($status) }}</span>
                         </li>
                     </ul>
                 </div>
@@ -100,11 +106,6 @@
                         class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-blue-700 text-white shadow-2xs hover:bg-blue-500 dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
                         Bukti PDF
                     </a> --}}
-
-                    <a href="{{ route('pelunasan_anggota.invoicepdf', $pelunasan->id) }}"
-                        class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center dark:bg-gray-600 dark:hover:bg-gray-700">
-                        Bukti PDF
-                    </a>
                 </div>
 
                 <div class="mt-5 sm:mt-10">

@@ -64,6 +64,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/{id}/edit', [AnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [AnggotaController::class, 'update'])->name('update');
         Route::delete('/{id}', [AnggotaController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/show', [AnggotaController::class, 'show'])->name('show');
     });
 
     // Tabungan Wajib
@@ -95,8 +96,13 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::post('/{id}/bayar', [PelunasanController::class, 'bayar'])->name('bayar');
         Route::get('/{id}/edit', [PelunasanController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PelunasanController::class, 'update'])->name('update');
+        /// bukti cicilan
         Route::get('/{id}/invoice', [PelunasanController::class, 'invoice'])->name('invoice');
         Route::get('/{id}/invoicepdf', [PelunasanController::class, 'exportPdfInvoice'])->name('invoicepdf');
+        // bukti pelunasan akhir
+        Route::get('/{id}/bukti', [PelunasanController::class, 'bukti'])->name('bukti');
+        Route::get('/{id}/buktipdf', [PelunasanController::class, 'exportPdfbukti'])->name('buktipdf');
+
         Route::delete('/{id}', [PelunasanController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/konfirmasi', [PelunasanController::class, 'konfirmasi'])->name('konfirmasi');
     });
@@ -138,13 +144,13 @@ Route::middleware(['isAdmin'])->group(function () {
 Route::middleware(['isAnggota'])->group(function () {
     Route::prefix('anggota')->name('anggota.')->group(function () {
         Route::get('/home', [AnggotaController::class, 'index_anggota'])->name('anggota');
+        Route::get('/dashboard', [AnggotaController::class, 'dashboard'])->name('dashboard');
     });
 
     Route::prefix('profile_anggota')->name('profile_anggota.')->group(function () {
         Route::get('/', [AnggotaController::class, 'profile'])->name('profile');
         Route::get('/identitas', [AnggotaController::class, 'identitas'])->name('identitas');
-        Route::post('/datadiri', [DatadiriController::class, 'store'])
-        ->name('datadiri.store');
+        Route::post('/datadiri', [DatadiriController::class, 'store'])->name('datadiri.store');
         Route::post('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
     });
 

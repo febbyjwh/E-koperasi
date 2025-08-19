@@ -36,27 +36,27 @@ class UserSeeder extends Seeder
         }
 
         // Tambah 28 anggota lagi
-        for ($i = 2; $i <= 30; $i++) {
-            $email = "anggota{$i}@koperasi.com";
+        // for ($i = 2; $i <= 30; $i++) {
+        //     $email = "anggota{$i}@koperasi.com";
 
-            // Hindari duplikat email
-            if (User::where('email', $email)->exists()) {
-                continue;
-            }
+        //     // Hindari duplikat email
+        //     if (User::where('email', $email)->exists()) {
+        //         continue;
+        //     }
 
-            User::create([
-                'name' => "Anggota {$i}",
-                'username' => "anggota{$i}",
-                'email' => $email,
-                'no_hp' => '08' . rand(1000000000, 9999999999),
-                'alamat' => "Jl. Anggota No. {$i}",
-                'jenis_kelamin' => $i % 2 == 0 ? 'Perempuan' : 'Laki-laki',
-                'tanggal_lahir' => now()->subYears(rand(20, 35))->format('Y-m-d'),
-                'email_verified_at' => now(),
-                'role' => 'anggota',
-                'password' => Hash::make('password'),
-                'remember_token' => Str::random(10),
-            ]);
-        }
+        //     User::create([
+        //         'name' => "Anggota {$i}",
+        //         'username' => "anggota{$i}",
+        //         'email' => $email,
+        //         'no_hp' => '08' . rand(1000000000, 9999999999),
+        //         'alamat' => "Jl. Anggota No. {$i}",
+        //         'jenis_kelamin' => $i % 2 == 0 ? 'Perempuan' : 'Laki-laki',
+        //         'tanggal_lahir' => now()->subYears(rand(20, 35))->format('Y-m-d'),
+        //         'email_verified_at' => now(),
+        //         'role' => 'anggota',
+        //         'password' => Hash::make('password'),
+        //         'remember_token' => Str::random(10),
+        //     ]);
+        // }
     }
 }

@@ -77,65 +77,67 @@ class LaporanController extends Controller
     {
         $periode = $request->input('periode', now()->format('Y-m'));
         $periodeCarbon = Carbon::createFromFormat('Y-m', $periode);
-        $start = $periodeCarbon->copy()->startOfMonth();
-        $end = $periodeCarbon->copy()->endOfMonth();
+        $start = $periodeCarbon->copy()->startOfMonth()->startOfDay();
+        $end = $periodeCarbon->copy()->endOfMonth()->endOfDay();
 
-        // Saldo Kas Awal: semua kas masuk - kas keluar SEBELUM periode
-        $kasMasukSebelumnya = TabWajib::where('created_at', '<', $periodeCarbon)->sum('nominal')
-            + TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
-            + PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
-            + Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga');
+        $kasMasukSebelumnya = TabWajib::where('created_at', '<', $start)->sum('nominal')
+            + TabManasuka::where('created_at', '<', $start)->sum('nominal_masuk')
+            + PelunasanPinjaman::where('created_at', '<', $start)->sum('jumlah_dibayar')
+            + Angsuran::where('tanggal_bayar', '<', $start)->sum('bunga');
 
-        $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
-            + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)->where('status', 'disetujui')->sum('jumlah_diterima');
+        $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $start)->sum('nominal_keluar')
+            + PengajuanPinjaman::where('created_at', '<', $start)->where('status', 'disetujui')->sum('jumlah_diterima');
 
         $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
+        $pelunasanPokok = 0;
 
-        // Kas Masuk PERIODE INI
+        PelunasanPinjaman::whereBetween('created_at', [$start, $end])->get()->each(function ($p) use (&$pelunasanPokok, $start, $end) {
+            $bunga = Angsuran::where('pinjaman_id', $p->pinjaman_id)
+                ->whereBetween('tanggal_bayar', [$start, $end])
+                ->sum('bunga');
+
+            $pelunasanPokok += $p->jumlah_dibayar - $bunga;
+        });
+
         $kasMasuk = [
             [
                 'keterangan' => 'Setoran Simpanan Wajib',
-                'jumlah' => TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])->sum('nominal')
+                'jumlah' => TabWajib::whereBetween('created_at', [$start, $end])->sum('nominal')
             ],
             [
                 'keterangan' => 'Setoran Simpanan Sukarela (net)',
-                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])
+                'jumlah' => TabManasuka::whereBetween('created_at', [$start, $end])
                     ->select(DB::raw('SUM(CAST(nominal_masuk AS SIGNED) - CAST(nominal_keluar AS SIGNED)) as total'))
-                    ->value('total')
+                    ->value('total') ?? 0
             ],
             [
-                'keterangan' => 'Pelunasan Pinjaman',
-                'jumlah' => PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])->sum('jumlah_dibayar')
+                'keterangan' => 'Pelunasan Pinjaman (Pokok)',
+                'jumlah' => $pelunasanPokok,
             ],
             [
                 'keterangan' => 'Bunga Pinjaman (SHU)',
-                'jumlah' => Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])->sum('bunga')
+                'jumlah' => Angsuran::whereBetween('tanggal_bayar', [$start, $end])->sum('bunga')
             ],
         ];
 
-        // Kas Keluar PERIODE INI
         $kasKeluar = [
             [
                 'keterangan' => 'Pencairan Pinjaman',
                 'jumlah' => PengajuanPinjaman::where('status', 'disetujui')
-                    ->whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])
+                    ->whereBetween('created_at', [$start, $end])
                     ->sum('jumlah_diterima')
             ],
+            // Hanya hitung penarikan sukarela yang
             [
                 'keterangan' => 'Penarikan Simpanan Sukarela',
-                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeCarbon->copy()->endOfMonth()])
-                    ->sum('nominal_keluar')
+                'jumlah' => 0 // sudah net di kas masuk, bisa dihapus atau ditampilkan 0
             ],
         ];
 
-        // Total
         $totalKasMasuk = collect($kasMasuk)->sum('jumlah');
         $totalKasKeluar = collect($kasKeluar)->sum('jumlah');
-
-        // Kenaikan kas bersih = masuk - keluar
         $kasBersih = $totalKasMasuk - $totalKasKeluar;
 
-        // Saldo Kas Akhir
         $saldoKas = $saldoKasAwal + $kasBersih;
 
         return view('admin.laporan.arus_kas', compact(
@@ -268,106 +270,120 @@ class LaporanController extends Controller
         return Excel::download(new NeracaExport($data), 'laporan_neraca.xlsx');
     }
 
-
     public function exportExcelArusKas(Request $request)
     {
         $periode = $request->input('periode', now()->format('Y-m'));
         $periodeCarbon = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
         $periodeAkhir = $periodeCarbon->copy()->endOfMonth();
 
+        // SALDO KAS AWAL
         $kasMasukSebelumnya = TabWajib::where('created_at', '<', $periodeCarbon)->sum('nominal')
-            + TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
-            + PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
+            + (TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
+                - TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar'))
+            + (PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
+                - Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga'))
             + Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga');
 
-        $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
-            + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)
-            ->where('status', 'disetujui')->sum('jumlah_diterima');
+        $kasKeluarSebelumnya = PengajuanPinjaman::where('status', 'disetujui')
+            ->where('created_at', '<', $periodeCarbon)->sum('jumlah_diterima');
 
         $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
 
+        // KAS MASUK PERIODE
         $kasMasuk = [
             ['Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
-            ['Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
-            ['Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
+            [
+                'Setoran Simpanan Sukarela (net)',
+                TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')
+                    - TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')
+            ],
+            [
+                'Pelunasan Pinjaman (Pokok)',
+                PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')
+                    - Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')
+            ],
             ['Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
         ];
         $totalKasMasuk = array_sum(array_column($kasMasuk, 1));
 
+        // KAS KELUAR PERIODE
         $kasKeluar = [
             ['Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
                 ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_diterima')],
-            ['Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
+            // Penarikan Simpanan Sukarela sudah masuk net di kas masuk, bisa tetap dimunculkan kosong
+            ['Penarikan Simpanan Sukarela', 0],
         ];
         $totalKasKeluar = array_sum(array_column($kasKeluar, 1));
 
+        // Kenaikan kas bersih
         $kasBersih = $totalKasMasuk - $totalKasKeluar;
+
+        // Saldo kas akhir
         $saldoKas = $saldoKasAwal + $kasBersih;
 
         $data = [
             ['Kategori', 'Keterangan', 'Jumlah (Rp)'],
             ['Kas Masuk', '', ''],
-            ['', 'Setoran Simpanan Wajib', TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal')],
-            ['', 'Setoran Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')],
-            ['', 'Pelunasan Pinjaman', PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')],
-            ['', 'Bunga Pinjaman (SHU)', Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga')],
+            ['', 'Setoran Simpanan Wajib', $kasMasuk[0][1]],
+            ['', 'Setoran Simpanan Sukarela (net)', $kasMasuk[1][1]],
+            ['', 'Pelunasan Pinjaman (Pokok)', $kasMasuk[2][1]],
+            ['', 'Bunga Pinjaman (SHU)', $kasMasuk[3][1]],
             ['Total Kas Masuk', '', $totalKasMasuk],
             ['Kas Keluar', '', ''],
-            ['', 'Pencairan Pinjaman', PengajuanPinjaman::where('status', 'disetujui')
-                ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_diterima')],
-            ['', 'Penarikan Simpanan Sukarela', TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar')],
+            ['', 'Pencairan Pinjaman', $kasKeluar[0][1]],
+            ['', 'Penarikan Simpanan Sukarela', $kasKeluar[1][1]],
             ['Total Kas Keluar', '', $totalKasKeluar],
             ['Kenaikan Kas Bersih', '', $kasBersih],
             ['Saldo Kas Awal', '', $saldoKasAwal],
             ['Saldo Kas Akhir', '', $saldoKas],
         ];
 
-        // Export
         return Excel::download(new ArusKasExport($data), 'laporan_ArusKas_' . $periode . '.xlsx');
     }
 
-
     public function exportPdfArusKas(Request $request)
     {
-        $periode = $request->input('periode', now()->format('Y-m')); // default bulan ini
+        $periode = $request->input('periode', now()->format('Y-m'));
         $periodeCarbon = Carbon::createFromFormat('Y-m', $periode)->startOfMonth();
         $periodeAkhir = $periodeCarbon->copy()->endOfMonth();
 
-        // Saldo Kas Awal = total masuk - total keluar sebelum periode
+        // SALDO KAS AWAL (net sebelum periode)
         $kasMasukSebelumnya = TabWajib::where('created_at', '<', $periodeCarbon)->sum('nominal')
-            + TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
-            + PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
+            + (TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_masuk')
+                - TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar'))
+            + (PelunasanPinjaman::where('created_at', '<', $periodeCarbon)->sum('jumlah_dibayar')
+                - Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga'))
             + Angsuran::where('tanggal_bayar', '<', $periodeCarbon)->sum('bunga');
 
-        $kasKeluarSebelumnya = TabManasuka::where('created_at', '<', $periodeCarbon)->sum('nominal_keluar')
-            + PengajuanPinjaman::where('created_at', '<', $periodeCarbon)
-            ->where('status', 'disetujui')->sum('jumlah_diterima');
+        $kasKeluarSebelumnya = PengajuanPinjaman::where('status', 'disetujui')
+            ->where('created_at', '<', $periodeCarbon)->sum('jumlah_diterima');
 
         $saldoKasAwal = $kasMasukSebelumnya - $kasKeluarSebelumnya;
 
-        // Kas Masuk periode ini
+        // KAS MASUK PERIODE
         $kasMasuk = collect([
             [
                 'keterangan' => 'Setoran Simpanan Wajib',
                 'jumlah' => TabWajib::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal'),
             ],
             [
-                'keterangan' => 'Setoran Simpanan Sukarela',
-                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk'),
+                'keterangan' => 'Setoran Simpanan Sukarela (net)',
+                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_masuk')
+                    - TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('nominal_keluar'),
             ],
             [
-                'keterangan' => 'Pelunasan Pinjaman',
-                'jumlah' => PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar'),
+                'keterangan' => 'Pelunasan Pinjaman (Pokok)',
+                'jumlah' => PelunasanPinjaman::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])->sum('jumlah_dibayar')
+                    - Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga'),
             ],
             [
                 'keterangan' => 'Bunga Pinjaman (SHU)',
                 'jumlah' => Angsuran::whereBetween('tanggal_bayar', [$periodeCarbon, $periodeAkhir])->sum('bunga'),
             ],
         ]);
-
         $totalKasMasuk = $kasMasuk->sum('jumlah');
 
-        // Kas Keluar periode ini
+        // KAS KELUAR PERIODE
         $kasKeluar = collect([
             [
                 'keterangan' => 'Pencairan Pinjaman',
@@ -375,13 +391,12 @@ class LaporanController extends Controller
                     ->whereBetween('created_at', [$periodeCarbon, $periodeAkhir])
                     ->sum('jumlah_diterima'),
             ],
+            // Penarikan Simpanan Sukarela sudah masuk net, bisa tetap ditampilkan 0
             [
                 'keterangan' => 'Penarikan Simpanan Sukarela',
-                'jumlah' => TabManasuka::whereBetween('created_at', [$periodeCarbon, $periodeAkhir])
-                    ->sum('nominal_keluar'),
+                'jumlah' => 0,
             ],
         ]);
-
         $totalKasKeluar = $kasKeluar->sum('jumlah');
 
         // Kenaikan kas bersih
@@ -390,7 +405,6 @@ class LaporanController extends Controller
         // Saldo kas akhir
         $saldoKas = $saldoKasAwal + $kasBersih;
 
-        // PDF Export
         $pdf = Pdf::loadView('admin.laporan.aruskaspdf', [
             'kasMasuk' => $kasMasuk,
             'totalKasMasuk' => $totalKasMasuk,
