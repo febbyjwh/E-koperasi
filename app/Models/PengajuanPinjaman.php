@@ -37,4 +37,9 @@ class PengajuanPinjaman extends Model
         return $this->hasMany(PelunasanPinjaman::class, 'pinjaman_id');
     }
 
+    public function angsurans()
+    {
+        return $this->hasMany(Angsuran::class, 'pinjaman_id');
+    }        
+
 }

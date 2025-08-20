@@ -53,11 +53,13 @@
             <div class="flex items-center justify-center sm:text-center h-5 sm:h-7 mt-2">
                 @php
                     $pelunasan = $pengajuan?->pelunasan?->last();
-                    $sisa = $pelunasan?->sisa_pinjaman ?? $pengajuan->jumlah_diterima;
+                    $sisa = $pelunasan?->sisa_pinjaman ?? ($pengajuan?->jumlah_diterima ?? 0);
                 @endphp
+
                 <p class="text-lg sm:text-3xl font-bold">
                     Rp {{ number_format($sisa, 0, ',', '.') }}
                 </p>
+
 
             </div>
         </div>

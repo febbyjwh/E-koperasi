@@ -19,7 +19,8 @@ return new class extends Migration
                 $table->decimal('sisa_pinjaman', 15, 2);
                 $table->date('tanggal_pengajuan')->nullable();
                 $table->date('tanggal_dikonfirmasi')->nullable();
-                $table->datetime('tanggal_bayar')->nullable()->change();
+                // $table->datetime('tanggal_bayar')->nullable()->change();
+                $table->datetime('tanggal_bayar')->nullable();
                 $table->text('tengat')->nullable();
                 $table->string('metode_pembayaran')->default('tunai');
                 $table->foreignId('admin_id')->nullable()->constrained('users')->onDelete('set null');

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Angsuran;
 use App\Models\Datadiri;
 use App\Models\PelunasanPinjaman;
 use App\Models\PengajuanPinjaman;
+use App\Models\TabManasuka;
+use App\Models\TabWajib;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class AnggotaController extends Controller
 {
@@ -108,33 +112,82 @@ class AnggotaController extends Controller
 
     public function index_anggota()
     {
+        // Carbon::setTestNow(Carbon::create(2025, 10, 20)); // ini buat ngecek bulan depan 
         $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
             ->where('status', 'disetujui')
             ->latest()
             ->first();
 
-        $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pengajuan->id)->where('user_id', Auth::id())->latest()->first();
-        // dd($pelunasan->status);
         $sisaCicilan = 0;
+        $progress = 0;
+        $bulanPinjam = 0;
+        $tengat = null;
+
         if ($pengajuan) {
-            $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
-                ->latest()
+            $pelunasan = PelunasanPinjaman::where('pinjaman_id', $pengajuan->id)
+                ->where('user_id', Auth::id())
                 ->first();
 
-            // Hitung sisa cicilan kalau pinjaman masih berjalan
-            if ($pelunasan && $pelunasan->status !== 'lunas') {
-                $totalPinjaman = $pengajuan->jumlah_diterima;
-                // dd($totalPinjaman);
-                $totalDibayar = $pelunasan
-                    ->sum('jumlah_dibayar');
+            $totalPinjaman = $pengajuan->jumlah_harus_dibayar ?? 0;
+            $totalDibayar  = $pelunasan->jumlah_dibayar ?? 0;
+            $sisaCicilan   = max($totalPinjaman - $totalDibayar, 0);
 
-                $sisaCicilan = $totalPinjaman - $totalDibayar;
-                // dd($sisaCicilan);                
+            if ($totalPinjaman > 0) {
+                $progress = round(($totalDibayar / $totalPinjaman) * 100, 2);
+            }
+
+            // ambil cicilan terakhir yang sudah dibayar
+            $lastAngsuran = Angsuran::where('pinjaman_id', $pengajuan->id)
+                ->where('status', 'sudah_bayar')
+                ->orderByDesc('bulan_ke')
+                ->first();
+
+            $bulanPinjam = $lastAngsuran ? $lastAngsuran->bulan_ke : 0;
+
+            // ambil angsuran berikutnya (belum dibayar) sebagai tenggat
+            $nextAngsuran = Angsuran::where('pinjaman_id', $pengajuan->id)
+                ->where('status', 'belum_bayar')
+                ->orderBy('bulan_ke', 'asc')
+                ->first();
+
+            if ($nextAngsuran) {
+                $tengat = Carbon::parse($nextAngsuran->tanggal_jatuh_tempo)->translatedFormat('d F Y');
+            }
+
+            if ($pelunasan && $pelunasan->status === 'lunas') {
+                return view('anggota.index', [
+                    'pengajuan'   => null,
+                    'pelunasan'   => null,
+                    'sisaCicilan' => 0,
+                    'progress'    => 0,
+                    'message'     => 'Pinjaman Anda sudah lunas.',
+                    'bulanPinjam' => 0,
+                    'tengat'      => null,
+                    'statusTabungan' => null,
+                ]);
             }
         }
 
-        return view('anggota.index', compact('pengajuan', 'pelunasan', 'sisaCicilan'));
+        $bulanIni = Carbon::now()->format('Y-m');
+        $tabunganWajib = TabWajib::where('user_id', Auth::id())
+            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanIni])
+            ->first();
+        
+        $tabunganManasuka = TabManasuka::where('user_id', Auth::id())
+            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanIni])
+            ->first();
+
+        $statusTabunganManasuka = $tabunganManasuka
+            ? ['status' => 'sudah', 'tanggal' => Carbon::parse($tabunganManasuka->tanggal)->translatedFormat('d F Y')]
+            : ['status' => 'belum', 'tanggal' => Carbon::now()->translatedFormat('d F Y')];
+
+        $statusTabungan = $tabunganWajib
+            ? ['status' => 'sudah', 'tanggal' => Carbon::parse($tabunganWajib->tanggal)->translatedFormat('d F Y')]
+            : ['status' => 'belum', 'tanggal' => Carbon::now()->translatedFormat('d F Y')];
+
+        return view('anggota.index', compact('pengajuan', 'sisaCicilan', 'progress', 'bulanPinjam', 'tengat', 'statusTabungan', 'statusTabunganManasuka'));
     }
+
 
     public function profile()
     {
