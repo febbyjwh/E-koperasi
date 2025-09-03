@@ -25,6 +25,8 @@ use Pusher\Pusher;
 
 Route::get('/', [AuthController::class, 'formlogin'])->name('formlogin');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+Route::post('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
 
 Route::prefix('auth')->name('auth.')->group(function () {
     // Auth

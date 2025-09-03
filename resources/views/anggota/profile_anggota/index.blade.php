@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Profile Admin')
+@section('title', 'Profile ' . $user->name)
 
 @section('content')
     <div class="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 min-h-screen">
@@ -19,7 +19,7 @@
                 {{-- User ID --}}
                 <div class="flex items-center gap-2 mt-4">
                     <span id="userIdText" class="text-sm bg-gray-100 px-3 py-1 rounded text-gray-700">
-                        User ID: UsrAnGKpRSMP1C{{ $user->id }}
+                        User ID: {{ Str::random() . $user->id }}
                     </span>
                     <button onclick="copyToClipboard(event)"
                         class="cursor-pointer text-xs text-gray-600 border px-2 py-1 rounded hover:bg-gray-100">
@@ -40,7 +40,7 @@
                     🧑 {{ $user->name }}
                 </button>
 
-                <a href="{{ route('profile_admin.changepass') }}"
+                <a href="{{ route('forgot-password') }}"
                     class="cursor-pointer block w-full text-left px-4 py-2 bg-blue-100 rounded hover:bg-blue-200 text-sm">
                     🔐 Ganti Kata Sandi
                 </a>
@@ -120,9 +120,9 @@
 
             {{-- Change photo --}}
             <div id="profile-admin-section" class="bg-white shadow-sm rounded-md p-6">
-                <h3 class="text-lg font-semibold mb-4">Profile Admin</h3>
+                <h3 class="text-lg font-semibold mb-4">Profile Anggota</h3>
                 <div class="space-y-4">
-                    Admin
+                    Anggota
                     <label class="block text-sm text-gray-600 mb-1">Ubah Foto Propil</label>
                     <form action="{{ route('profile_anggota.changephoto') }}" method="POST" enctype="multipart/form-data">
                         @csrf

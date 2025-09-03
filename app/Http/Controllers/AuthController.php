@@ -46,7 +46,7 @@ class AuthController extends Controller
             Auth::logout();
             return redirect()->back()->with(['pesan' => 'Role tidak dikenali.']);
         }
-        
+
         return redirect()->back()->with(['pesan' => 'Akun tidak terdaftar!']);
     }
 
@@ -67,25 +67,48 @@ class AuthController extends Controller
 
     public function store(Request $request)
     {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'username' => 'required|string|max:50|unique:users,username',
-        'email' => 'required|email|unique:users,email',
-        'no_hp' => 'nullable|string|max:20',
-        'alamat' => 'nullable|string|max:255',
-        'password' => 'required|string|confirmed|min:6',
-    ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:50|unique:users,username',
+            'email' => 'required|email|unique:users,email',
+            'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string|max:255',
+            'password' => 'required|string|confirmed|min:6',
+        ]);
 
-    User::create([
-        'name' => $request->name,
-        'username' => $request->username,
-        'email' => $request->email,
-        'no_hp' => $request->no_hp,
-        'alamat' => $request->alamat,
-        'password' => Hash::make($request->password),
-        'role' => 'anggota', // default role
-    ]);
+        User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'password' => Hash::make($request->password),
+            'role' => 'anggota', // default role
+        ]);
 
-    return redirect()->route('formlogin')->with('success', 'Registrasi berhasil. Silakan login.');
+        return redirect()->route('formlogin')->with('success', 'Registrasi berhasil. Silakan login.');
+    }
+
+    public function forgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'new_password' => 'required|string|min:8|confirmed'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        if (Auth::check() && Auth::id() == $user->id) {
+            Auth::logout();
+        }
+
+        return redirect()->route('formlogin')->with('pesan', 'Kata sandi berhasil diubah. Silakan login dengan kata sandi baru.');
     }
 }

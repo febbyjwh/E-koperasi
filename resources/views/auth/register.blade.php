@@ -1,7 +1,7 @@
 @extends('auth')
 @section('title', 'Registrasi')
 @section('content')
-
+<img src="{{ asset('assets/img/logo-new.png') }}" class="h-24" alt="Logo" />
 <div class="w-full md:w-1/2 flex items-center justify-center p-6">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrasi Akun</h2>

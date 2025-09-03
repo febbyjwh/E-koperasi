@@ -45,12 +45,14 @@ class AnggotaController extends Controller
         $request->validate([
             'email' => 'required|email|unique:users,email',
             'nama' => 'required|string|max:255',
-            'username' => 'required|string|max:50|unique:users,username',
+            'username' => 'required|string|max:50|unique:users,username|lowercase',
             'no_hp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string',
             'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
             'tanggal_lahir' => 'nullable|date',
         ]);
+
+        $password = $request->username . '123';
 
         User::create([
             'name' => $request->nama,
@@ -60,7 +62,7 @@ class AnggotaController extends Controller
             'alamat' => $request->alamat,
             'jenis_kelamin' => $request->jenis_kelamin,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'password' => Hash::make('password123'), // Default password
+            'password' => Hash::make($password), // Default password
             'role' => 'anggota',
         ]);
 
