@@ -9,6 +9,7 @@ use App\Models\PengajuanPinjaman;
 use App\Models\TabManasuka;
 use App\Models\TabWajib;
 use App\Models\User;
+// use App\Models\Datadiri;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -112,7 +113,7 @@ class AnggotaController extends Controller
 
     public function index_anggota()
     {
-        // Carbon::setTestNow(Carbon::create(2025, 10, 20)); // ini buat ngecek bulan depan 
+        // Carbon::setTestNow(Carbon::create(2025, 10, 20)); // cek bulan depan 
         $pengajuan = PengajuanPinjaman::where('user_id', Auth::id())
             ->where('status', 'disetujui')
             ->latest()
@@ -172,7 +173,7 @@ class AnggotaController extends Controller
         $tabunganWajib = TabWajib::where('user_id', Auth::id())
             ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanIni])
             ->first();
-        
+
         $tabunganManasuka = TabManasuka::where('user_id', Auth::id())
             ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanIni])
             ->first();
@@ -205,5 +206,13 @@ class AnggotaController extends Controller
     public function dashboard()
     {
         return $this->index_anggota();
+    }
+
+    public function show($id)
+    {
+        // cari user berdasarkan id
+        $anggota = User::with('datadiri')->findOrFail($id);
+
+        return view('admin.kelola_anggota.show', compact('anggota'));
     }
 }
