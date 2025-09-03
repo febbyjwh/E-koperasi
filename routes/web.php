@@ -33,17 +33,27 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
+Route::prefix('print')->name('print.')->group(function () {
+    /// bukti cicilan
+    Route::get('/{id}/invoice', [PelunasanController::class, 'invoice'])->name('invoice');
+    Route::get('/{id}/invoicepdfPelunasan', [PelunasanController::class, 'exportPdfInvoice'])->name('invoicepdfPelunasan');
+    // bukti pelunasan akhir
+    Route::get('/{id}/bukti', [PelunasanController::class, 'bukti'])->name('bukti');
+    Route::get('/{id}/buktipdf', [PelunasanController::class, 'exportPdfbukti'])->name('buktipdf');
+
+    Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdfPengajuan');
+});
+
 Route::middleware(['isAdmin'])->group(function () {
     // DataAnggotaUpdate::dispatch('lorem ipsum dolor sit amet');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/simulasi', [SimulasiController::class, 'calculate'])->name('simulasi.calculate');
-    
+
     Route::prefix('profile_admin')->name('profile_admin.')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::get('/changepass', [AdminController::class, 'changepass'])->name('changepass');
         Route::post('/updatepassword', [AdminController::class, 'updatePassword'])->name('updatepassword');
         Route::post('/changephoto', [AdminController::class, 'changephoto'])->name('changephoto');
-        
     });
 
     // Modal Utama
@@ -96,12 +106,12 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::post('/{id}/bayar', [PelunasanController::class, 'bayar'])->name('bayar');
         Route::get('/{id}/edit', [PelunasanController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PelunasanController::class, 'update'])->name('update');
-        /// bukti cicilan
-        Route::get('/{id}/invoice', [PelunasanController::class, 'invoice'])->name('invoice');
-        Route::get('/{id}/invoicepdf', [PelunasanController::class, 'exportPdfInvoice'])->name('invoicepdf');
-        // bukti pelunasan akhir
-        Route::get('/{id}/bukti', [PelunasanController::class, 'bukti'])->name('bukti');
-        Route::get('/{id}/buktipdf', [PelunasanController::class, 'exportPdfbukti'])->name('buktipdf');
+        // /// bukti cicilan
+        // Route::get('/{id}/invoice', [PelunasanController::class, 'invoice'])->name('invoice');
+        // Route::get('/{id}/invoicepdf', [PelunasanController::class, 'exportPdfInvoice'])->name('invoicepdf');
+        // // bukti pelunasan akhir
+        // Route::get('/{id}/bukti', [PelunasanController::class, 'bukti'])->name('bukti');
+        // Route::get('/{id}/buktipdf', [PelunasanController::class, 'exportPdfbukti'])->name('buktipdf');
 
         Route::delete('/{id}', [PelunasanController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/konfirmasi', [PelunasanController::class, 'konfirmasi'])->name('konfirmasi');
@@ -116,7 +126,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::put('/{id}', [PengajuanController::class, 'update'])->name('update');
         Route::delete('/{id}', [PengajuanController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/invoice', [PengajuanController::class, 'invoice'])->name('invoice');
-        Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdf');
+        // Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdf');
         Route::patch('/{id}/konfirmasi', [PengajuanController::class, 'konfirmasi'])->name('konfirmasi');
     });
 
@@ -127,7 +137,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/arus_kas', [LaporanController::class, 'arusKas'])->name('arus_kas');
         Route::get('/shu', [LaporanController::class, 'laporanSHU'])->name('shu');
         Route::get('/anggota', [LaporanController::class, 'anggota']);
-        
+
         // Export
         Route::get('/neraca/export-pdf', [LaporanController::class, 'exportNeracaPdf'])->name('exportpdf');
         Route::get('/export/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('exportexcel');
@@ -163,7 +173,7 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::get('/{id}/edit', [PinjamanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [PinjamanAnggotaController::class, 'update'])->name('update');
         Route::get('/{id}/bukti', [PengajuanController::class, 'invoice'])->name('bukti');
-        Route::get('/{id}/bukti-pdf', [PengajuanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
+        Route::get('/{id}/bukti-pdf', [PengajuanController::class, 'exportPdfInvoice'])->name('bukti_pdf');
         Route::delete('/{id}', [PinjamanAnggotaController::class, 'destroy'])->name('destroy');
     });
 
@@ -173,9 +183,9 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::post('/', [CicilanAnggotaController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [CicilanAnggotaController::class, 'edit'])->name('edit');
         Route::put('/{id}', [CicilanAnggotaController::class, 'update'])->name('update');
-        Route::get('/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');    
+        Route::get('/pelunasan_anggota/{id}', [PelunasanController::class, 'show'])->name('pelunasan_anggota.show');
         Route::get('/{id}/bukti', [PelunasanController::class, 'invoice'])->name('bukti');
-        Route::get('/pelunasan/{id}/bukti-pdf', [PelunasanController::class, 'exportPdfInvoice'])->name('bukti_pdf');     
+        Route::get('/pelunasan/{id}/bukti-pdf', [PelunasanController::class, 'exportPdfInvoice'])->name('bukti_pdf');
         Route::delete('/{id}', [CicilanAnggotaController::class, 'destroy'])->name('destroy');
     });
 
@@ -196,6 +206,4 @@ Route::middleware(['isAnggota'])->group(function () {
         Route::put('/{id}', [TabManasukaAnggotaController::class, 'update'])->name('update');
         Route::delete('/{id}', [TabManasukaAnggotaController::class, 'destroy'])->name('destroy');
     });
-
-    
 });

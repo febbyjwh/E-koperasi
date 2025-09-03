@@ -327,11 +327,12 @@ class PelunasanController extends Controller
     public function exportPdfInvoice($id)
     {
         // Ambil data pelunasan dengan relasi peminjaman dan user
-        $pelunasan = PelunasanPinjaman::with('pinjaman.user')->findOrFail($id);
+        $pelunasan = Angsuran::with('peminjaman.user')->findOrFail($id);
+        // dd($pelunasan);
 
         // Generate ID invoice
         $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
-
+        
         // Data untuk PDF
         $tanggal = $pelunasan->tanggal_bayar;
         $nama = optional(optional($pelunasan->pinjaman)->user)->name ?? '-';

@@ -103,16 +103,16 @@
                                     </a>
 
                                     @if ($item->status === 'lunas')
-                                        <a href="{{ route('pelunasan_anggota.bukti', $item->id) }}"
+                                        <a href="{{ route('print.bukti', $item->id) }}"
                                             class="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center">
                                             Bukti
                                         </a>
                                     @endif
 
                                     {{-- <button onclick="showModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
-                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
-                                Hapus
-                            </button> --}}
+                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none font-medium rounded-full text-sm px-5 py-1 text-center">
+                                        Hapus
+                                    </button> --}}
                                     <button type="button"
                                         onclick="showDeleteModal('{{ route('pelunasan_anggota.destroy', $item->id) }}')"
                                         class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium rounded-full text-sm px-4 py-1 cursor-pointer">
