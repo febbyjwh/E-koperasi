@@ -53,9 +53,9 @@
                                 <td class="px-6 py-4 text-right flex gap-2 justify-end items-center">
                                     @if (auth()->user()->role === 'admin')
                                         @if ($isLunas)
-                                            <a href="{{ route('pelunasan_anggota.invoice', $pelunasan->id) }}"
+                                            <a href="{{ route('print.invoice', $pelunasan->id) }}"
                                                 class="text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-full text-sm px-5 py-1">
-                                                Bukti
+                                                Bukti Tai
                                             </a>
                                         @else
                                             <button data-modal-target="{{ $modalId }}"
