@@ -7,6 +7,7 @@ use App\Models\PelunasanPinjaman;
 use App\Models\PengajuanPinjaman;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 class PelunasanController extends Controller
 {
     public function index(Request $request)
@@ -332,7 +333,7 @@ class PelunasanController extends Controller
 
         // Generate ID invoice
         $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
-        
+
         // Data untuk PDF
         $tanggal = $pelunasan->tanggal_bayar;
         $nama = optional(optional($pelunasan->pinjaman)->user)->name ?? '-';
@@ -396,9 +397,42 @@ class PelunasanController extends Controller
         ));
     }
 
-    public function exportPdfbukti()
+    public function exportPdfbukti($id)
     {
-        return view('admin.pelunsan_anggota.bukti');
+        $pelunasan = PelunasanPinjaman::with('pinjaman.user')->findOrFail($id);
+
+        if (auth()->user()->role !== 'admin') {
+            if (!$pelunasan->pinjaman || auth()->id() !== $pelunasan->pinjaman->user_id) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
+        $nama = optional($pelunasan->pinjaman->user)->name ?? '-';
+        $jumlahPinjaman = $pelunasan->pinjaman->jumlah ?? 0;
+        $jumlahDibayar = $pelunasan->jumlah_dibayar;
+        $sisaCicilan = $pelunasan->sisa_pokok;
+        $metode = $pelunasan->metode_pembayaran ?? 'Tunai';
+        $tanggalPengajuan = $pelunasan->pinjaman->tanggal_pengajuan ?? '-';
+        $tanggalDikonfirmasi = $pelunasan->pinjaman->tanggal_dikonfirmasi ?? '-';
+        $tanggalBayar = $pelunasan->tanggal_bayar;
+        $status = $pelunasan->status;
+        $invoiceId = 'CITA' . str_pad($pelunasan->id, 3, '0', STR_PAD_LEFT) . '-' . \Carbon\Carbon::parse($pelunasan->tanggal_bayar)->format('dmY');
+
+        $pdf = Pdf::loadView('admin.pelunasan_anggota.buktipdf', compact(
+            'pelunasan',
+            'invoiceId',
+            'nama',
+            'jumlahPinjaman',
+            'jumlahDibayar',
+            'sisaCicilan',
+            'metode',
+            'tanggalPengajuan',
+            'tanggalDikonfirmasi',
+            'tanggalBayar',
+            'status'
+        ));
+
+        return $pdf->download('bukti-pelunasan-' . $pelunasan->id . '.pdf');
     }
 
     public function destroy($id)
