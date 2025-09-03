@@ -126,7 +126,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::put('/{id}', [PengajuanController::class, 'update'])->name('update');
         Route::delete('/{id}', [PengajuanController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/invoice', [PengajuanController::class, 'invoice'])->name('invoice');
-        // Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdf');
+        Route::get('/{id}/invoicepdf', [PengajuanController::class, 'exportPdfInvoice'])->name('invoicepdf');
         Route::patch('/{id}/konfirmasi', [PengajuanController::class, 'konfirmasi'])->name('konfirmasi');
     });
 

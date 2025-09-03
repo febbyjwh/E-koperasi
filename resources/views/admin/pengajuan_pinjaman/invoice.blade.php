@@ -120,7 +120,7 @@
           Kembali
         </a>
 
-        <a href="{{ route('print.butkipdf', $pinjaman->id) }}" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-blue-700 text-white shadow-2xs hover:bg-blue-500 dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
+        <a href="{{ route('pengajuan_pinjaman.invoicepdf', $pinjaman->id) }}" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-blue-700 text-white shadow-2xs hover:bg-blue-500 dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
           <!-- Download Icon -->
           Bukti PDF
         </a>

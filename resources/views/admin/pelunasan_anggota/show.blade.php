@@ -55,7 +55,7 @@
                                         @if ($isLunas)
                                             <a href="{{ route('print.invoice', $pelunasan->id) }}"
                                                 class="text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-full text-sm px-5 py-1">
-                                                Bukti Tai
+                                                Bukti
                                             </a>
                                         @else
                                             <button data-modal-target="{{ $modalId }}"

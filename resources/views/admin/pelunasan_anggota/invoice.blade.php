@@ -102,7 +102,7 @@
                     </a> --}}
 
                     <a href="{{ route('print.invoicepdfPelunasan', $pelunasan->id) }}"
-                        class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none font-medium rounded-full text-sm px-4 py-1 text-center dark:bg-gray-600 dark:hover:bg-gray-700">
+                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-blue-700 text-white shadow-2xs hover:bg-blue-500 dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
                         Bukti PDF
                     </a>
                 </div>

@@ -336,8 +336,8 @@ class PelunasanController extends Controller
 
         // Data untuk PDF
         $tanggal = $pelunasan->tanggal_bayar;
-        $nama = optional(optional($pelunasan->pinjaman)->user)->name ?? '-';
-        $jenis_kredit = optional($pelunasan->pinjaman)->jenis_pinjaman ?? '-';
+        $nama = optional(optional($pelunasan->peminjaman)->user)->name ?? '-';
+        $jenis_kredit = optional($pelunasan->peminjaman)->jenis_pinjaman ?? '-';
         $pokok = $pelunasan->pokok;
         $bunga = $pelunasan->bunga;
         $total_angsuran = $pelunasan->total_angsuran;
@@ -430,7 +430,7 @@ class PelunasanController extends Controller
             'tanggalDikonfirmasi',
             'tanggalBayar',
             'status'
-        ));
+        ))->setPaper('a5', 'portrait');
 
         return $pdf->download('bukti-pelunasan-' . $pelunasan->id . '.pdf');
     }
