@@ -33,7 +33,7 @@
 
         <a href="{{ route('tabungan_manasuka.create') }}"
            class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
-            Tambah Tabungan
+            Transaksi Tabungan
         </a>
     </div>
 

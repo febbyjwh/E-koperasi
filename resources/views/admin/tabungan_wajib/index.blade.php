@@ -31,10 +31,16 @@
                 </div>
             </form>
 
-            <a href="{{ route('tabungan_wajib.create') }}"
-                class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
-                Tambah Setoran
-            </a>
+            <div class="flex space-x-3">
+                <a href="{{ route('tabungan_wajib.create') }}"
+                    class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
+                    Transaksi Tabungan
+                </a>
+                <a href="{{ route('tabungan_wajib.riwayat') }}"
+                    class="inline-block px-4 py-2 text-sm bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
+                    Riwayat Tabungan
+                </a>
+            </div>
         </div>
 
         <div class="overflow-x-auto w-full">
@@ -134,7 +140,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </td>
                             </tr>
                         @endforeach
@@ -146,6 +151,12 @@
                             <td colspan="7" class="px-6 py-2 font-semibold text-right text-gray-700">
                                 Total Tabungan Wajib {{ $items->first()->anggota->name ?? 'Anggota' }}:
                                 <span class="text-blue-700">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</span>
+
+                                <button type="button"
+                                    onclick="showWithdrawModal('{{ route('tabungan_wajib.withdraw', $userId) }}', '{{ $items->first()->anggota->name ?? '-' }}', '{{ number_format($totalSaldo, 0, ',', '.') }}')"
+                                    class="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-full text-sm px-5 py-1 cursor-pointer">
+                                    Tarik Tabungan
+                                </button>
                             </td>
                         </tr>
                         @php $groupIndex++; @endphp
@@ -156,6 +167,39 @@
                     @endforelse
                 </tbody>
             </table>
+            <!-- Modal Penarikan -->
+            <div id="withdrawModal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+                <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+
+                <div class="relative bg-white w-full max-w-sm mx-4 rounded-2xl shadow-xl p-6">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-orange-100 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">Tarik Semua Tabungan?</h2>
+                        <p id="withdrawText" class="text-sm text-gray-500 text-center mb-6"></p>
+
+                        <div class="flex space-x-3">
+                            <button type="button" onclick="closeWithdrawModal()"
+                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm font-medium cursor-pointer">
+                                Batal
+                            </button>
+                            <form id="withdrawForm" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-semibold cursor-pointer">
+                                    Tarik
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="mt-4">
             {{ $setoranWajib->withQueryString()->links('vendor.pagination.tailwind') }}
@@ -169,6 +213,18 @@
 
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
+        }
+    </script>
+    <script>
+        function showWithdrawModal(actionUrl, nama, saldo) {
+            document.getElementById('withdrawModal').classList.remove('hidden');
+            document.getElementById('withdrawForm').setAttribute('action', actionUrl);
+            document.getElementById('withdrawText').innerText =
+                `Seluruh tabungan sebesar Rp ${saldo} milik ${nama} akan ditarik. Apakah Anda yakin?`;
+        }
+
+        function closeWithdrawModal() {
+            document.getElementById('withdrawModal').classList.add('hidden');
         }
     </script>
 @endsection

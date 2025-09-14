@@ -8,6 +8,7 @@ use App\Http\Controllers\ModalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\TabunganWajibController;
+use App\Http\Controllers\PenarikanWajibController;
 use App\Http\Controllers\TabunganManasukaController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\PelunasanController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\CicilanAnggotaController;
 use App\Http\Controllers\TabWajibAnggotaController;
 use App\Http\Controllers\TabManasukaAnggotaController;
 use App\Http\Controllers\DatadiriController;
+use App\Models\PenarikanWajib;
 use Pusher\Pusher;
 
 Route::get('/', [AuthController::class, 'formlogin'])->name('formlogin');
@@ -82,10 +84,12 @@ Route::middleware(['isAdmin'])->group(function () {
     // Tabungan Wajib
     Route::prefix('tabungan_wajib')->name('tabungan_wajib.')->group(function () {
         Route::get('/', [TabunganWajibController::class, 'index'])->name('tabungan_wajib');
+        Route::get('/riwayat', [PenarikanWajibController::class, 'riwayat'])->name('riwayat');
         Route::get('/create', [TabunganWajibController::class, 'create'])->name('create');
         Route::post('/', [TabunganWajibController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [TabunganWajibController::class, 'edit'])->name('edit');
         Route::put('/{id}', [TabunganWajibController::class, 'update'])->name('update');
+        Route::post('/{id}/withdraw', [PenarikanWajibController::class, 'withdraw'])->name('withdraw');
         Route::delete('/{id}', [TabunganWajibController::class, 'destroy'])->name('destroy');
     });
 

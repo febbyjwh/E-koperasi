@@ -109,4 +109,23 @@ class TabunganWajibController extends Controller
 
         return redirect()->route('tabungan_wajib.tabungan_wajib')->with('hapus', 'Setoran berhasil dihapus.');
     }
+
+    public function withdraw($userId)
+    {
+        $tabungan = TabWajib::where('user_id', $userId)->get();
+
+        if ($tabungan->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada tabungan untuk ditarik.');
+        }
+
+        $totalSaldo = $tabungan->sum('nominal');
+
+        TabWajib::where('user_id', $userId)->delete();
+
+        return redirect()->back()->with('success', "Seluruh tabungan sebesar Rp " . number_format($totalSaldo, 0, ',', '.') . " berhasil ditarik.");
+    }
+
+    public function riwayat(){
+        return view ('admin.tabungan_wajib.riwayat');
+    }
 }

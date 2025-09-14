@@ -17,7 +17,7 @@ class TabWajibAnggotaController extends Controller
             ->when($search, function ($query, $search) {
                 $query->whereHas('anggota', function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                    ->orWhere('jenis', 'like', "%$search%");
+                        ->orWhere('jenis', 'like', "%$search%");
                 });
             })
             ->latest();
@@ -26,5 +26,4 @@ class TabWajibAnggotaController extends Controller
 
         return view('anggota.tab_wajib_anggota.index', compact('setoranWajib'));
     }
-
 }
