@@ -17,8 +17,7 @@ class DatadiriController extends Controller
             'foto_ktp' => [$existing ? 'required' : 'required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'nik' => [
                 'required',
-                'string',
-                'size:16',
+                'digits:16',
                 Rule::unique('datadiris', 'nik')->ignore($existing?->id),
             ],
             'nama_pengguna' => 'required|string|max:255',

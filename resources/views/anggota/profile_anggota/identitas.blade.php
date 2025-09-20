@@ -138,7 +138,10 @@
                     @enderror
 
                     <label for="nik" class="font-bold text-gray-700 block mb-1">NIK</label>
-                    <input id="nik" name="nik" type="text" placeholder="NIK"
+                    <input id="nik" name="nik" type="number" placeholder="NIK"
+                        maxlength="16"
+                        pattern="\d{16}"
+                        oninput="if(this.value.length > 16) this.value = this.value.slice(0,16);"
                         class="w-full px-4 py-3 rounded-lg border shadow-sm focus:outline-none focus:border-blue-500 text-gray-700 @error('nik') border-red-500 @enderror"
                         value="{{ old('nik', $anggota->nik ?? '') }}">
                     @error('nik')

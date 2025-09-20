@@ -31,7 +31,7 @@ class AuthController extends Controller
             return redirect()->back()->with(['pesan' => 'Password tidak sesuai!']);
         }
 
-        if (Auth::attempt([
+        if (Auth::guard('web')->attempt([
             'username' => $request->username,
             'password' => $request->password
         ])) {
@@ -71,19 +71,34 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:50|unique:users,username',
             'email' => 'required|email|unique:users,email',
-            'no_hp' => 'nullable|string|max:20',
+            'no_hp' => [
+                'required',
+                'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,11}$/'
+            ],
             'alamat' => 'nullable|string|max:255',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => [
+            'required',
+            'string',
+            'confirmed',
+            'min:8', // minimal 8 karakter
+            'regex:/[A-Z]/', // harus ada huruf kapital
+            'regex:/[a-z]/', // harus ada huruf kecil
+            'regex:/[0-9]/', // harus ada angka
+            'regex:/[@$!%*?&]/', // harus ada simbol
+        ],
+    ], [
+        'no_hp.regex' => 'Nomor HP harus diawali 08 / 62 / +62 dan panjang 10-14 digit.',   
+        'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol.'
         ]);
 
         User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
-            'password' => Hash::make($request->password),
-            'role' => 'anggota', // default role
+        'name' => $request->name,
+        'username' => $request->username,
+        'email' => $request->email,
+        'no_hp' => $request->no_hp,
+        'alamat' => $request->alamat,
+        'password' => Hash::make($request->password),
+        'role' => 'anggota', // default role
         ]);
 
         return redirect()->route('formlogin')->with('success', 'Registrasi berhasil. Silakan login.');
@@ -98,7 +113,18 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
-            'new_password' => 'required|string|min:8|confirmed'
+            'new_password' => [
+            'required',
+            'string',
+            'confirmed',
+            'min:8',
+            'regex:/[A-Z]/',
+            'regex:/[a-z]/',
+            'regex:/[0-9]/',
+            'regex:/[@$!%*?&]/',
+            ]
+        ], [
+             'new_password.regex' => 'Password baru harus mengandung huruf besar, huruf kecil, angka, dan simbol.'
         ]);
 
         $user = User::where('email', $request->email)->first();

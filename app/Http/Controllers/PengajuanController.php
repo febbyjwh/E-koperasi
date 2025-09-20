@@ -119,7 +119,7 @@ class PengajuanController extends Controller
             $totalJasa = $jasaFlat * $tenor;
         } else {
             $pokokBulanan = $jumlah / $tenor;
-            $sisaPokok = $jumlah;
+            $sisaPokok = $jumlah; 
             for ($i = 1; $i <= $tenor; $i++) {
                 $jasaBulan = $sisaPokok * 0.025;
                 $totalJasa += $jasaBulan;
